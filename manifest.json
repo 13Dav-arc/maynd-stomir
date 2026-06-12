@@ -2,7 +2,7 @@
     "name": "Maynd Stomir",
     "short_name": "Maynd",
     "description": "On-demand facility maintenance across Qatar",
-    "start_url": "/index.html",
+    "start_url": "/",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#0a1628",
