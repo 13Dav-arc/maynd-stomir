@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin page</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Maynd">
+    
+</head>
+<body>
+    <div class="admin-layout">
+        <div class=" header" id="header-layout">
+            <header>
+                <div class="logo">Maynd<span class="logo">Stomir</span></div>
+                <nav>
+                    <a href="#" data-view="log">All Jobs</a>
+                    <a href="#" data-view="track">Technicians</a>
+                </nav>
+            </header>
+        </div>
+        <div class="admin-content">
+            <div class="admin-header">
+                <h2>Dispatch Overview</h2>
+                <div class="admin-left">
+                    <input type="search" placeholder="Search by name,category, zone e.t.c" name="search_field">
+                    <select name="filter" id="filter">
+                        <option value="" selected disabled>Filter</option>
+                        <option value="pending">Pending</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="dispatch-cards">
+                <div class="dispatch-card pending">
+                    <div class="card-num">12</div>
+                    <div class="card-info">Pending Jobs</div>
+                </div>
+                <div class="dispatch-card assigned">
+                    <div class="card-num">6</div>
+                    <div class="card-info">Assigned</div>
+                </div>
+                <div class="dispatch-card completed">
+                    <div class="card-num">5</div>
+                    <div class="card-info">Completed</div>
+                </div>
+            </div>
+            <div class="dispatch-visual">
+                <div class="table-wrapper">
+                    <table class="dispatch-table">
+                        <thead>
+                            <tr>
+                                <th>job id</th>
+                                <th>customer</th>
+                                <th>category</th>
+                                <th>location</th>
+                                <th>scheduled</th>
+                                <th>status</th>
+                                <th>Assign Technician</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#0039</td>
+                                <td class="customer">
+                                    <span class="name">Ahmed Al-Kuari</span>
+                                    <span class="small">+97500000123</span>
+                                </td>
+                                <td>Ac Repair</td>
+                                <td>Z40.S850.B12</td>
+                                <td>Jun 12. 2:00PM</td>
+                                <td><span class="status-badge assigned">Assigned</span></td>
+                                <td class="assign-cell">
+                                    <input type="tel" placeholder="+974 xxxxxxxxxx">
+                                    <button class="assign-btn">Assign →</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#0039</td>
+                                <td class="customer">
+                                    <span class="name">Ahmed Al-Kuari</span>
+                                    <span class="small">+97500000123</span>
+                                </td>
+                                <td>Ac Repair</td>
+                                <td>Z40.S850.B12</td>
+                                <td>Jun 12. 2:00PM</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td class="assign-cell">
+                                    <input type="tel" placeholder="+974 xxxxxxxxxx">
+                                    <button class="assign-btn">Assign →</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#0039</td>
+                                <td class="customer">
+                                     <span class="name">Ahmed Al-Kuari</span>
+                                    <span class="small">+97500000123</span>
+                                </td>
+                                <td>Ac Repair</td>
+                                <td>Z40.S850.B12</td>
+                                <td>Jun 12. 2:00PM</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td class="assign-cell">
+                                    <input type="tel" placeholder="+974 xxxxxxxxxx">
+                                    <button class="assign-btn">Assign →</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+         <nav class="bottom-nav">
+            <a href="admin.html" class="active">
+                <i class="ti ti-plus"></i>
+                <span>All Jobs</span>
+            </a>
+            <a href="#">
+                <i class="ti ti-search"></i>
+                <span>Track</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch((err) => console.error('Service Worker failed:', err));
+        }
+    </script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+.admin-content {
+    padding-top: 100px;
+    background: var(--blue-soft);
+    min-height: 100vh;
+}
+.admin-header {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    justify-content: space-between;
+}
+.admin-header h2 {
+    flex: 1;
+    color: var(--blue-accent);
+}
+.admin-left {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+.admin-left input {
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    height: 36px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.75rem;
+    color: var(--blue-mid);
+    transition: all 0.2s ease;
+    text-wrap: wrap;
+} 
+.admin-left select {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    height: 36px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.75rem;
+    color: var(--blue-mid);
+    transition: all 0.2s ease;
+    text-wrap: wrap;
+}
+.admin-left input:hover, .admin-left select:hover {
+    border-color: var(--blue-light);
+}
+.admin-left input:focus, .admin-left select:focus {
+    border-color: var(--blue-light);
+    outline: none;
+}
+.admin-left select option {
+    border-color: var(--blue-light);
+    outline: none;
+}
+.dispatch-cards {
+    padding: 1.5em;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2em;
+}
+.dispatch-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 2em;
+    border: solid 1px var(--border);
+    border-radius: 10px;
+    background: var(--off-white);
+}
+.card-num{
+    font-family: 'Syne' sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+}
+.card-info {
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.dispatch-visual {
+    padding: 1.5em;
+}
+.table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+.dispatch-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+.dispatch-table thead {
+    border-bottom: solid 2px var(--blue-light);
+}
+.dispatch-table tbody {
+    background: var(--white);
+}
+.dispatch-table thead th {
+    padding: 0.6rem 1rem;
+    text-transform: uppercase;
+}
+.dispatch-table tbody tr {
+    border-bottom: solid 1px var(--text-muted);
+}
+.dispatch-table tbody tr:hover {
+    background: var(--blue-soft);
+}
+.dispatch-table tbody td {
+    padding: 0.6em 1.5em;
+    text-align: center;
+}
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+.customer {
+    display: flex;
+    flex-direction: column;
+}
+.assign-cell {
+    display: flex;
+    gap: 0.2em;
+    align-items: center;
+    justify-content: center;
+}
+.assign-btn {
+    padding: 0.4rem;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--blue-accent);
+    border: none;
+    transition: background 0.2s ease;
+}
+.assign-btn:hover {
+    background: var(--blue-light);
+}
+.assign-cell input {
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    height: 36px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+.assign-cell input:hover,
+.assign-cell input:focus {
+    border-color: var(--blue-light);
+    outline: none;
+}
+.pending {
+    color: var(--pending);
+    border-color: var(--pending);
+}
+.assigned {
+    color: var(--assigned);
+    border-color: var(--assigned);
+}
+.completed {
+    color: var(--completed);
+    border-color: var(--completed);
+}

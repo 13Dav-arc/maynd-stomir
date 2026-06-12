@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance form</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Maynd">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class=" log-layout" id="log-layout">
+        <header>
+            <div class="logo">Maynd<span class="logo">Stomir</span></div>
+            <nav>
+                <a href="index.html">New Request</a>
+                <a href="status.html">Track Job</a>
+                <a href="freelance.html">Register as Technician</a>
+            </nav>
+            <div>
+                <button class="primary" role="button">Emergency Call</button>
+                <button class="hamburger" id="hamburger" aria-label="Open menu">
+                    <i class="ti ti-menu-2"></i>
+                </button>
+            </div>
+        </header>
+        <!-- Drawer -->
+        <div class="drawer-overlay" id="drawer-overlay"></div>
+        <div class="drawer" id="drawer">
+            <div class="drawer-header">
+                
+                <button class="drawer-close" id="drawer-close" aria-label="Close menu">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <nav class="drawer-nav">
+                <a href="index.html"><i class="ti ti-plus"></i> New Request</a>
+                <a href="status.html"><i class="ti ti-search"></i> Track Job</a>
+                <a href="freelance.html"><i class="ti ti-tool"></i> Register as Technician</a>
+            </nav>
+            <div class="drawer-footer">
+                <button class="primary" style="width:100%">Emergency Call</button>
+            </div>
+        </div>
+        <div class="page-layout">
+            <div class="info">
+                <div class="info-header">
+                    <div class="divider"></div>
+                    <h2>Fast. Reliable.<br>On-Demand<br>Maintenance</h2>
+                    <div class="small">We connect You to Jobs across Qatar. Register and get assigned one now</div>
+                </div>
+                <div class="info-main">
+                    <div class="small" style="text-transform: uppercase; margin-bottom: 1.5rem;">how it works</div>
+                    <div class="info-list">
+                        <div class="info-field">
+                            <div class="info-num">1</div>
+                            <div class="info-desc">Fill in your requests details and submit the form</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-num">2</div>
+                            <div class="info-desc">We review and verify your details</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-num">3</div>
+                            <div class="info-desc">We contact you via WhatsApp for available Jobs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="main-header">
+                    <h3>Register to be a part</h3>
+                    <div class="small">Fill in all fields below. We'll confirm your details within minutes</div>
+                </div>
+                <div class>
+                    <form action="" method="post" class="form-grid">
+                        <div class="form-upload">
+                            <label for="technician-name">Your Full Name</label>
+                            <input type="text" name="name" id="technician-name" placeholder="Enter Your Name" required>
+                        </div>
+                       
+                        <div class="personal"> 
+                            <div class="form-upload">
+                                <label for="phone-number">Phone Number</label>
+                                <input type="tel" name="phone_number" id="phone-number" placeholder="Enter Your Phone Number" required>
+                            </div>
+                            <div class="form-upload">
+                                <label for="problem-category">Trade</label>
+                                <select name="trade_skill" id="trade-skill">
+                                    <option value="" selected disabled>Select Trade</option>
+                                    <option value="AC">AC Technician</option>
+                                    <option value="plumbing">Plumbing</option>
+                                    <option value="electrical">Electrical</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-upload">
+                            <label for="description-note">Description of What you do</label>
+                            <textarea id="description-note" name="description" 
+                                        rows="5"
+                                        cols="10"
+                                        placeholder="Describe what you do here"></textarea>
+                        </div>
+                        <div class="form-upload">
+                            <label for="photo-upload">Upload your id</label>
+                            <div class="upload-photo">
+                                 <i class="ti ti-camera"></i>
+                                <span class="upload-text">Click to upload from your device here (PNG, JPG, JPEG - Max 5mb)</span>
+                                <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required>
+                            </div>
+                        </div>
+                        </div>
+                        <button type="submit" class="primary">Register →</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+         <nav class="bottom-nav">
+            <a href="index.html">
+                <i class="ti ti-plus"></i>
+                <span>Request</span>
+            </a>
+            <a href="status.html">
+                <i class="ti ti-search"></i>
+                <span>Track</span>
+            </a>
+            <a href="freelance.html" class="active">
+                <i class="ti ti-tool"></i>
+                <span>Technician</span>
+            </a>
+        </nav>
+    </div>
+    <script>
+        const currentPage = window.location.pathname.split("/").pop();
+
+        document.querySelectorAll("nav a").forEach(link => {
+            const linkPage = link.getAttribute("href").split("/").pop();
+            if (linkPage === currentPage) {
+                link.classList.add("active");
+            }
+        });
+
+
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch((err) => console.error('Service Worker failed:', err));
+        }
+    </script>
+    <script src="js/nav.js"></script>
+    <script src="js/freelance.js"></script>
+</body>
+</html>

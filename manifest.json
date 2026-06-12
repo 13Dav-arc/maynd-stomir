@@ -1,0 +1,77 @@
+{
+    "name": "Maynd Stomir",
+    "short_name": "Maynd",
+    "description": "On-demand facility maintenance across Qatar",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0a1628",
+    "theme_color": "#2563eb",
+    "scope": "/",
+    "lang": "en",
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "New Request",
+            "short_name": "Request",
+            "description": "Log a new maintenance request",
+            "url": "/index.html",
+            "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Track Job",
+            "short_name": "Track",
+            "description": "Check your job status",
+            "url": "/status.html",
+            "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Join as Technician",
+            "short_name": "Technician",
+            "description": "Register as Technician",
+            "url": "/freelance.html",
+            "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshots/mobile.png",
+            "sizes": "1170x2691",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Maynd Stomir — Log a maintenance request"
+        },
+        {
+            "src": "screenshots/desktop.png",
+            "sizes": "1918x922",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Maynd Stomir — Log a maintenance request"
+        }
+    ]
+}
