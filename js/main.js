@@ -117,6 +117,9 @@ submitBtn.addEventListener("click", async (e) => {
         if (response.ok) {
             console.log("Full response:", data);
             console.log("data.data:", data.data);
+            setTimeout(() => {
+                window.location.href = `status.html?id=${data.data[0].id}`;
+            }, 15000);
             window.location.href = `status.html?id=${data.data[0].id}`;
         } else {
             console.error("Submission failed:", response.status, data);
