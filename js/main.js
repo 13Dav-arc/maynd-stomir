@@ -85,7 +85,7 @@ submitBtn.addEventListener("click", async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            window.location.href = `status.html?id=${data.id}`;
+            window.location.href = `status.html?id=${data.data[0].id}`;
         } else {
             alert("Submission failed: " + (data.message || "Please try again."));
         }
