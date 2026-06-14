@@ -11,7 +11,18 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const submitBtn = document.querySelector("button[type='submit']");
 const photoInput = document.getElementById("photo-upload");
 const uploadText = document.querySelector(".upload-text");
+const scheduledDate = document.getElementById("scheduled-date");
+const scheduledTime = document.getElementById("scheduled-time");
 
+scheduledTime.disabled = true;
+
+scheduledDate.addEventListener("change", () => {
+    if (scheduledDate.value) {
+        scheduledTime.disabled = false;
+    } else {
+        scheduledTime.disabled = true;
+    }
+});
 
 photoInput.addEventListener("change", () => {
     const file = photoInput.files[0];
@@ -42,6 +53,25 @@ async function uploadPhoto(file) {
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
+
+    const customerName = document.getElementById("customer-name").value.trim();
+    if (customerName.split(' ').filter(n => n).length < 2) {
+        alert("Please enter your full name. Must match the names on your Uploaded QID.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Maintenance Request";
+        return;
+    }
+
+    const phoneNumber = document.getElementById("phone-number").value.trim();
+    if (!/^\d{8}$/.test(phoneNumber)) {
+        alert("Phone number must be exactly 8 digits.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Maintenance Request";
+        return;
+    }
+
+
+
     const photoFile = photoInput.files[0];
 
     if (!photoFile) {
@@ -60,8 +90,8 @@ submitBtn.addEventListener("click", async (e) => {
         submitBtn.textContent = "Submitting...";
 
         // payload
-        const scheduledDate = document.getElementById("scheduled-date").value;
-        const scheduledTime = document.getElementById("scheduled-time").value;
+        const scheduledDateValue = document.getElementById("scheduled-date").value;
+        const scheduledTimeValue = document.getElementById("scheduled-time").value;
 
         const body = {
             customer_name:    document.getElementById("customer-name").value,
@@ -72,7 +102,7 @@ submitBtn.addEventListener("click", async (e) => {
             zone_number:      document.getElementById("zone-number").value,
             street_number:    document.getElementById("street-number").value,
             building_number:  document.getElementById("building-number").value,
-            scheduled_date:   `${scheduledDate}T${scheduledTime}:00`
+            scheduled_date:   `${scheduledDateValue}T${scheduledTimeValue}:00`
         };
 
         
@@ -85,8 +115,11 @@ submitBtn.addEventListener("click", async (e) => {
         const data = await response.json();
 
         if (response.ok) {
+            console.log("Full response:", data);
+            console.log("data.data:", data.data);
             window.location.href = `status.html?id=${data.data[0].id}`;
         } else {
+            console.error("Submission failed:", response.status, data);
             alert("Submission failed: " + (data.message || "Please try again."));
         }
 
