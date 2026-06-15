@@ -243,6 +243,10 @@ nav a:focus{
 .form-upload textarea::placeholder {
     color: var(--text-muted);
 }
+.form-upload input:disabled, .form-upload select:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
 .upload-photo {
     display: flex;
     flex-direction: column;
