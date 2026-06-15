@@ -35,8 +35,8 @@ async function fetchJobById(jobId) {
 
         if (!response.ok) throw new Error("Job not found");
 
-        const job = await response.json();
-        renderJobCard(job);
+        const result = await response.json();
+        renderJobCard(result.data);
 
     } catch (error) {
         console.error(error);
@@ -67,10 +67,8 @@ searchForm.addEventListener("submit", async (e) => {
 
         if (!response.ok) throw new Error("No jobs found");
 
-        const data = await response.json();
-
-        // Backend may return array (multiple jobs) or single object
-        const job = Array.isArray(data) ? data[0] : data;
+        const result = await response.json();
+        const job = Array.isArray(result.data) ? result.data[0] : result.data;
 
         if (!job) {
             showError("No jobs found for that phone number.");
@@ -130,22 +128,16 @@ function renderJobCard(job) {
                 field.querySelector(".track-info").textContent = jobId;
                 break;
             case "Category":
-                field.querySelector(".track-info").textContent = job.problem_category || "—";
+                field.querySelector(".track-info").textContent = job.category || "—";
                 break;
             case "Description":
                 field.querySelector(".track-info").textContent = job.description || "—";
                 break;
             case "Scheduled":
-                field.querySelector(".track-info").textContent = scheduled;
-                break;
-            case "Zone":
-                field.querySelector(".track-info").textContent = job.zone_number || "—";
-                break;
-            case "Street":
-                field.querySelector(".track-info").textContent = job.street_number || "—";
-                break;
-            case "Building":
-                field.querySelector(".track-info").textContent = job.building_number || "—";
+                const scheduled2 = job.preferred_date
+                    ? `${job.preferred_date} ${job.preferred_time || ""}`.trim()
+                    : "—";
+                field.querySelector(".track-info").textContent = scheduled2;
                 break;
             case "Technician":
                 const techEl = field.querySelector(".track-info");

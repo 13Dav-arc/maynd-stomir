@@ -103,7 +103,7 @@ submitBtn.addEventListener("click", async (e) => {
             phone_number:   document.getElementById("phone-number").value,
             category:       document.getElementById("problem-category").value,
             description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
-            photo_url,
+            job_photo_url:  photo_url,
             preferred_date: scheduledDateValue,
             preferred_time: scheduledTimeValue
         };

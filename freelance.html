@@ -85,6 +85,21 @@
                             <label for="technician-name">Your Full Name</label>
                             <input type="text" name="name" id="technician-name" placeholder="Enter Your Name" required>
                         </div>
+                        <div class="form-upload">
+                            <label for="email">Email Address</label>
+                            <input type="email" name="email" id="email" placeholder="Enter Your Email" required>
+                        </div>
+
+                        <div class="personal">
+                            <div class="form-upload">
+                                <label for="experience-years">Years of Experience</label>
+                                <input type="number" name="experience_years" id="experience-years" placeholder="e.g 3" min="0" required>
+                            </div>
+                            <div class="form-upload">
+                                <label for="qid-number">QID Number</label>
+                                <input type="text" name="qid_number" id="qid-number" placeholder="Enter QID Number" required>
+                            </div>
+                        </div>
                        
                         <div class="personal"> 
                             <div class="form-upload">
@@ -116,7 +131,6 @@
                                 <span class="upload-text">Click to upload from your device here (PNG, JPG, JPEG - Max 5mb)</span>
                                 <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required>
                             </div>
-                        </div>
                         </div>
                         <button type="submit" class="primary">Register →</button>
                     </form>

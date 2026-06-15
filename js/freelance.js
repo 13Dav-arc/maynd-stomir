@@ -41,6 +41,18 @@ async function uploadIdPhoto(file) {
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
+    const techName = document.getElementById("technician-name").value.trim();
+    if (techName.split(' ').filter(n => n).length < 2) {
+        alert("Please enter your full name. Must match the names on your Uploaded QID.");
+        return;
+    }
+
+    const phoneNumber = document.getElementById("phone-number").value.trim();
+    if (!/^\d{8}$/.test(phoneNumber)) {
+        alert("Phone number must be exactly 8 digits.");
+        return;
+    }
+
     const photoFile = photoInput.files[0];
 
     if (!photoFile) {
@@ -57,14 +69,15 @@ submitBtn.addEventListener("click", async (e) => {
 
         submitBtn.textContent = "Submitting...";
 
-        
         const body = {
-            name:         document.getElementById("technician-name").value,
-            phone_number: document.getElementById("phone-number").value,
-            trade_skill:  document.getElementById("trade-skill").value,
-            id_photo_url,
+            full_name:        document.getElementById("technician-name").value,
+            phone_number:     document.getElementById("phone-number").value,
+            email:            document.getElementById("email").value,
+            specialty:        document.getElementById("trade-skill").value,
+            experience_years: parseInt(document.getElementById("experience-years").value, 10),
+            qid_number:       document.getElementById("qid-number").value,
+            id_photo_url:     id_photo_url,
         };
-
         
         const response = await fetch(`${BASE_URL}/freelance_applications`, {
             method: "POST",

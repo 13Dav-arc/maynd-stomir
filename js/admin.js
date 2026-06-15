@@ -25,11 +25,10 @@ async function fetchJobs() {
 
         if (!response.ok) throw new Error("Failed to fetch jobs");
 
-        const jobs = await response.json();
-        allJobs = jobs;
-
-        updateStatCards(jobs);
-        renderTable(jobs);
+        const result = await response.json();
+        allJobs = result.data;
+        updateStatCards(result.data);
+        renderTable(result.data);
 
     } catch (error) {
         console.error(error);
@@ -53,14 +52,12 @@ function renderTable(jobs) {
 
     tbody.innerHTML = jobs.map(job => {
         // Format scheduled date
-        const date = job.scheduled_date
-            ? new Date(job.scheduled_date).toLocaleString("en-GB", {
-                day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
-              })
+        const date = job.preferred_date
+            ? `${job.preferred_date} ${job.preferred_time || ""}`.trim()
             : "—";
 
         // Location shorthand
-        const location = `Z${job.zone_number}.S${job.street_number}.B${job.building_number}`;
+       const location = job.description || "—";
 
         // Assign column — show input+button if pending, show number if assigned/completed
         const assignCell = job.status === "Pending"
@@ -74,10 +71,10 @@ function renderTable(jobs) {
             <tr>
                 <td>#${String(job.id).padStart(4, "0")}</td>
                 <td class="customer">
-                    <span class="name">${job.customer_name}</span>
+                    <span class="name">${job.full_name}</span>
                     <span class="small">${job.phone_number}</span>
                 </td>
-                <td>${job.problem_category}</td>
+                <td>${job.category}</td>
                 <td>${location}</td>
                 <td>${date}</td>
                 <td><span class="status-badge ${job.status.toLowerCase()}">${job.status}</span></td>
@@ -119,10 +116,9 @@ async function assignTechnician(jobId) {
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
     const filtered = allJobs.filter(job =>
-        job.customer_name.toLowerCase().includes(query) ||
-        job.problem_category.toLowerCase().includes(query) ||
-        job.zone_number.toLowerCase().includes(query) ||
-        job.street_number.toLowerCase().includes(query)
+        job.full_name.toLowerCase().includes(query) ||
+        job.category.toLowerCase().includes(query) ||
+        job.description.toLowerCase().includes(query)
     );
     renderTable(filtered);
 });
