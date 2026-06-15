@@ -93,16 +93,19 @@ submitBtn.addEventListener("click", async (e) => {
         const scheduledDateValue = document.getElementById("scheduled-date").value;
         const scheduledTimeValue = document.getElementById("scheduled-time").value;
 
+        const zoneNumber = document.getElementById("zone-number").value;
+        const streetNumber = document.getElementById("street-number").value;
+        const buildingNumber = document.getElementById("building-number").value;
+        const descriptionText = document.getElementById("description-note").value;
+
         const body = {
-            customer_name:    document.getElementById("customer-name").value,
-            phone_number:     document.getElementById("phone-number").value,
-            problem_category: document.getElementById("problem-category").value,
-            description:      document.getElementById("description-note").value,
+            full_name:      document.getElementById("customer-name").value,
+            phone_number:   document.getElementById("phone-number").value,
+            category:       document.getElementById("problem-category").value,
+            description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
             photo_url,
-            zone_number:      document.getElementById("zone-number").value,
-            street_number:    document.getElementById("street-number").value,
-            building_number:  document.getElementById("building-number").value,
-            scheduled_date:   `${scheduledDateValue}T${scheduledTimeValue}:00`
+            preferred_date: scheduledDateValue,
+            preferred_time: scheduledTimeValue
         };
 
         
@@ -115,11 +118,6 @@ submitBtn.addEventListener("click", async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            console.log("Full response:", data);
-            console.log("data.data:", data.data);
-            setTimeout(() => {
-                window.location.href = `status.html?id=${data.data[0].id}`;
-            }, 15000);
             window.location.href = `status.html?id=${data.data[0].id}`;
         } else {
             console.error("Submission failed:", response.status, data);
