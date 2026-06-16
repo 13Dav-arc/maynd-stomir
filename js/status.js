@@ -111,6 +111,16 @@ function renderJobCard(job) {
     // Job ID display
     const jobId = `#JOB-${String(job.id).padStart(4, "0")}`;
 
+    // Scheduled display
+    const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
+
+    const availability = (dateObj && !isNaN(dateObj))
+    ? dateObj.toLocaleString("en-GB", {
+        day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+        })
+    : "-";
+
     // Inject into result card
     document.querySelector(".track-title").textContent = jobId;
     document.querySelector(".track-timestap").textContent = `Submitted ${submitted}`;
@@ -135,7 +145,7 @@ function renderJobCard(job) {
                 field.querySelector(".track-info").textContent = job.description || "—";
                 break;
             case "Scheduled":
-                field.querySelector(".track-info").textContent = job.customer_availability || "-";
+                field.querySelector(".track-info").textContent = availability;
                 break;
             case "Technician":
                 const techEl = field.querySelector(".track-info");
