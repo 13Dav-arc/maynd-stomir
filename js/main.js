@@ -115,13 +115,14 @@ submitBtn.addEventListener("click", async (e) => {
             body: JSON.stringify(body)
         });
 
-        const data = await response.json();
+        const result = await response.json();
 
-        if (response.ok) {
-            window.location.href = `status.html?id=${data.data[0].id}`;
+        if (result.status === "success" && result.data && result.data.length > 0) {
+            const jobId = result.data[0].id;
+            window.location.href = `status.html?id=${jobId}`;
         } else {
-            console.error("Submission failed:", response.status, data);
-            alert("Submission failed: " + (data.message || "Please try again."));
+            console.error("Submission failed:", result);
+            alert("Submission failed: " + (result.message || "Please try again."));
         }
 
     } catch (error) {
