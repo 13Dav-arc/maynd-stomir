@@ -73,7 +73,7 @@ submitBtn.addEventListener("click", async (e) => {
             full_name:        document.getElementById("technician-name").value,
             phone_number:     document.getElementById("phone-number").value,
             email:            document.getElementById("email").value,
-            specialty:        document.getElementById("trade-skill").value,
+            trade:        document.getElementById("trade-skill").value,
             experience_years: parseInt(document.getElementById("experience-years").value, 10),
             qid_number:       document.getElementById("qid-number").value,
             id_photo_url:     id_photo_url,
