@@ -62,14 +62,14 @@ function renderTable(jobs) {
         // Assign column — show input+button if pending, show number if assigned/completed
         const assignCell = job.status === "Pending"
             ? `<div class="assign-cell">
-                <input type="tel" placeholder="+974 xxxxxxxxxx" id="tech-input-${job.uuid}">
-                <button class="assign-btn" onclick="assignTechnician('${job.uuid}')">Assign →</button>
+                <input type="tel" placeholder="+974 xxxxxxxxxx" id="tech-input-${job.id}">
+                <button class="assign-btn" onclick="assignTechnician('${job.id}')">Assign →</button>
                </div>`
             : `<span class="small">${job.assigned_technician || "—"}</span>`;
 
         return `
             <tr>
-                <td>#${String(job.uuid).padStart(4, "0")}</td>
+                <td>#${String(job.id).padStart(4, "0")}</td>
                 <td class="customer">
                     <span class="name">${job.full_name}</span>
                     <span class="small">${job.phone_number}</span>

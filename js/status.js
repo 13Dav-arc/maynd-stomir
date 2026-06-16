@@ -109,7 +109,7 @@ function renderJobCard(job) {
     const technician = job.assigned_technician || "Not Assigned Yet";
 
     // Job ID display
-    const jobId = `#JOB-${String(job.uuid).padStart(4, "0")}`;
+    const jobId = `#JOB-${String(job.id).padStart(4, "0")}`;
 
     // Inject into result card
     document.querySelector(".track-title").textContent = jobId;
@@ -135,10 +135,7 @@ function renderJobCard(job) {
                 field.querySelector(".track-info").textContent = job.description || "—";
                 break;
             case "Scheduled":
-                const scheduled2 = job.preferred_date
-                    ? `${job.preferred_date} ${job.preferred_time || ""}`.trim()
-                    : "—";
-                field.querySelector(".track-info").textContent = scheduled2;
+                field.querySelector(".track-info").textContent = job.customer_availability || "-";
                 break;
             case "Technician":
                 const techEl = field.querySelector(".track-info");
