@@ -1,6 +1,6 @@
 // MAYND STOMIR — Service Worke
 
-const CACHE_NAME = "maynd-stomir-v12";
+const CACHE_NAME = "maynd-stomir-v13";
 
 // Files to cache for offline access
 const ASSETS = [
