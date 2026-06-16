@@ -74,7 +74,8 @@ searchForm.addEventListener("submit", async (e) => {
             showError("No jobs found for that phone number.");
             return;
         }
-
+        
+        console.log(job);
         renderJobCard(job);
 
     } catch (error) {
