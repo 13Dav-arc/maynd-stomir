@@ -35,8 +35,8 @@ async function fetchJobById(jobId) {
 
         if (!response.ok) throw new Error("Job not found");
 
-        const result = await response.json();
-        renderJobCard(result.data);
+        const job = await response.json();
+        renderJobCard(job);
 
     } catch (error) {
         console.error(error);
@@ -60,7 +60,7 @@ searchForm.addEventListener("submit", async (e) => {
     try {
         showLoading();
 
-        const response = await fetch(`${BASE_URL}/jobs?phone=${encodeURIComponent(phone)}`, {
+        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -68,7 +68,7 @@ searchForm.addEventListener("submit", async (e) => {
         if (!response.ok) throw new Error("No jobs found");
 
         const result = await response.json();
-        const job = Array.isArray(result.data) ? result.data[0] : result.data;
+        const job = Array.isArray(result) ? result[0] : result;
 
         if (!job) {
             showError("No jobs found for that phone number.");

@@ -25,10 +25,10 @@ async function fetchJobs() {
 
         if (!response.ok) throw new Error("Failed to fetch jobs");
 
-        const result = await response.json();
-        allJobs = result.data;
-        updateStatCards(result.data);
-        renderTable(result.data);
+        const jobs = await response.json();
+        allJobs = jobs;
+        updateStatCards(jobs);
+        renderTable(jobs);
 
     } catch (error) {
         console.error(error);
@@ -95,7 +95,7 @@ async function assignTechnician(jobId) {
     }
 
     try {
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}`, {
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}/assign`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ assigned_technician: techPhone })
