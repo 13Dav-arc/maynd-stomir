@@ -118,8 +118,7 @@ submitBtn.addEventListener("click", async (e) => {
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
-            const jobId = result.data[0].id;
-            console.log("Full result:", JSON.stringify(result));
+            const jobId = result.data[0].uuid;
             window.location.href = `status.html?id=${jobId}`;
         } else {
             console.error("Submission failed:", result);
