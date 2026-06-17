@@ -183,6 +183,11 @@
     .track-results-main {
         padding: 1rem;
     }
+     .track-fields {
+        flex-direction: column;
+        gap: 0.2rem;
+        margin-bottom: 0.8rem;
+    }
 
     /* BOTTOM NAV — show on mobile */
     .bottom-nav {

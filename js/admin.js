@@ -1,3 +1,7 @@
+// AUTH CHECK — redirect to login if not authenticated
+if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
+    window.location.href = "login.html";
+}
 
 // MAYND STOMIR — Admin Dashboard Logic
 
@@ -38,9 +42,9 @@ async function fetchJobs() {
 
 // UPDATE STAT CARDS
 function updateStatCards(jobs) {
-    pendingCount.textContent   = jobs.filter(j => j.status === "Pending").length;
-    assignedCount.textContent  = jobs.filter(j => j.status === "Assigned").length;
-    completedCount.textContent = jobs.filter(j => j.status === "Completed").length;
+    pendingCount.textContent   = jobs.filter(j => j.status === "PENDING").length;
+    assignedCount.textContent  = jobs.filter(j => j.status === "ASSIGNED").length;
+    completedCount.textContent = jobs.filter(j => j.status === "COMPLETED").length;
 }
 
 // RENDER TABLE ROWS
@@ -59,8 +63,17 @@ function renderTable(jobs) {
         // Location shorthand
        const location = job.description || "—";
 
+       const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
+
+        const availability = (dateObj && !isNaN(dateObj))
+        ? dateObj.toLocaleString("en-GB", {
+            day: "numeric", month: "long", year: "numeric",
+            hour: "2-digit", minute: "2-digit"
+            })
+        : "-";
+
         // Assign column — show input+button if pending, show number if assigned/completed
-        const assignCell = job.status === "Pending"
+        const assignCell = (job.status || "").toUpperCase() === "PENDING"
             ? `<div class="assign-cell">
                 <input type="tel" placeholder="+974 xxxxxxxxxx" id="tech-input-${job.id}">
                 <button class="assign-btn" onclick="assignTechnician('${job.id}')">Assign →</button>
@@ -76,8 +89,8 @@ function renderTable(jobs) {
                 </td>
                 <td>${job.category}</td>
                 <td>${location}</td>
-                <td>${date}</td>
-                <td><span class="status-badge ${job.status.toLowerCase()}">${job.status}</span></td>
+                <td>${availability}</td>
+                <td><span class="status-badge ${(job.status || "pending").toLowerCase()}">${job.status || "Pending"}</span></td>
                 <td>${assignCell}</td>
             </tr>
         `;
@@ -128,7 +141,7 @@ searchInput.addEventListener("input", () => {
 filterSelect.addEventListener("change", () => {
     const value = filterSelect.value;
     const filtered = value
-        ? allJobs.filter(job => job.status.toLowerCase() === value)
+        ? allJobs.filter(job => (job.status || "").toUpperCase() === value.toUpperCase())
         : allJobs;
     renderTable(filtered);
 });
