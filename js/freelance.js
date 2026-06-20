@@ -10,6 +10,21 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const submitBtn = document.querySelector("button[type='submit']");
 const photoInput = document.getElementById("photo-upload");
 const uploadText = document.querySelector(".upload-text");
+const tradeSelect = document.getElementById("trade-skill");
+const kahramaaField = document.getElementById("kahramaa-field");
+const kahramaaInput = document.getElementById("kahramaa-id");
+
+tradeSelect.addEventListener("change", () => {
+    const trade = tradeSelect.value;
+    if (trade === "electrical" || trade === "plumbing" || trade === "hvac") {
+        kahramaaField.style.display = "flex";
+        kahramaaInput.required = true;
+    } else {
+        kahramaaField.style.display = "none";
+        kahramaaInput.required = false;
+        kahramaaInput.value = "";
+    }
+});
 
 // --- Show selected filename on photo pick ---
 photoInput.addEventListener("change", () => {
@@ -76,6 +91,7 @@ submitBtn.addEventListener("click", async (e) => {
             trade:        document.getElementById("trade-skill").value,
             experience_years: parseInt(document.getElementById("experience-years").value, 10),
             qid_number:       document.getElementById("qid-number").value,
+            kahramaa_id:      kahramaaInput.value || null,
             id_photo_url:     id_photo_url,
         };
         
@@ -90,7 +106,7 @@ submitBtn.addEventListener("click", async (e) => {
         if (response.ok) {
             alert("Application submitted successfully! We will contact you via WhatsApp.");
         } else {
-            alert("Submission failed: " + (data.message || "Please try again."));
+            alert("Submission failed: " + (data.message || data.detail || "Please try again."));
         }
 
     } catch (error) {

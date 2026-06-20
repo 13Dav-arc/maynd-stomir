@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maynd Stomir — Verify Onboarding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --charcoal:     #1a1a1a;
+            --charcoal-mid: #2d2d2d;
+            --gold:         #c9a84c;
+            --gold-light:   #e2c06a;
+            --white:        #ffffff;
+            --off-white:    #faf8f4;
+            --border:       #e8e0d0;
+            --muted:        #7a7a7a;
+            --error:        #c0392b;
+            --success:      #2e7d52;
+        }
+        body {
+            background: var(--charcoal);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .wrap {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .brand-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--white);
+            letter-spacing: 0.05em;
+        }
+        .brand-logo span { color: var(--gold); }
+        .brand-divider {
+            width: 40px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+            margin: 0.5rem auto;
+        }
+        .card {
+            width: 100%;
+            background: var(--off-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background: var(--charcoal-mid);
+            padding: 1.2rem 1.8rem;
+            border-bottom: 2px solid var(--gold);
+        }
+        .card-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .card-header p {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+        .card-body {
+            padding: 2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+            text-align: center;
+        }
+        .state-icon {
+            font-size: 3rem;
+            line-height: 1;
+        }
+        .state-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--charcoal);
+        }
+        .state-msg {
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        .join-btn {
+            width: 100%;
+            height: 44px;
+            background: var(--gold);
+            color: var(--charcoal);
+            border: none;
+            border-radius: 4px;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            box-shadow: 0 4px 15px rgba(201,168,76,0.3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .join-btn:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+        .error-card .card-header {
+            border-bottom-color: var(--error);
+        }
+        .error-card .card-header h2 {
+            color: var(--error);
+        }
+        .loading-msg {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        .footer {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div>
+            <div class="brand-logo">Maynd<span>Stomir</span></div>
+            <div class="brand-divider"></div>
+        </div>
+
+        <div class="card" id="main-card">
+            <div class="card-header">
+                <h2>Technician Onboarding</h2>
+                <p>Verifying your invitation link...</p>
+            </div>
+            <div class="card-body">
+                <div class="loading-msg">Please wait while we verify your link.</div>
+            </div>
+        </div>
+
+        <div class="footer">Maynd Stomir &copy; 2026 &nbsp;|&nbsp; Internal use only</div>
+    </div>
+
+    <script>
+        const BASE_URL = "https://msa-backend-drwt.onrender.com";
+        const card = document.getElementById("main-card");
+
+        function showSuccess(whatsappUrl) {
+            card.innerHTML = `
+                <div class="card-header">
+                    <h2>Invitation Verified</h2>
+                    <p>Your link is valid and active</p>
+                </div>
+                <div class="card-body">
+                    <div class="state-icon">✅</div>
+                    <div class="state-title">Welcome to Maynd Stomir</div>
+                    <div class="state-msg">Your identity has been confirmed. Tap the button below to join the official technician dispatch group.</div>
+                    <a href="${whatsappUrl}" class="join-btn">Join Official Chat →</a>
+                </div>
+            `;
+        }
+
+        function showExpired(message) {
+            card.classList.add("error-card");
+            card.innerHTML = `
+                <div class="card-header">
+                    <h2>Invite Link Expired</h2>
+                    <p>This link is no longer valid</p>
+                </div>
+                <div class="card-body">
+                    <div class="state-icon">🔒</div>
+                    <div class="state-title">Link Already Used or Expired</div>
+                    <div class="state-msg">${message}</div>
+                </div>
+            `;
+        }
+
+        function showInvalid() {
+            card.classList.add("error-card");
+            card.innerHTML = `
+                <div class="card-header">
+                    <h2>Invalid Link</h2>
+                    <p>No worker ID found in this link</p>
+                </div>
+                <div class="card-body">
+                    <div class="state-icon">⚠️</div>
+                    <div class="state-title">Invalid Invitation</div>
+                    <div class="state-msg">This link appears to be invalid or incomplete. Please use the exact link sent to your WhatsApp number.</div>
+                </div>
+            `;
+        }
+
+        async function verifyLink(workerId) {
+            try {
+                const response = await fetch(`${BASE_URL}/workers/${workerId}/verify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === "verified") {
+                    showSuccess(data.whatsapp_group_url);
+                } else {
+                    showExpired(data.detail || "This invitation link has already been used or has expired.");
+                }
+            } catch (error) {
+                console.error(error);
+                showExpired("Something went wrong. Please contact Maynd Stomir support.");
+            }
+        }
+
+        // On load — read worker ID from URL
+        window.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const workerId = params.get("id");
+
+            if (!workerId) {
+                showInvalid();
+                return;
+            }
+
+            verifyLink(workerId);
+        });
+    </script>
+</body>
+</html>

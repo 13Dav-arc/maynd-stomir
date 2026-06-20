@@ -110,12 +110,20 @@
                                 <label for="problem-category">Trade</label>
                                 <select name="trade_skill" id="trade-skill">
                                     <option value="" selected disabled>Select Trade</option>
-                                    <option value="AC">AC Technician</option>
+                                    <option value="hvac">HVAC (AC & Ventilation)</option>
                                     <option value="plumbing">Plumbing</option>
                                     <option value="electrical">Electrical</option>
+                                    <option value="carpentry">Carpentry & Flooring</option>
+                                    <option value="appliance_repair">Appliance Repair</option>
+                                    <option value="cleaning">Cleaning & Pest Control</option>
+                                    <option value="masonry">Masonry, Tiling & Glass</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="form-upload" id="kahramaa-field" style="display:none;">
+                            <label for="kahramaa-id">Kahramaa ID <span style="color:var(--pending)">*Required for your trade</span></label>
+                            <input type="text" id="kahramaa-id" name="kahramaa_id" placeholder="Enter your Kahramaa ID">
                         </div>
                         <div class="form-upload">
                             <label for="description-note">Description of What you do</label>

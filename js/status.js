@@ -1,185 +1,127 @@
-
 // MAYND STOMIR — Status Page Logic
 
-// --- CONFIG ---
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 
-// --- DOM References ---
 const searchForm = document.querySelector(".form-search");
 const phoneInput = document.getElementById("phone-number");
-const resultsCard = document.querySelector(".track-results-card");
+const resultsContainer = document.getElementById("track-results-container");
 
-// Hide results card on page load until a search is made
-resultsCard.style.display = "none";
-
-// AUTO-LOAD — Read job ID from URL on page load
 window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
-
-    if (jobId) {
-        
-        fetchJobById(jobId);
-    }
+    if (jobId) fetchJobById(jobId);
 });
 
-// FETCH JOB BY ID — GET /jobs/{id}
 async function fetchJobById(jobId) {
     try {
         showLoading();
-
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-        });
-
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}`);
         if (!response.ok) throw new Error("Job not found");
-
         const job = await response.json();
-        renderJobCard(job);
-
+        renderJobCards([job]);
     } catch (error) {
         console.error(error);
         showError("We could not find a job with that ID. Please check and try again.");
     }
 }
 
-
-// PHONE SEARCH — fallback manual lookup
-
 searchForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const phone = phoneInput.value.trim();
 
     if (!phone) {
         alert("Please enter your phone number.");
         return;
     }
+    if (!/^\d{8}$/.test(phone)) {
+        alert("Phone number must be exactly 8 digits.");
+        return;
+    }
 
     try {
         showLoading();
-
-        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-        });
-
+        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`);
         if (!response.ok) throw new Error("No jobs found");
-
         const result = await response.json();
-        const job = Array.isArray(result) ? result[0] : result;
+        const jobs = Array.isArray(result) ? result : [result];
 
-        if (!job) {
+        if (jobs.length === 0) {
             showError("No jobs found for that phone number.");
             return;
         }
-        
-        console.log(job);
-        renderJobCard(job);
 
+        renderJobCards(jobs);
     } catch (error) {
         console.error(error);
         showError("No jobs found for that phone number. Make sure you used the same number from your request.");
     }
 });
 
-// RENDER JOB CARD
-function renderJobCard(job) {
-    // Format scheduled date
-    const scheduled = job.scheduled_date
-        ? new Date(job.scheduled_date).toLocaleString("en-GB", {
-            day: "numeric", month: "long", year: "numeric",
-            hour: "2-digit", minute: "2-digit"
-          })
-        : "—";
-
-    // Format submitted date
-    const submitted = job.created_at
-        ? new Date(job.created_at).toLocaleString("en-GB", {
-            day: "numeric", month: "long", year: "numeric",
-            hour: "2-digit", minute: "2-digit"
-          })
-        : "—";
-
-    // Status class for badge colour
+function buildJobCardHTML(job) {
     const statusClass = job.status ? job.status.toLowerCase() : "pending";
-
-    // Technician display
     const technician = job.assigned_technician || "Not Assigned Yet";
-
-    // Job ID display
     const jobId = `#JOB-${String(job.id).padStart(4, "0")}`;
 
-    // Scheduled display
     const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
+    const scheduled = (dateObj && !isNaN(dateObj))
+        ? dateObj.toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })
+        : "—";
 
-    const availability = (dateObj && !isNaN(dateObj))
-    ? dateObj.toLocaleString("en-GB", {
-        day: "numeric", month: "long", year: "numeric",
-        hour: "2-digit", minute: "2-digit"
-        })
-    : "-";
+    const submitted = job.created_at
+        ? new Date(job.created_at).toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })
+        : "—";
 
-    // Inject into result card
-    document.querySelector(".track-title").textContent = jobId;
-    document.querySelector(".track-timestap").textContent = `Submitted ${submitted}`;
-
-    // Update status badge
-    const badge = document.querySelector(".track-results-header .status-badge");
-    badge.textContent = job.status;
-    badge.className = `status-badge ${statusClass}`;
-
-    // Update result fields
-    document.querySelectorAll(".track-fields").forEach(field => {
-        const key = field.querySelector(".track-list").textContent.trim();
-
-        switch (key) {
-            case "Job ID":
-                field.querySelector(".track-info").textContent = jobId;
-                break;
-            case "Category":
-                field.querySelector(".track-info").textContent = job.category || "—";
-                break;
-            case "Description":
-                field.querySelector(".track-info").textContent = job.description || "—";
-                break;
-            case "Scheduled":
-                field.querySelector(".track-info").textContent = availability;
-                break;
-            case "Technician":
-                const techEl = field.querySelector(".track-info");
-                techEl.textContent = technician;
-                techEl.style.color = job.assigned_technician
-                    ? "var(--assigned)"
-                    : "var(--text-muted)";
-                break;
-        }
-    });
-
-    
-    resultsCard.style.display = "block";
+    return `
+        <div class="track-results-card">
+            <div class="track-results-header">
+                <div class="track-left">
+                    <div class="track-title">${jobId}</div>
+                    <div class="track-timestap small">Submitted ${submitted}</div>
+                </div>
+                <div class="track-right">
+                    <div class="status-badge ${statusClass}">${job.status || "Pending"}</div>
+                </div>
+            </div>
+            <div class="track-results-main">
+                <div class="track-fields">
+                    <div class="track-list">Job ID</div>
+                    <div class="track-info">${jobId}</div>
+                </div>
+                <div class="track-fields">
+                    <div class="track-list">Category</div>
+                    <div class="track-info">${job.category || "—"}</div>
+                </div>
+                <div class="track-fields">
+                    <div class="track-list">Description</div>
+                    <div class="track-info">${job.description || "—"}</div>
+                </div>
+                <div class="track-fields">
+                    <div class="track-list">Scheduled</div>
+                    <div class="track-info">${scheduled}</div>
+                </div>
+                <div class="track-fields">
+                    <div class="track-list">Technician</div>
+                    <div class="track-info" style="color:${job.assigned_technician ? 'var(--assigned)' : 'var(--text-muted)'}">${technician}</div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
-
-// HELPERS
+function renderJobCards(jobs) {
+    resultsContainer.innerHTML = jobs.map(buildJobCardHTML).join("");
+}
 
 function showLoading() {
-    resultsCard.style.display = "block";
-    document.querySelector(".track-title").textContent = "Loading...";
-    document.querySelector(".track-timestap").textContent = "";
-    document.querySelectorAll(".track-info").forEach(el => {
-        el.textContent = "—";
-    });
+    resultsContainer.innerHTML = `<div class="track-results-card"><div class="track-results-main"><div class="track-fields"><div class="track-info">Loading...</div></div></div></div>`;
 }
 
 function showError(message) {
-    resultsCard.style.display = "block";
-    document.querySelector(".track-title").textContent = "Not Found";
-    document.querySelector(".track-timestap").textContent = message;
-    document.querySelectorAll(".track-info").forEach(el => {
-        el.textContent = "—";
-    });
+    resultsContainer.innerHTML = `
+        <div class="empty-state">
+            <i class="ti ti-search-off"></i>
+            <div class="empty-state-title">No Jobs Found</div>
+            <div class="small">${message}</div>
+        </div>
+    `;
 }
-
-

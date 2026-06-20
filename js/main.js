@@ -70,7 +70,20 @@ submitBtn.addEventListener("click", async (e) => {
         return;
     }
 
+    const scheduledDateVal = document.getElementById("scheduled-date").value;
+    const scheduledTimeVal = document.getElementById("scheduled-time").value;
 
+    if (scheduledDateVal && scheduledTimeVal) {
+        const scheduledDateTime = new Date(`${scheduledDateVal}T${scheduledTimeVal}`);
+        const minAllowed = new Date(Date.now() + 3 * 60 * 60 * 1000);
+
+        if (scheduledDateTime < minAllowed) {
+            alert("Scheduled time must be at least 3 hours from now.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Maintenance Request";
+            return;
+        }
+    }
 
     const photoFile = photoInput.files[0];
 
@@ -101,6 +114,7 @@ submitBtn.addEventListener("click", async (e) => {
         const body = {
             full_name:      document.getElementById("customer-name").value,
             phone_number:   document.getElementById("phone-number").value,
+            email:          document.getElementById("customer-email").value,
             category:       document.getElementById("problem-category").value,
             description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
             job_photo_url:  photo_url,
@@ -122,7 +136,7 @@ submitBtn.addEventListener("click", async (e) => {
             window.location.href = `status.html?id=${jobId}`;
         } else {
             console.error("Submission failed:", result);
-            alert("Submission failed: " + (result.message || "Please try again."));
+            alert("Submission failed: " + (result.message || result.detail || "Please try again."));
         }
 
     } catch (error) {
