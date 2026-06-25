@@ -223,12 +223,19 @@
 
                 if (response.ok && data.status === "verified") {
                     showSuccess(data.whatsapp_group_url);
+                } else if (response.status === 410) {
+                    showExpired("This link has already been used and is expired.");
+                } else if (response.status === 403) {
+                    showExpired("Access Denied: Your profile is not approved yet.");
+                } else if (response.status === 404) {
+                    showExpired("Invalid link. Identifier not found.");
                 } else {
-                    showExpired(data.detail || "This invitation link has already been used or has expired.");
+                    showExpired(data.detail || "Something went wrong. Please try again.");
                 }
+
             } catch (error) {
                 console.error(error);
-                showExpired("Something went wrong. Please contact Maynd Stomir support.");
+                showExpired("Something went wrong. Please try again.");
             }
         }
 

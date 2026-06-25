@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maynd Stomir — Technicians</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <header>
+            <div class="logo">Maynd<span class="logo">Stomir</span></div>
+            <nav>
+                <a href="admin.html">All Jobs</a>
+                <a href="technicians.html" class="active">Technicians</a>
+            </nav>
+            <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='login.html'" class="primary">
+                Logout
+            </button>
+        </header>
+
+        <div class="admin-content">
+
+            <!-- STAT CARDS -->
+            <div class="dispatch-cards">
+                <div class="dispatch-card">
+                    <div class="card-num" id="total-technicians">—</div>
+                    <div class="card-info">Total Technicians</div>
+                </div>
+                <div class="dispatch-card assigned">
+                    <div class="card-num" id="assigned-technicians">—</div>
+                    <div class="card-info">Currently Assigned</div>
+                </div>
+                <div class="dispatch-card completed">
+                    <div class="card-num" id="total-jobs-done">—</div>
+                    <div class="card-info">Total Jobs Done</div>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="admin-header">
+                <h2>Technician Directory</h2>
+                <div class="admin-left">
+                    <input type="search" placeholder="Search by name, phone, trade..." id="tech-search">
+                    <select id="status-filter">
+                        <option value="">All Status</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="available">Available</option>
+                    </select>
+                    <select id="trade-filter">
+                        <option value="">All Trades</option>
+                        <option value="hvac">HVAC</option>
+                        <option value="plumbing">Plumbing</option>
+                        <option value="electrical">Electrical</option>
+                        <option value="carpentry">Carpentry & Flooring</option>
+                        <option value="appliance_repair">Appliance Repair</option>
+                        <option value="cleaning">Cleaning & Pest Control</option>
+                        <option value="masonry">Masonry, Tiling & Glass</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="dispatch-visual">
+                <div class="table-wrapper">
+                    <table class="dispatch-table" id="tech-table">
+                        <thead>
+                            <tr>
+                                <th>Technician</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Trade</th>
+                                <th>Status</th>
+                                <th>Jobs Done</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tech-tbody">
+                            <!-- populated by technicians.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        const currentPage = window.location.pathname.split("/").pop();
+
+        document.querySelectorAll("nav a").forEach(link => {
+            const linkPage = link.getAttribute("href").split("/").pop();
+            if (linkPage === currentPage) {
+                link.classList.add("active");
+            }
+        });
+    </script>
+    <script src="js/technicians.js"></script>
+</body>
+</html>

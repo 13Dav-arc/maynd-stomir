@@ -50,13 +50,26 @@ async function uploadPhoto(file) {
     return urlData.publicUrl;
 }
 
+function showFormError(message) {
+    const errorDiv = document.getElementById("form-error");
+    const errorText = document.getElementById("form-error-text");
+    errorText.textContent = message;
+    errorDiv.style.display = "flex";
+    errorDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function hideFormError() {
+    document.getElementById("form-error").style.display = "none";
+}
+
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
+    hideFormError(); 
 
     const customerName = document.getElementById("customer-name").value.trim();
     if (customerName.split(' ').filter(n => n).length < 2) {
-        alert("Please enter your full name. Must match the names on your Uploaded QID.");
+        showFormError("Please enter your full name. Must match the names on your Uploaded QID.");
         submitBtn.disabled = false;
         submitBtn.textContent = "Submit Maintenance Request";
         return;
@@ -64,7 +77,7 @@ submitBtn.addEventListener("click", async (e) => {
 
     const phoneNumber = document.getElementById("phone-number").value.trim();
     if (!/^\d{8}$/.test(phoneNumber)) {
-        alert("Phone number must be exactly 8 digits.");
+        showFormError("Phone number must be exactly 8 digits.");
         submitBtn.disabled = false;
         submitBtn.textContent = "Submit Maintenance Request";
         return;
@@ -78,7 +91,7 @@ submitBtn.addEventListener("click", async (e) => {
         const minAllowed = new Date(Date.now() + 3 * 60 * 60 * 1000);
 
         if (scheduledDateTime < minAllowed) {
-            alert("Scheduled time must be at least 3 hours from now.");
+            showFormError("Scheduled time must be at least 3 hours from now.");
             submitBtn.disabled = false;
             submitBtn.textContent = "Submit Maintenance Request";
             return;
@@ -88,7 +101,7 @@ submitBtn.addEventListener("click", async (e) => {
     const photoFile = photoInput.files[0];
 
     if (!photoFile) {
-        alert("Please upload a photo before submitting.");
+        showFormError("Please upload a photo before submitting.");
         return;
     }
 
@@ -135,13 +148,14 @@ submitBtn.addEventListener("click", async (e) => {
             const jobId = result.data[0].id;
             window.location.href = `status.html?id=${jobId}`;
         } else {
-            console.error("Submission failed:", result);
-            alert("Submission failed: " + (result.message || result.detail || "Please try again."));
+            const rawMsg = data.detail?.[0]?.msg || data.detail || data.message || "Submission failed.";
+            const errorMsg = rawMsg.replace("Value error, ", "");
+            showFormError(errorMsg);
         }
 
     } catch (error) {
         console.error(error);
-        alert("Something went wrong. Check your connection and try again.");
+        showFormError("Something went wrong. Check your connection and try again.");
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Submit Maintenance Request";

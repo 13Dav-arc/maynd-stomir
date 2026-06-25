@@ -481,3 +481,18 @@ nav a.active {
     font-weight: 700;
     color: var(--text-primary);
 }
+.form-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    border-radius: 4px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.8rem;
+    color: #c0392b;
+}
+.form-error i {
+    font-size: 1rem;
+    flex-shrink: 0;
+}

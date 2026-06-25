@@ -171,3 +171,42 @@
     color: var(--completed);
     border-color: var(--completed);
 }
+.tech-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.tech-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(201, 168, 76, 0.15);
+    color: var(--blue-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.tech-name { font-weight: 600; }
+.tech-row { cursor: pointer; }
+.tech-row.expanded { background: var(--blue-soft); }
+.tech-chevron {
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+}
+.tech-expand-body {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--off-white);
+    border-top: 2px solid var(--blue-accent);
+}
+.tech-expand-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}

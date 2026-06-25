@@ -97,7 +97,7 @@
                             </div>
                             <div class="form-upload">
                                 <label for="qid-number">QID Number</label>
-                                <input type="text" name="qid_number" id="qid-number" placeholder="Enter QID Number" required>
+                                <input type="text" name="qid_number" id="qid-number" placeholder="11-digit Qatar ID" required>
                             </div>
                         </div>
                        
@@ -139,6 +139,10 @@
                                 <span class="upload-text">Click to upload from your device here (PNG, JPG, JPEG - Max 5mb)</span>
                                 <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required>
                             </div>
+                        </div>
+                        <div class="form-error" id="form-error" style="display:none;">
+                            <i class="ti ti-alert-circle"></i>
+                            <span id="form-error-text"></span>
                         </div>
                         <button type="submit" class="primary">Register →</button>
                     </form>

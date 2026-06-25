@@ -29,8 +29,8 @@
             <header>
                 <div class="logo">Maynd<span class="logo">Stomir</span></div>
                 <nav>
-                    <a href="#" data-view="log">All Jobs</a>
-                    <a href="#" data-view="track">Technicians</a>
+                    <a href="admin.html" class="active">All Jobs</a>
+                    <a href="technicians.html">Technicians</a>
                 </nav>
                 <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='login.html'" class="primary">
                     Logout
@@ -142,6 +142,16 @@
     </div>
 
     <script>
+        const currentPage = window.location.pathname.split("/").pop();
+
+        document.querySelectorAll("nav a").forEach(link => {
+            const linkPage = link.getAttribute("href").split("/").pop();
+            if (linkPage === currentPage) {
+                link.classList.add("active");
+            }
+        });
+
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js')
                 .then(() => console.log('Service Worker registered'))

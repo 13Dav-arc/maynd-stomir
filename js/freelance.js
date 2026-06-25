@@ -53,25 +53,44 @@ async function uploadIdPhoto(file) {
     return urlData.publicUrl;
 }
 
+function showFormError(message) {
+    const errorDiv = document.getElementById("form-error");
+    const errorText = document.getElementById("form-error-text");
+    errorText.textContent = message;
+    errorDiv.style.display = "flex";
+    errorDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function hideFormError() {
+    document.getElementById("form-error").style.display = "none";
+}
+
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
+    hideFormError();
+
     const techName = document.getElementById("technician-name").value.trim();
     if (techName.split(' ').filter(n => n).length < 2) {
-        alert("Please enter your full name. Must match the names on your Uploaded QID.");
+        showFormError("Please enter your full name. Must match the names on your Uploaded QID.");
         return;
     }
 
     const phoneNumber = document.getElementById("phone-number").value.trim();
     if (!/^\d{8}$/.test(phoneNumber)) {
-        alert("Phone number must be exactly 8 digits.");
+        showFormError("Phone number must be exactly 8 digits.");
+        return;
+    }
+    const qidNumber = document.getElementById("qid-number").value.trim();
+    if (!/^\d{11}$/.test(qidNumber)) {
+        showFormError("QID number must be exactly 11 digits.");
         return;
     }
 
     const photoFile = photoInput.files[0];
 
     if (!photoFile) {
-        alert("Please upload your ID photo before submitting.");
+        showFormError("Please upload your ID photo before submitting.");
         return;
     }
 
@@ -106,12 +125,15 @@ submitBtn.addEventListener("click", async (e) => {
         if (response.ok) {
             alert("Application submitted successfully! We will contact you via WhatsApp.");
         } else {
-            alert("Submission failed: " + (data.message || data.detail || "Please try again."));
+            console.error("422 detail:", JSON.stringify(data));
+            const rawMsg = data.detail?.[0]?.msg || data.detail || data.message || "Submission failed.";
+            const errorMsg = rawMsg.replace("Value error, ", "");
+            showFormError(errorMsg);
         }
 
     } catch (error) {
         console.error(error);
-        alert("Something went wrong. Check your connection and try again.");
+        showFormError("Something went wrong. Check your connection and try again.");
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Register →";

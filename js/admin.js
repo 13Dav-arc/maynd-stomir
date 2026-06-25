@@ -22,6 +22,9 @@ let allJobs = [];
 
 async function fetchJobs() {
     try {
+
+        showTableLoading()
+
         const response = await fetch(`${BASE_URL}/jobs`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
@@ -146,6 +149,14 @@ filterSelect.addEventListener("change", () => {
     renderTable(filtered);
 });
 
+function showTableLoading() {
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted)">
+                Loading Jobs...
+            </td>
+        </tr>`;
+}
 
 // INIT — load jobs on page load
 
