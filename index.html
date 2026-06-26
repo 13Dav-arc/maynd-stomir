@@ -111,7 +111,8 @@
                                     <option value="glass_windows">Glass & Windows</option>
                                     <option value="locks_security">Locks & Security</option>
                                     <option value="other">Other</option>
-                                </select>
+                               </select>
+                            </div>
                         </div>
                         <div class="form-upload">
                             <label for="customer-email">Email Address</label>
@@ -179,6 +180,16 @@
                 <span>Technician</span>
             </a>
         </nav>
+    </div>
+
+    <div class="success-modal" id="success-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text"></h3>
+            <button class="primary" onclick="window.location.href='status.html'">
+                Track My Job →
+            </button>
+        </div>
     </div>
     <script>
         const currentPage = window.location.pathname.split("/").pop();

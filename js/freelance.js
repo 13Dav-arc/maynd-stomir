@@ -127,7 +127,7 @@ submitBtn.addEventListener("click", async (e) => {
         } else {
             console.error("422 detail:", JSON.stringify(data));
             const rawMsg = data.detail?.[0]?.msg || data.detail || data.message || "Submission failed.";
-            const errorMsg = rawMsg.replace("Value error, ", "");
+            const errorMsg = typeof rawMsg === "string" ? rawMsg.replace("Value error, ", "") : "Submission validation failed.";
             showFormError(errorMsg);
         }
 

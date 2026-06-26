@@ -62,6 +62,38 @@ function hideFormError() {
     document.getElementById("form-error").style.display = "none";
 }
 
+function showSuccessModal(message, jobId) {
+    const modal = document.getElementById("success-modal");
+    document.getElementById("success-modal-text").textContent = message;
+    modal.style.display = "flex";
+
+    if (jobId) {
+        const trackBtn = modal.querySelector("button");
+        if (trackBtn) {
+            trackBtn.onclick = () => {
+                window.location.href = `status.html?id=${jobId}`;
+            };
+        }
+    }
+}
+
+// Get user coordinates
+function getCoordinates() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error("Geolocation not supported"));
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude
+            }),
+            (err) => reject(err)
+        );
+    });
+}
+
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -124,6 +156,13 @@ submitBtn.addEventListener("click", async (e) => {
         const buildingNumber = document.getElementById("building-number").value;
         const descriptionText = document.getElementById("description-note").value;
 
+        let coords = { lat: null, lng: null };
+        try {
+            coords = await getCoordinates();
+        } catch (err) {
+            console.warn("Location unavailable:", err.message);
+        }
+
         const body = {
             full_name:      document.getElementById("customer-name").value,
             phone_number:   document.getElementById("phone-number").value,
@@ -132,7 +171,9 @@ submitBtn.addEventListener("click", async (e) => {
             description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
             job_photo_url:  photo_url,
             preferred_date: scheduledDateValue,
-            preferred_time: scheduledTimeValue
+            preferred_time: scheduledTimeValue,
+            client_lat:     coords.lat,  
+            client_lng:     coords.lng    
         };
 
         
@@ -144,12 +185,22 @@ submitBtn.addEventListener("click", async (e) => {
 
         const result = await response.json();
 
-        if (result.status === "success" && result.data && result.data.length > 0) {
+        if (response.ok && result.status === "success") {
+            // Show client notice as inline success instead of redirecting
+            const jobId = result.data?.[0]?.id;
+            const successNotice = result.popup_data?.client_notice || "Application submitted successfully!";
+            showSuccessModal(successNotice, jobId);
+        } else if (result.status === "success") {
+            // Fallback — redirect as before
             const jobId = result.data[0].id;
-            window.location.href = `status.html?id=${jobId}`;
+            if (jobId) {
+                window.location.href = `status.html?id=${jobId}`;
+            } else {
+                showFormError("Submission acknowledged, but tracking ID could not be resolved.");
+            }
         } else {
-            const rawMsg = data.detail?.[0]?.msg || data.detail || data.message || "Submission failed.";
-            const errorMsg = rawMsg.replace("Value error, ", "");
+            const rawMsg = result.detail?.[0]?.msg || result.detail || result.message || "Submission failed.";
+            const errorMsg = typeof rawMsg === "string" ? rawMsg.replace("Value error, ", "") : "Submission validation failed.";
             showFormError(errorMsg);
         }
 

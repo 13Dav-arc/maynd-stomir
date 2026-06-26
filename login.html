@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -193,6 +194,31 @@
             font-size: 0.7rem;
             color: var(--muted);
         }
+        .password-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrap input {
+            width: 100%;
+            padding-right: 2.5rem;
+        }
+        .toggle-pwd-btn {
+            position: absolute;
+            right: 0.8rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--charcoal-mid);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+        .toggle-pwd-btn:hover {
+            color: var(--charcoal);
+        }
     </style>
 </head>
 <body>
@@ -217,7 +243,12 @@
                 </div>
                 <div class="field">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+                    <div class="password-wrap">
+                        <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+                        <button type="button" id="toggle-password" class="toggle-pwd-btn">
+                            <i class="ti ti-eye" id="toggle-icon"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="error-msg" id="error-msg">
                     Incorrect username or password. Please try again.
@@ -247,6 +278,14 @@
         const passwordInput = document.getElementById("password");
         const errorMsg = document.getElementById("error-msg");
 
+        const toggleBtn  = document.getElementById("toggle-password");
+        const toggleIcon = document.getElementById("toggle-icon");
+
+        toggleBtn.addEventListener("click", () => {
+            const isPassword = passwordInput.type === "password";
+            passwordInput.type = isPassword ? "text" : "password";
+            toggleIcon.className = isPassword ? "ti ti-eye-off" : "ti ti-eye";
+        });
         loginBtn.addEventListener("click", () => {
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
