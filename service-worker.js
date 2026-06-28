@@ -1,10 +1,10 @@
 // MAYND STOMIR — Service Worker
 
-const CACHE_NAME = "maynd-stomir-v23";
+const CACHE_NAME = "maynd-stomir-v24";
 
 // Files to cache for offline access
 const ASSETS = [
-    "/index.html",
+    "/request.html",
     "/status.html",
     "/freelance.html",
     "/css/styles.css",
@@ -85,7 +85,7 @@ self.addEventListener("fetch", (event) => {
         }).catch(() => {
             // If both cache and network fail, show offline page
             if (event.request.destination === "document") {
-                return caches.match("/index.html");
+                return caches.match("/request.html");
             }
         })
     );

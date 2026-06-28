@@ -2,11 +2,11 @@
     "name": "Maynd Stomir",
     "short_name": "Maynd",
     "description": "On-demand facility maintenance across Qatar",
-    "start_url": "/",
+    "start_url": "/request.html",
     "display": "standalone",
     "orientation": "portrait",
-    "background_color": "#1a1a1a",
-    "theme_color": "#c9a84c",
+    "background_color": "#5C0F1A",
+    "theme_color": "#8B1A2B",
     "scope": "/",
     "lang": "en",
     "icons": [
@@ -40,7 +40,7 @@
             "name": "New Request",
             "short_name": "Request",
             "description": "Log a new maintenance request",
-            "url": "/index.html",
+            "url": "/request.html",
             "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
         },
         {

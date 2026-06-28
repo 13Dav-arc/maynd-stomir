@@ -1,30 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
 :root {
-    /* Primary Charcoal */
-    --blue-dark:    #1a1a1a;   /* deep charcoal — backgrounds, sidebar */
-    --blue-mid:     #2d2d2d;   /* dark gray — headers, cards */
-    --blue-accent:  #c9a84c;   /* gold — buttons, highlights */
-    --blue-light:   #e2c06a;   /* light gold — hover states */
-    --blue-soft:    #f5f0e8;   /* warm cream — section backgrounds */
+    /* Qatar Maroon + Gold Theme */
+    --blue-dark:    #5C0F1A;   /* deep maroon — backgrounds, sidebar */
+    --blue-mid:     #8B1A2B;   /* maroon — headers, cards */
+    --blue-accent:  #C9A84C;   /* gold — buttons, highlights */
+    --blue-light:   #E2C06A;   /* light gold — hover states */
+    --blue-soft:    #F5F0E8;   /* warm cream — section backgrounds */
 
     /* Whites & Neutrals */
     --white:        #ffffff;   /* pure white — cards, modals */
-    --off-white:    #faf8f4;   /* warm off-white — page background */
-    --border:       #e8e0d0;   /* warm border color */
+    --off-white:    #FAF8F4;   /* warm off-white — page background */
+    --border:       #E8E0D0;   /* warm border color */
 
     /* Text */
-    --text-primary:  #1a1a1a;  /* headings, body text */
-    --text-muted:    #7a7a7a;  /* labels, placeholders */
+    --text-primary:  #1A1A1A;  /* headings, body text */
+    --text-muted:    #7A7A7A;  /* labels, placeholders */
     --text-inverse:  #ffffff;  /* text on dark backgrounds */
 
     /* Status Colors */
-    --pending:      #d4a017;   /* gold amber — pending jobs */
-    --assigned:     #2e7d52;   /* deep green — assigned jobs */
-    --completed:    #c9a84c;   /* gold — completed jobs */
+    --pending:      #D4A017;   /* gold amber — pending jobs */
+    --assigned:     #2E7D52;   /* deep green — assigned jobs */
+    --completed:    #C9A84C;   /* gold — completed jobs */
 
     /* Utility */
     --shadow:       rgba(201, 168, 76, 0.15);
+
+    /* Glass + Extended Palette */
+    --glass-bg:     rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --maroon-deep:  #5C0F1A;
+    --maroon:       #8B1A2B;
+    --gold:         #C9A84C;
+    --gold-light:   #E2C06A;
+    --cream:        #F5F0E8;
+    --charcoal:     #1A1A1A;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -162,9 +172,12 @@ nav a:focus{
     gap: 2em;;
 }
 .info-num {
-    padding: 0.6rem 0.8rem;
+    padding: 1.25rem;
     border: 1px solid var(--blue-accent);
-    border-radius: 100%;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 40px;
     width: 40px;
     color: var(--blue-accent);
@@ -176,6 +189,10 @@ nav a:focus{
     flex-direction: column;
     gap: 2rem;
     background: var(--blue-soft);
+    background-image: 
+        radial-gradient(circle at 15% 20%, rgba(139, 26, 43, 0.04) 0%, transparent 45%),  
+        radial-gradient(circle at 85% 75%, rgba(201, 168, 76, 0.07) 0%, transparent 50%); 
+    background-attachment: local; 
     height: 100%;
     overflow-y: auto;
     align-items: center;
@@ -191,12 +208,17 @@ nav a:focus{
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.75rem;
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(0.75rem); 
+    -webkit-backdrop-filter: blur(0.75rem); 
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(92, 15, 26, 0.04), 
+                0 2px 8px rgba(201, 168, 76, 0.05);
     width: 100%;
     max-width: 800px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 0.0625rem solid rgba(255, 255, 255, 0.5);
 }
 .form-upload {
     display: flex;
@@ -228,17 +250,17 @@ nav a:focus{
 .form-upload input,
 .form-upload select,
 .form-upload textarea {
-    background: var(--off-white);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    height: 36px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    height: 40px;
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.75rem;
+    padding: 0.6rem 0.875rem;
+    font-size: 1rem;
     color: var(--blue-mid);
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 } 
 .form-upload textarea {
     height: 80px;
@@ -253,7 +275,8 @@ nav a:focus{
 .form-upload textarea:focus {
     border-color:  var(--blue-accent);
     outline: none;
-    box-shadow: 0 0 0 3px var(--shadow);
+    box-shadow: 0 0 0 0.25rem rgba(201, 168, 76, 0.15);
+    
 }
 .form-upload input::placeholder,
 .form-upload select::placeholder, 
@@ -273,16 +296,16 @@ nav a:focus{
     width: 100%;
     height: 80px;
     background: var(--off-white);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
+    border: 2px dashed #D3C6B0;
+    border-radius: 10px;
     justify-content: center;
     color: var(--text-muted);
 }
 .upload-photo:hover {
-    border-color: var(--blue-light);
+    border-color: var(--blue-accent);
 }
 .upload-photo:focus {
-    border-color: var(--blue-light);
+    border-color: var(--blue-accent);
 }
 .upload-photo input[type='file'] {
     position: absolute;
@@ -293,6 +316,11 @@ nav a:focus{
 .upload-photo i {
     padding: 0.3rem;
     font-size: 1.4rem;
+    color: var(--blue-accent);
+    transition: transform 0.3s ease;
+}
+.upload-photo:hover i {
+    transform: scale(1.1);
 }
 .upload-text {
     font-size: clamp(0.75rem, 2vw, 0.85rem);

@@ -2,6 +2,7 @@ const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const SUPABASE_URL = "https://sukssqwzatvmnwdxthoa.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1a3NzcXd6YXR2bW53ZHh0aG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MjE0NjgsImV4cCI6MjA5NjM5NzQ2OH0.sT0wK2IAksWIycIwNvVqKJdQvXax4w4rPE5Mw8eppNo";
 const BUCKET_NAME = "id-photos";
+const KAHRAMAA_BUCKET = "Kahramaa-ids";
 
 // --- Init Supabase ---
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -12,7 +13,7 @@ const photoInput = document.getElementById("photo-upload");
 const uploadText = document.querySelector(".upload-text");
 const tradeSelect = document.getElementById("trade-skill");
 const kahramaaField = document.getElementById("kahramaa-field");
-const kahramaaInput = document.getElementById("kahramaa-id");
+const kahramaaInput = document.getElementById("kahramaa-photo");
 
 tradeSelect.addEventListener("change", () => {
     const trade = tradeSelect.value;
@@ -33,6 +34,12 @@ photoInput.addEventListener("change", () => {
         uploadText.textContent = `Selected: ${file.name}`;
     }
 });
+kahramaaInput.addEventListener("change", () => {
+    const file = kahramaaInput.files[0];
+    if (file && kahramaaUploadText) {
+        kahramaaUploadText.textContent = `Selected: ${file.name}`;
+    }
+});
 
 async function uploadIdPhoto(file) {
     const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
@@ -48,6 +55,25 @@ async function uploadIdPhoto(file) {
 
     const { data: urlData } = supabaseClient.storage
         .from(BUCKET_NAME)
+        .getPublicUrl(fileName);
+
+    return urlData.publicUrl;
+}
+
+async function uploadKahramaaPhoto(file) {
+    const fileName = `kahramaa-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+
+    const { data, error } = await supabaseClient.storage
+        .from(KAHRAMAA_BUCKET)
+        .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false
+        });
+
+    if (error) throw new Error("Kahramaa photo upload failed: " + error.message);
+
+    const { data: urlData } = supabaseClient.storage
+        .from(KAHRAMAA_BUCKET)
         .getPublicUrl(fileName);
 
     return urlData.publicUrl;
@@ -101,6 +127,22 @@ submitBtn.addEventListener("click", async (e) => {
         
         const id_photo_url = await uploadIdPhoto(photoFile);
 
+        // Upload Kahramaa photo if field is visible
+        let kahramaa_photo_url = null;
+        const kahramaaPhotoFile = document.getElementById("kahramaa-photo").files[0];
+
+        if (kahramaaField.style.display !== "none") {
+            if (!kahramaaPhotoFile) {
+                showFormError("Please upload your Kahramaa card photo.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Register →";
+                return;
+            }
+            submitBtn.textContent = "Uploading Kahramaa card...";
+            kahramaa_photo_url = await uploadKahramaaPhoto(kahramaaPhotoFile);
+        }
+
+       
         submitBtn.textContent = "Submitting...";
 
         const body = {
@@ -110,7 +152,7 @@ submitBtn.addEventListener("click", async (e) => {
             trade:        document.getElementById("trade-skill").value,
             experience_years: parseInt(document.getElementById("experience-years").value, 10),
             qid_number:       document.getElementById("qid-number").value,
-            kahramaa_id:      kahramaaInput.value || null,
+            kahramaa_id_url:    kahramaa_photo_url,
             id_photo_url:     id_photo_url,
         };
         

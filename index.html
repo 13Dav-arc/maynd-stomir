@@ -3,214 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maynd Stomir</title>
+    <title>Maynd Stomir — On-Demand Maintenance in Qatar</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/landing.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#C9A84C">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Maynd">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="description" content="Qatar's premier on-demand facility maintenance platform. Connecting residents to verified technicians within hours.">
 </head>
 <body>
-    <div class=" log-layout" id="log-layout">
-        <header>
-            <div class="logo">Maynd<span class="logo">Stomir</span></div>
-            <nav>
-                <a href="index.html">Requets Maintenance</a>
-                
-                <a href="freelance.html">Join as Technician</a>
-            </nav>
-            <div>
-                <button class="primary" role="button">Emergency Call</button>
-                <button class="hamburger" id="hamburger" aria-label="Open menu">
-                    <i class="ti ti-menu-2"></i>
-                </button>
-            </div>
-        </header>
-        <!-- Drawer -->
-        <div class="drawer-overlay" id="drawer-overlay"></div>
-        <div class="drawer" id="drawer">
-            <div class="drawer-header">
-                <button class="drawer-close" id="drawer-close" aria-label="Close menu">
-                    <i class="ti ti-x"></i>
-                </button>
-            </div>
-            <nav class="drawer-nav">
-                <a href="index.html"><i class="ti ti-plus"></i> Request Maintenance</a>
-                <a href="freelance.html"><i class="ti ti-tool"></i>Join as Technician</a>
-            </nav>
-            <div class="drawer-footer">
-                <button class="primary" style="width:100%">Emergency Call</button>
+
+    <!-- NAV -->
+    <header class="landing-nav">
+        <div class="logo">Maynd<span class="logo">Stomir</span></div>
+        <nav>
+            <a href="#services">Services</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div style="display:flex; gap:0.6rem; align-items:center;">
+            <a href="request.html" class="primary" style="text-decoration:none; padding:0.5rem 1rem; font-size:0.72rem;">Request Maintenance</a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-left">
+            <div class="hero-eyebrow">Qatar's Premier Maintenance Network</div>
+            <h1>Fast. Verified.<br><span>On-Demand</span><br>Maintenance.</h1>
+            <p class="hero-sub">Connecting Qatar residents to skilled, verified technicians within hours. No phone tag. No waiting. Just results delivered to your door.</p>
+            <div class="hero-btns">
+                <a href="request.html" class="primary" style="text-decoration:none; padding:0.7rem 1.4rem;">Request Maintenance →</a>
+                <a href="freelance.html" class="btn-outline">Join as Technician</a>
             </div>
         </div>
-        <div class="page-layout">
-            <div class="info">
-                <div class="info-header">
-                    <div class="divider"></div>
-                    <h2>Fast. Reliable.<br>On-Demand<br>Maintenance</h2>
-                    <div class="small">We connect You to verified technicians across Qatar within hours. No phone tag. No waiting</div>
+        <div class="hero-right">
+            <div class="glass-card">
+                <div class="glass-card-header">
+                    <p>Live Dispatch System</p>
+                    <h3>Technician matched to your location</h3>
                 </div>
-                <div class="info-main">
-                    <div class="small" style="text-transform: uppercase; margin-bottom: 1.5rem;">how it works</div>
-                    <div class="info-list">
-                        <div class="info-field">
-                            <div class="info-num">1</div>
-                            <div class="info-desc">Fill in your requests details and submit the form</div>
-                        </div>
-                        <div class="info-field">
-                            <div class="info-num">2</div>
-                            <div class="info-desc">Our dispatcher reviews ans assigns a technician</div>
-                        </div>
-                        <div class="info-field">
-                            <div class="info-num">3</div>
-                            <div class="info-desc">Technician receives a WhatsApp notification with your location</div>
-                        </div>
-                        <div class="info-field">
-                            <div class="info-num">4</div>
-                            <div class="info-desc">Track your job status on your confirmation page</div>
-                        </div>
+                <div class="glass-steps">
+                    <div class="glass-step">
+                        <div class="glass-step-num">1</div>
+                        <div class="glass-step-text">Submit your maintenance request with location details</div>
+                    </div>
+                    <div class="glass-step">
+                        <div class="glass-step-num">2</div>
+                        <div class="glass-step-text">Dispatcher reviews and assigns the nearest technician</div>
+                    </div>
+                    <div class="glass-step">
+                        <div class="glass-step-num">3</div>
+                        <div class="glass-step-text">Technician notified instantly via WhatsApp</div>
+                    </div>
+                    <div class="glass-step">
+                        <div class="glass-step-num">4</div>
+                        <div class="glass-step-text">Track your job status from Pending to Completed</div>
                     </div>
                 </div>
-            </div>
-            <div class="main-content">
-                <div class="main-header">
-                    <h3>Log a Maintenance Request</h3>
-                    <div class="small">Fill in all fields below. We'll confirm your job within minutes</div>
-                </div>
-                <div class>
-                    <form action="" method="post" class="form-grid">
-                        <div class="form-upload">
-                            <label for="customer-name">Your Full Name</label>
-                            <input type="text" name="customer_name" id="customer-name" placeholder="Enter Your Name" required>
-                        </div>
-                        <div class="personal">
-                            <div class="form-upload">
-                                <label for="phone-number">Phone Number</label>
-                                <input type="tel" name="phone_number" id="phone-number" placeholder="Enter Your Phone Number" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="problem-category">Category</label>
-                                <select name="problem_category" id="problem-category" required>
-                                    <option value="" selected disabled>Select Problem</option>
-                                    <option value="hvac">HVAC</option>
-                                    <option value="plumbing">Plumbing</option>
-                                    <option value="electrical">Electrical</option>
-                                    <option value="painting">Painting</option>
-                                    <option value="carpentry">Carpentry</option>
-                                    <option value="flooring">Flooring</option>
-                                    <option value="appliance_repair">Appliance Repair</option>
-                                    <option value="pest_control">Pest Control</option>
-                                    <option value="cleaning">Deep Cleaning</option>
-                                    <option value="masonry">Masonry / Tiling</option>
-                                    <option value="glass_windows">Glass & Windows</option>
-                                    <option value="locks_security">Locks & Security</option>
-                                    <option value="other">Other</option>
-                               </select>
-                            </div>
-                        </div>
-                        <div class="form-upload">
-                            <label for="customer-email">Email Address</label>
-                            <input type="email" name="email" id="customer-email" placeholder="Enter Your Email" required>
-                        </div>
-                        <div class="form-upload">
-                            <label for="description-note">Description of Issue</label>
-                            <textarea id="description-note" name="description" 
-                                        rows="5"
-                                        cols="10"
-                                        placeholder="Describe the Issue Here"></textarea>
-                        </div>
-                        <div class="form-upload">
-                            <label for="photo-upload">upload Photo here</label>
-                            <div class="upload-photo">
-                                <i class="ti ti-camera"></i>
-                                <span class="upload-text">Click to upload from your device here (PNG, JPG, JPEG - Max 5mb)</span>
-                                <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required>
-                            </div>
-                        </div>
-                        <div class="form-upload">
-                            <label> Qatar Blue Plate Location</label>
-                            <div class="small"> Enter your Blue Plate address - Zone, Street, Building numbers</div>
-                        </div>
-                        <div class="address">
-                            <div class="form-upload">
-                                <label for="zone-number">Zone Number</label>
-                                <input type="text" name="zone_number" id="zone-number" placeholder="Zone e.g 40" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="street-number">Street Number</label>
-                                <input type="text" name="street_number" id="street-number" placeholder="Street e.g 230" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="building-number">Building Number</label>
-                                <input type="text" name="building_number" id="building-number" placeholder="BDG e.g 20" required>
-                            </div>
-                        </div>
-                        <div class="preferred-date">
-                            <div class="form-upload">
-                                <label for="scheduled-date">Preferred Date</label>
-                                <input type="date" name="scheduled_date" id="scheduled-date" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="scheduled-time">Preferred Time</label>
-                                <input type="time" name="scheduled_time" id="scheduled-time" required>
-                            </div>
-                        </div>
-                        <div class="form-error" id="form-error" style="display:none;">
-                            <i class="ti ti-alert-circle"></i>
-                            <span id="form-error-text"></span>
-                        </div>
-                        <button type="submit" class="primary">Submit Maintenance Request</button>
-                    </form>
+                <div class="glass-badge">
+                    <i class="ti ti-circle-check" aria-hidden="true"></i>
+                    Serving all Qatar zones
                 </div>
             </div>
         </div>
-        <nav class="bottom-nav">
-            <a href="index.html" class="active">
-                <i class="ti ti-plus"></i>
-                <span>Request</span>
-            </a>
-            <a href="freelance.html">
-                <i class="ti ti-tool"></i>
-                <span>Technician</span>
-            </a>
-        </nav>
-    </div>
+    </section>
 
-    <div class="success-modal" id="success-modal" style="display:none;">
-        <div class="success-modal-card">
-            <i class="ti ti-circle-check"></i>
-            <h3 id="success-modal-text"></h3>
-            <button class="primary" onclick="window.location.href='status.html'">
-                Track My Job →
-            </button>
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num">500+</div>
+            <div class="stat-label">Jobs Completed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">120+</div>
+            <div class="stat-label">Verified Technicians</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">&lt;2hr</div>
+            <div class="stat-label">Avg Response Time</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">All Zones</div>
+            <div class="stat-label">Qatar Coverage</div>
         </div>
     </div>
-    <script>
-        const currentPage = window.location.pathname.split("/").pop();
 
-        document.querySelectorAll("nav a").forEach(link => {
-            const linkPage = link.getAttribute("href").split("/").pop();
-            if (linkPage === currentPage) {
-                link.classList.add("active");
-            }
-        });
+    <!-- SERVICES -->
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <div class="section-eyebrow">What we fix</div>
+            <h2 class="section-title">Every home service, one platform</h2>
+            <p class="section-sub">From AC breakdowns to deep cleaning — our verified technicians handle it all across Qatar.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-wind" aria-hidden="true"></i></div>
+                <div class="service-name">HVAC</div>
+                <div class="service-desc">AC installation, repair and maintenance for all unit types</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-droplet" aria-hidden="true"></i></div>
+                <div class="service-name">Plumbing</div>
+                <div class="service-desc">Leaks, fixtures, pipe repairs and bathroom installations</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-bolt" aria-hidden="true"></i></div>
+                <div class="service-name">Electrical</div>
+                <div class="service-desc">Wiring, fixtures, panels and electrical safety checks</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-brush" aria-hidden="true"></i></div>
+                <div class="service-name">Painting</div>
+                <div class="service-desc">Interior and exterior painting for homes and offices</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-tools" aria-hidden="true"></i></div>
+                <div class="service-name">Carpentry</div>
+                <div class="service-desc">Furniture assembly, flooring and custom woodwork</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-washing-machine" aria-hidden="true"></i></div>
+                <div class="service-name">Appliance Repair</div>
+                <div class="service-desc">Washing machines, dryers, fridges and kitchen appliances</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-sparkles" aria-hidden="true"></i></div>
+                <div class="service-name">Deep Cleaning</div>
+                <div class="service-desc">Full home deep cleaning and pest control services</div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="ti ti-lock" aria-hidden="true"></i></div>
+                <div class="service-name">Locks & Security</div>
+                <div class="service-desc">Lock installation, repair and home security systems</div>
+            </div>
+        </div>
+    </section>
 
+    <!-- HOW IT WORKS -->
+    <section class="how-section" id="how-it-works">
+        <div class="section-header">
+            <div class="section-eyebrow">The process</div>
+            <h2 class="section-title">From request to resolution</h2>
+            <p class="section-sub">Our digital concierge pipeline connects you to the right technician in minutes.</p>
+        </div>
+        <div class="how-steps">
+            <div class="how-step">
+                <div class="how-step-circle">1</div>
+                <h4>Submit Request</h4>
+                <p>Fill in your details, describe the issue and upload a photo of the problem</p>
+            </div>
+            <div class="how-step">
+                <div class="how-step-circle">2</div>
+                <h4>Dispatcher Reviews</h4>
+                <p>Our team reviews your request and assigns the nearest verified technician</p>
+            </div>
+            <div class="how-step">
+                <div class="how-step-circle">3</div>
+                <h4>Technician Notified</h4>
+                <p>The assigned technician receives your full details and location via WhatsApp</p>
+            </div>
+            <div class="how-step">
+                <div class="how-step-circle">4</div>
+                <h4>Track Your Job</h4>
+                <p>Monitor your job status from Pending to Assigned to Completed in real time</p>
+            </div>
+        </div>
+    </section>
 
+    <!-- CTA SPLIT -->
+    <section class="cta-split">
+        <div class="cta-customer">
+            <span class="cta-tag">For residents</span>
+            <h2 class="cta-h2">Need something fixed at home?</h2>
+            <p class="cta-p">Log a request in under 2 minutes. Our dispatcher connects you to a verified technician fast — no waiting on hold, no middlemen.</p>
+            <ul class="cta-list">
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    No account needed to submit
+                </li>
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    Real-time job status tracking
+                </li>
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    All Qatar zones covered
+                </li>
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    Emergency call support available
+                </li>
+            </ul>
+            <a href="request.html" class="primary" style="text-decoration:none; display:inline-block; padding:0.7rem 1.4rem;">Request Maintenance →</a>
+        </div>
+        <div class="cta-tech">
+            <span class="cta-tag">For technicians</span>
+            <h2 class="cta-h2">Join our verified technician network</h2>
+            <p class="cta-p">Register once, get matched to clients near you automatically via WhatsApp. Build your client base across Qatar without the hassle.</p>
+            <ul class="cta-list">
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    Jobs sent directly to your WhatsApp
+                </li>
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    Proximity-based job matching
+                </li>
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    Grow your client base in Qatar
+                </li>
+                <li>
+                    <span class="check-icon"><i class="ti ti-check" aria-hidden="true"></i></span>
+                    Simple one-time registration
+                </li>
+            </ul>
+            <a href="freelance.html" class="primary" style="text-decoration:none; display:inline-block; padding:0.7rem 1.4rem;">Join as Technician →</a>
+        </div>
+    </section>
 
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+        <div class="about-left">
+            <div class="section-eyebrow">Who we are</div>
+            <h2 class="section-title">Built for Qatar's fast-moving lifestyle</h2>
+            <p class="about-body">Maynd Stomir is a facility management technology company registered in Qatar. We are building the infrastructure that connects residents with skilled tradespeople — eliminating the friction of finding reliable maintenance help in a fast-paced market.</p>
+            <p class="about-body" style="margin-top:1rem;">Our platform uses intelligent dispatch routing to match you to the nearest available technician, ensuring fast response times across all Qatar zones. We verify every technician on our network before they ever receive a job.</p>
+        </div>
+        <div class="about-right">
+            <div class="about-card">
+                <div class="about-card-num">500+</div>
+                <div class="about-card-label">Jobs Done</div>
+            </div>
+            <div class="about-card">
+                <div class="about-card-num">120+</div>
+                <div class="about-card-label">Technicians</div>
+            </div>
+            <div class="about-card">
+                <div class="about-card-num">All</div>
+                <div class="about-card-label">Qatar Zones</div>
+            </div>
+            <div class="about-card">
+                <div class="about-card-num">2hr</div>
+                <div class="about-card-label">Avg Response</div>
+            </div>
+        </div>
+    </section>
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(() => console.log('Service Worker registered'))
-                .catch((err) => console.error('Service Worker failed:', err));
-        }
-    </script>
-    <script src="js/nav.js"></script>
-    <script src="js/main.js"></script>
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+        <div class="contact-left">
+            <h2>Get in touch with us</h2>
+            <p>Reach our team for support, partnerships or general enquiries</p>
+        </div>
+        <div class="contact-emails">
+            <a href="mailto:customerservice@mayndstomir.com" class="contact-email">
+                <i class="ti ti-mail" aria-hidden="true"></i>
+                customerservice@mayndstomir.com
+            </a>
+            <a href="mailto:maintenance@mayndstomir.com" class="contact-email">
+                <i class="ti ti-tool" aria-hidden="true"></i>
+                maintenance@mayndstomir.com
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="landing-footer">
+        <div class="logo">Maynd<span class="logo">Stomir</span></div>
+        <div class="footer-links">
+            <a href="request.html">Request Maintenance</a>
+            <a href="freelance.html">Join as Technician</a>
+        </div>
+        <div class="footer-copy">© 2026 Maynd Stomir LLC, Qatar. All rights reserved.</div>
+    </footer>
+
 </body>
 </html>

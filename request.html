@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freelance form</title>
+    <title>Request Maintenance</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
@@ -22,7 +22,8 @@
         <header>
             <div class="logo">Maynd<span class="logo">Stomir</span></div>
             <nav>
-                <a href="request.html">Request Maintenance</a>
+                <a href="request.html">Requets Maintenance</a>
+                
                 <a href="freelance.html">Join as Technician</a>
             </nav>
             <div>
@@ -36,13 +37,12 @@
         <div class="drawer-overlay" id="drawer-overlay"></div>
         <div class="drawer" id="drawer">
             <div class="drawer-header">
-                
                 <button class="drawer-close" id="drawer-close" aria-label="Close menu">
                     <i class="ti ti-x"></i>
                 </button>
             </div>
             <nav class="drawer-nav">
-                <a href="request.html"><i class="ti ti-plus"></i>Request Maintenance</a>
+                <a href="request.html"><i class="ti ti-plus"></i> Request Maintenance</a>
                 <a href="freelance.html"><i class="ti ti-tool"></i>Join as Technician</a>
             </nav>
             <div class="drawer-footer">
@@ -54,7 +54,7 @@
                 <div class="info-header">
                     <div class="divider"></div>
                     <h2>Fast. Reliable.<br>On-Demand<br>Maintenance</h2>
-                    <div class="small">We connect You to Jobs across Qatar. Register and get assigned one now</div>
+                    <div class="small">We connect You to verified technicians across Qatar within hours. No phone tag. No waiting</div>
                 </div>
                 <div class="info-main">
                     <div class="small" style="text-transform: uppercase; margin-bottom: 1.5rem;">how it works</div>
@@ -65,102 +65,129 @@
                         </div>
                         <div class="info-field">
                             <div class="info-num">2</div>
-                            <div class="info-desc">We review and verify your details</div>
+                            <div class="info-desc">Our dispatcher reviews ans assigns a technician</div>
                         </div>
                         <div class="info-field">
                             <div class="info-num">3</div>
-                            <div class="info-desc">We contact you via WhatsApp for available Jobs</div>
+                            <div class="info-desc">Technician receives a WhatsApp notification with your location</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-num">4</div>
+                            <div class="info-desc">Track your job status on your confirmation page</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="main-content">
                 <div class="main-header">
-                    <h3>Register to be a part</h3>
-                    <div class="small">Fill in all fields below. We'll confirm your details within minutes</div>
+                    <h3>Log a Maintenance Request</h3>
+                    <div class="small">Fill in all fields below. We'll confirm your job within minutes</div>
                 </div>
                 <div class>
                     <form class="form-grid">
                         <div class="form-upload">
-                            <label for="technician-name">Your Full Name</label>
-                            <input type="text" name="name" id="technician-name" placeholder="Enter Your Name" required>
+                            <label for="customer-name">Your Full Name</label>
+                            <input type="text" name="customer_name" id="customer-name" placeholder="Enter Your Name" required>
                         </div>
                         <div class="form-upload">
-                            <label for="email">Email Address</label>
-                            <input type="email" name="email" id="email" placeholder="Enter Your Email" required>
+                            <label for="phone-number">Phone Number</label>
+                            <input type="tel" name="phone_number" id="phone-number" placeholder="Enter Your Phone Number" required>
                         </div>
-                        <div class="personal"> 
-                            <div class="form-upload">
-                                <label for="phone-number">Phone Number</label>
-                                <input type="tel" name="phone_number" id="phone-number" placeholder="Enter Your Phone Number" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="qid-number">QID Number</label>
-                                <input type="text" name="qid_number" id="qid-number" placeholder="11-digit Qatar ID" required>
-                            </div>
+                        <div class="form-upload">
+                            <label for="customer-email">Email Address</label>
+                            <input type="email" name="email" id="customer-email" placeholder="Enter Your Email" required>
                         </div>
-                        <div class="personal">
-                            <div class="form-upload">
-                                <label for="experience-years">Years of Experience</label>
-                                <input type="number" name="experience_years" id="experience-years" placeholder="e.g 3" min="0" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="problem-category">Trade</label>
-                                <select name="trade_skill" id="trade-skill">
-                                    <option value="" selected disabled>Select Trade</option>
-                                    <option value="hvac">HVAC (AC & Ventilation)</option>
-                                    <option value="plumbing">Plumbing</option>
-                                    <option value="electrical">Electrical</option>
-                                    <option value="carpentry">Carpentry & Flooring</option>
-                                    <option value="appliance_repair">Appliance Repair</option>
-                                    <option value="cleaning">Cleaning & Pest Control</option>
-                                    <option value="masonry">Masonry, Tiling & Glass</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
+                        <div class="form-upload">
+                            <label> Qatar Blue Plate Location</label>
+                            <div class="small"> Enter your Blue Plate address - Zone, Street, Building numbers</div>
                         </div>
-                        <div class="form-upload" id="kahramaa-field" style="display:none;">
-                            <label>Kahramaa Card Photo <span style="color:var(--pending)">*Required for your trade</span></label>
-                            <div class="upload-photo" id="kahramaa-upload-box">
-                                <i class="ti ti-camera"></i>
-                                <span class="upload-text" id="kahramaa-upload-text">Snap your Kahramaa card</span>
-                                <input type="file" accept="image/*" capture="environment" id="kahramaa-photo" name="kahramaa_photo">
+                        <div class="address">
+                            <div class="form-upload">
+                                <label for="zone-number">Zone Number</label>
+                                <input type="text" name="zone_number" id="zone-number" placeholder="Zone e.g 40" required>
+                            </div>
+                            <div class="form-upload">
+                                <label for="street-number">Street Number</label>
+                                <input type="text" name="street_number" id="street-number" placeholder="Street e.g 230" required>
+                            </div>
+                            <div class="form-upload">
+                                <label for="building-number">Building Number</label>
+                                <input type="text" name="building_number" id="building-number" placeholder="BDG e.g 20" required>
                             </div>
                         </div>
                         <div class="form-upload">
-                            <label for="description-note">Description of What you do</label>
+                             <label for="problem-category">Category</label>
+                            <select name="problem_category" id="problem-category" required>
+                                <option value="" selected disabled>Select Problem</option>
+                                <option value="hvac">HVAC</option>
+                                <option value="plumbing">Plumbing</option>
+                                <option value="electrical">Electrical</option>
+                                <option value="painting">Painting</option>
+                                <option value="carpentry">Carpentry</option>
+                                <option value="flooring">Flooring</option>
+                                <option value="appliance_repair">Appliance Repair</option>
+                                <option value="pest_control">Pest Control</option>
+                                <option value="cleaning">Deep Cleaning</option>
+                                <option value="masonry">Masonry / Tiling</option>
+                                <option value="glass_windows">Glass & Windows</option>
+                                <option value="locks_security">Locks & Security</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-upload">
+                            <label for="description-note">Description of Issue</label>
                             <textarea id="description-note" name="description" 
                                         rows="5"
                                         cols="10"
-                                        placeholder="Describe what you do here"></textarea>
+                                        placeholder="Describe the Issue Here"></textarea>
                         </div>
                         <div class="form-upload">
-                            <label for="photo-upload">Upload your id</label>
+                            <label for="photo-upload">Upload Photo of Issue here</label>
                             <div class="upload-photo">
                                 <i class="ti ti-camera"></i>
                                 <span class="upload-text">Click to upload from your device here (PNG, JPG, JPEG - Max 5mb)</span>
                                 <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required>
                             </div>
                         </div>
+                        <div class="preferred-date">
+                            <div class="form-upload">
+                                <label for="scheduled-date">Preferred Date</label>
+                                <input type="date" name="scheduled_date" id="scheduled-date" required>
+                            </div>
+                            <div class="form-upload">
+                                <label for="scheduled-time">Preferred Time</label>
+                                <input type="time" name="scheduled_time" id="scheduled-time" required>
+                            </div>
+                        </div>
                         <div class="form-error" id="form-error" style="display:none;">
                             <i class="ti ti-alert-circle"></i>
                             <span id="form-error-text"></span>
                         </div>
-                        <button type="submit" class="primary">Register →</button>
+                        <button type="submit" class="primary">Submit Maintenance Request</button>
                     </form>
                 </div>
             </div>
         </div>
-         <nav class="bottom-nav">
-            <a href="request.html">
+        <nav class="bottom-nav">
+            <a href="request.html" class="active">
                 <i class="ti ti-plus"></i>
                 <span>Request</span>
             </a>
-            <a href="freelance.html" class="active">
+            <a href="freelance.html">
                 <i class="ti ti-tool"></i>
                 <span>Technician</span>
             </a>
         </nav>
+    </div>
+
+    <div class="success-modal" id="success-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text"></h3>
+            <button class="primary" onclick="window.location.href='status.html'">
+                Track My Job →
+            </button>
+        </div>
     </div>
     <script>
         const currentPage = window.location.pathname.split("/").pop();
@@ -174,6 +201,7 @@
 
 
 
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js')
                 .then(() => console.log('Service Worker registered'))
@@ -181,6 +209,6 @@
         }
     </script>
     <script src="js/nav.js"></script>
-    <script src="js/freelance.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
