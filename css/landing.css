@@ -38,6 +38,7 @@
     padding: 0.5rem 1.2rem;
     font-size: 0.72rem;
 }
+.header-request { display:flex; gap:0.6rem; align-items:center;}
 
 /* HERO */
 .hero {
@@ -604,4 +605,5 @@
     .about-right { grid-template-columns: repeat(2, 1fr); }
     .stats-bar { grid-template-columns: 1fr 1fr; padding: 1rem; }
     .contact-section { flex-direction: column; align-items: flex-start; }
+    .header-request { display: none;}
 }

@@ -14,6 +14,7 @@ const uploadText = document.querySelector(".upload-text");
 const tradeSelect = document.getElementById("trade-skill");
 const kahramaaField = document.getElementById("kahramaa-field");
 const kahramaaInput = document.getElementById("kahramaa-photo");
+const kahramaaUploadText = document.getElementById("kahramaa-upload-text");
 
 tradeSelect.addEventListener("change", () => {
     const trade = tradeSelect.value;
