@@ -32,7 +32,7 @@ photoInput.addEventListener("change", () => {
 });
 
 async function uploadPhoto(file) {
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const fileName = `public/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
 
     const { data, error } = await supabaseClient.storage
         .from(BUCKET_NAME)

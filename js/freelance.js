@@ -43,7 +43,7 @@ kahramaaInput.addEventListener("change", () => {
 });
 
 async function uploadIdPhoto(file) {
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const fileName = `public/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
 
     const { data, error } = await supabaseClient.storage
         .from(BUCKET_NAME)
@@ -62,7 +62,7 @@ async function uploadIdPhoto(file) {
 }
 
 async function uploadKahramaaPhoto(file) {
-    const fileName = `kahramaa-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const fileName = `public/kahramaa-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
 
     const { data, error } = await supabaseClient.storage
         .from(KAHRAMAA_BUCKET)
