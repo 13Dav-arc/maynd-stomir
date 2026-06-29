@@ -32,11 +32,11 @@ photoInput.addEventListener("change", () => {
 });
 
 async function uploadPhoto(file) {
-    const fileName = `public/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const virtualPath = `public/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
 
     const { data, error } = await supabaseClient.storage
         .from(BUCKET_NAME)
-        .upload(fileName, file, {
+        .upload(virtualPath, file, {
             cacheControl: "3600",
             upsert: false
         });
@@ -45,7 +45,7 @@ async function uploadPhoto(file) {
 
     const { data: urlData } = supabaseClient.storage
         .from(BUCKET_NAME)
-        .getPublicUrl(fileName);
+        .getPublicUrl(virtualPath);
 
     return urlData.publicUrl;
 }
