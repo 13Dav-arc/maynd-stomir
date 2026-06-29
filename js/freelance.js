@@ -2,7 +2,7 @@ const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const SUPABASE_URL = "https://sukssqwzatvmnwdxthoa.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1a3NzcXd6YXR2bW53ZHh0aG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MjE0NjgsImV4cCI6MjA5NjM5NzQ2OH0.sT0wK2IAksWIycIwNvVqKJdQvXax4w4rPE5Mw8eppNo";
 const BUCKET_NAME = "id-photos";
-const KAHRAMAA_BUCKET = "Kahramaa-ids";
+const KAHRAMAA_BUCKET = "kahramaa-ids";
 
 // --- Init Supabase ---
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -10,7 +10,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 // --- DOM References ---
 const submitBtn = document.querySelector("button[type='submit']");
 const photoInput = document.getElementById("photo-upload");
-const uploadText = document.querySelector(".upload-text");
+const uploadText = document.getElementById("id-upload-text");
 const tradeSelect = document.getElementById("trade-skill");
 const kahramaaField = document.getElementById("kahramaa-field");
 const kahramaaInput = document.getElementById("kahramaa-photo");
