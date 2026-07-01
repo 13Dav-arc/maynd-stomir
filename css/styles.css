@@ -1,40 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
 :root {
-    /* Qatar Maroon + Gold Theme */
-    --blue-dark:    #5C0F1A;   /* deep maroon — backgrounds, sidebar */
-    --blue-mid:     #8B1A2B;   /* maroon — headers, cards */
-    --blue-accent:  #C9A84C;   /* gold — buttons, highlights */
-    --blue-light:   #E2C06A;   /* light gold — hover states */
-    --blue-soft:    #F5F0E8;   /* warm cream — section backgrounds */
 
-    /* Whites & Neutrals */
-    --white:        #ffffff;   /* pure white — cards, modals */
-    --off-white:    #FAF8F4;   /* warm off-white — page background */
-    --border:       #E8E0D0;   /* warm border color */
+    /* 1. SOLID BASE CANVASES (Emrill Heavy-Duty Foundations) */
+    --blue-dark:    #0F172A;   
+    --blue-mid:     #1E293B;   
+    --blue-soft:    #F8FAFC;   
+    --white:        #FFFFFF;   
+    --off-white:    #F8FAFC;   
+    --border:       #E2E8F0;   
 
-    /* Text */
-    --text-primary:  #1A1A1A;  /* headings, body text */
-    --text-muted:    #7A7A7A;  /* labels, placeholders */
-    --text-inverse:  #ffffff;  /* text on dark backgrounds */
+    /* 2. THE SCALPEL BRAND BALANCERS (High-Contrast Interactivity Rules) */
+    --blue-accent:  #5C0F1A;   
+    --blue-light:   #8B1A2B;   
+    --blue-accent-bg: #5C0F1A; 
 
-    /* Status Colors */
-    --pending:      #D4A017;   /* gold amber — pending jobs */
-    --assigned:     #2E7D52;   /* deep green — assigned jobs */
-    --completed:    #C9A84C;   /* gold — completed jobs */
+    /* 3. TYPOGRAPHY TEXT CONTRAST CONTROL (Zero Bleeding or Flashing) */
+    --text-primary: #0F172A;   
+    --text-muted:    #64748B;   
+    --text-inverse:  #FFFFFF;   
 
-    /* Utility */
-    --shadow:       rgba(201, 168, 76, 0.15);
+    /* 4. FLAT BADGE INDICATORS (No Blurs, Rigid Corporate Badging) */
+    --pending:      #B45309;   
+    --assigned:     #15803D;   
+    --completed:    #0369A1;   
 
-    /* Glass + Extended Palette */
-    --glass-bg:     rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --maroon-deep:  #5C0F1A;
-    --maroon:       #8B1A2B;
-    --gold:         #C9A84C;
-    --gold-light:   #E2C06A;
-    --cream:        #F5F0E8;
-    --charcoal:     #1A1A1A;
+    /* 5. BRAND IDENTITY INVERSION (Guarantees .primary Button Stability) */
+    --shadow:       rgba(15, 23, 42, 0.04); 
+
+    /* Extended Legacy Platform Overrides (Flattens Blurs Impeccably) */
+    --glass-bg:     #FFFFFF;   
+    --glass-border: #E2E8F0;   
+    --maroon-deep:  #5C0F1A;   
+    --maroon:       #8B1A2B;   
+    --gold:         #C9A84C;   
+    --gold-light:   #E2C06A;   
+    --cream:        #F8FAFC;   
+    --charcoal:     #0F172A;   
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -117,13 +119,13 @@ nav a:focus{
     cursor: pointer;
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--text-primary);
-    background: var(--blue-accent);
-    border: none;
+    color: var(--text-inverse) !important;
+    background: var(--blue-accent) !important;
+    border: none !important;
     transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 .primary:hover {
-    background: var(--blue-light);
+    background: var(--blue-light) !important;
     transform: translateY(-2px);
     box-shadow: 0 6px 18px var(--shadow);
 }
@@ -173,14 +175,14 @@ nav a:focus{
 }
 .info-num {
     padding: 1.25rem;
-    border: 1px solid var(--blue-accent);
+    border: 1px solid var(--blue-soft);
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     height: 40px;
     width: 40px;
-    color: var(--blue-accent);
+    color: var(--blue-soft);
     font-weight: 600;
 }
 .main-content {
@@ -189,10 +191,6 @@ nav a:focus{
     flex-direction: column;
     gap: 2rem;
     background: var(--blue-soft);
-    background-image: 
-        radial-gradient(circle at 15% 20%, rgba(139, 26, 43, 0.04) 0%, transparent 45%),  
-        radial-gradient(circle at 85% 75%, rgba(201, 168, 76, 0.07) 0%, transparent 50%); 
-    background-attachment: local; 
     height: 100%;
     overflow-y: auto;
     align-items: center;
@@ -208,10 +206,7 @@ nav a:focus{
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.75rem;
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(0.75rem); 
-    -webkit-backdrop-filter: blur(0.75rem); 
-    padding: 2rem;
+    background: var(--white);
     border-radius: 16px;
     box-shadow: 0 12px 40px rgba(92, 15, 26, 0.04), 
                 0 2px 8px rgba(201, 168, 76, 0.05);
@@ -219,6 +214,7 @@ nav a:focus{
     max-width: 800px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 0.0625rem solid rgba(255, 255, 255, 0.5);
+    padding: 2rem;
 }
 .form-upload {
     display: flex;
@@ -243,23 +239,23 @@ nav a:focus{
 .form-upload label {
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--blue-light);
+    color: var(--text-primary);
     font-weight: 600;
     margin-bottom: 0.3rem;
 }
 .form-upload input,
 .form-upload select,
 .form-upload textarea {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-    border-radius: 10px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
     height: 40px;
     width: 100%;
     display: flex;
     align-items: center;
     padding: 0.6rem 0.875rem;
     font-size: 1rem;
-    color: var(--blue-mid);
+    color: var(--text-primary);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 } 
 .form-upload textarea {
@@ -296,7 +292,7 @@ nav a:focus{
     width: 100%;
     height: 80px;
     background: var(--off-white);
-    border: 2px dashed #D3C6B0;
+    border: 2px dashed var(--border);
     border-radius: 10px;
     justify-content: center;
     color: var(--text-muted);
@@ -513,12 +509,12 @@ nav a.active {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(192, 57, 43, 0.08);
-    border: 1px solid rgba(192, 57, 43, 0.3);
+    background: #FEF2F2; /* Flat, high-visibility institutional light red utility badge */
+    border: 1px solid #EF4444; /* Crisp solid red outline */
     border-radius: 4px;
     padding: 0.7rem 0.9rem;
     font-size: 0.8rem;
-    color: #c0392b;
+    color: #991B1B;
 }
 .form-error i {
     font-size: 1rem;

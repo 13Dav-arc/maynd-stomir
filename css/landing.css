@@ -42,7 +42,7 @@
 
 /* HERO */
 .hero {
-    background: linear-gradient(135deg, var(--maroon-deep) 0%, var(--maroon) 65%, #6B1020 100%);
+    background: var(--blue-dark);
     min-height: 100vh;
     padding-top: 70px;
     display: grid;
@@ -148,16 +148,14 @@
     z-index: 1;
 }
 .glass-card {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: var(--white);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.8rem;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
 }
 .glass-card-header {
-    background: rgba(201, 168, 76, 0.12);
-    border: 1px solid rgba(201, 168, 76, 0.22);
+    background: var(--off-white);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.9rem 1.1rem;
     margin-bottom: 1.2rem;
@@ -172,7 +170,7 @@
 .glass-card-header h3 {
     font-family: 'Syne', sans-serif;
     font-size: 0.9rem;
-    color: var(--white);
+    color: var(--text-primary);
     font-weight: 700;
 }
 .glass-steps {
@@ -201,25 +199,25 @@
 }
 .glass-step-text {
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.78);
+    color: var(--text-muted);
     line-height: 1.4;
 }
 .glass-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    background: rgba(46, 125, 82, 0.18);
-    border: 1px solid rgba(46, 125, 82, 0.28);
-    border-radius: 20px;
+    background: var(--off-white);
+    border: 1px var(--border);
+    border-radius: 4px;
     padding: 0.35rem 0.9rem;
     font-size: 0.68rem;
-    color: #6FCF97;
+    color: var(--assigned);
     margin-top: 1.2rem;
 }
 
 /* STATS BAR */
 .stats-bar {
-    background: var(--maroon);
+    background: var(--blue-mid);
     padding: 1.5rem 3rem;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -264,7 +262,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--maroon);
+    color: var(--blue-accent);
     font-family: 'DM Sans', sans-serif;
 }
 .section-eyebrow::before {
@@ -272,14 +270,14 @@
     display: block;
     width: 20px;
     height: 2px;
-    background: var(--maroon);
+    background: var(--blue-accent);
     flex-shrink: 0;
 }
 .section-title {
     font-family: 'Syne', sans-serif;
     font-size: clamp(1.4rem, 3vw, 2rem);
     font-weight: 800;
-    color: var(--maroon-deep);
+    color: var(--blue-dark);
     margin-bottom: 0.5rem;
 }
 .section-sub {
@@ -296,7 +294,7 @@
 .service-card {
     background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 4px;
     padding: 1.3rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -307,13 +305,13 @@
 .service-icon {
     width: 38px;
     height: 38px;
-    background: rgba(139, 26, 43, 0.08);
+    background: var(--blue-soft);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 0.9rem;
-    color: var(--maroon);
+    color: var(--blue-dark);
     font-size: 1.1rem;
 }
 .service-name {
@@ -331,7 +329,7 @@
 
 /* HOW IT WORKS */
 .how-section {
-    background: var(--maroon-deep);
+    background: var(--blue-mid);
     padding: 4rem 3rem;
 }
 .how-section .section-eyebrow {
@@ -362,8 +360,8 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: rgba(201, 168, 76, 0.1);
-    border: 1px solid rgba(201, 168, 76, 0.28);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -371,7 +369,7 @@
     font-family: 'Syne', sans-serif;
     font-size: 1rem;
     font-weight: 800;
-    color: var(--gold);
+    color: var(--white);
 }
 .how-step h4 {
     font-family: 'Syne', sans-serif;
@@ -397,7 +395,7 @@
     border-right: 1px solid var(--border);
 }
 .cta-tech {
-    background: var(--maroon);
+    background: var(--blue-dark);
     padding: 4rem 3rem;
 }
 .cta-tag {
@@ -486,9 +484,9 @@
     gap: 1rem;
 }
 .about-card {
-    background: var(--cream);
+    background: var(--off-white);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 4px;
     padding: 1.5rem 1.2rem;
     text-align: center;
 }
@@ -496,7 +494,7 @@
     font-family: 'Syne', sans-serif;
     font-size: 1.6rem;
     font-weight: 800;
-    color: var(--maroon);
+    color: var(--blue-dark);
     margin-bottom: 0.3rem;
 }
 .about-card-label {
@@ -508,7 +506,7 @@
 
 /* CONTACT */
 .contact-section {
-    background: var(--maroon-deep);
+    background: var(--blue-dark);
     padding: 3rem;
     display: flex;
     justify-content: space-between;
@@ -606,4 +604,13 @@
     .stats-bar { grid-template-columns: 1fr 1fr; padding: 1rem; }
     .contact-section { flex-direction: column; align-items: flex-start; }
     .header-request { display: none;}
+}
+.landing-footer .logo {
+    color: var(--white);
+}
+.landing-footer .logo span {
+    color: var(--gold);
+}
+.landing-nav .logo span {
+    color: var(--gold);
 }
