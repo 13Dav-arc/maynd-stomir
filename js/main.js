@@ -199,8 +199,39 @@ submitBtn.addEventListener("click", async (e) => {
                 showFormError("Submission acknowledged, but tracking ID could not be resolved.");
             }
         } else {
-            const rawMsg = result.detail?.[0]?.msg || result.detail || result.message || "Submission failed.";
-            const errorMsg = typeof rawMsg === "string" ? rawMsg.replace("Value error, ", "") : "Submission validation failed.";
+            console.error("422 detail:", JSON.stringify(result));
+            
+            let errorMsg = "Request validation failed. Please review your address and contact inputs.";
+
+            if (result.detail && Array.isArray(result.detail)) {
+                // Extract structural field name information from the validation matrix
+                const errorLocation = result.detail[0]?.loc?.[1] || "";
+                const backendMessage = result.detail[0]?.msg || "";
+
+                // Intercept raw backend validation strings and translate into institutional UI text
+                if (errorLocation === "job_photo_url" || errorLocation === "photo") {
+                    errorMsg = "Please upload a clear, valid image highlighting the maintenance issue.";
+                } else if (errorLocation === "phone_number") {
+                    errorMsg = "Please enter a valid 8-digit Qatar mobile phone number.";
+                } else if (errorLocation === "email") {
+                    errorMsg = "Please enter a valid email address.";
+                } else if (errorLocation === "category") {
+                    errorMsg = "Please select a maintenance trade category from the options provided.";
+                } else if (errorLocation === "preferred_date" || errorLocation === "preferred_time") {
+                    errorMsg = "Please provide a valid preferred scheduling date and time window.";
+                } else {
+                    // Corporate fallback parsing logic for any remaining layout fields
+                    errorMsg = typeof backendMessage === "string" 
+                        ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
+                        : "Please ensure all address parameters and details are complete.";
+                }
+            } else if (typeof result.detail === "string") {
+                errorMsg = result.detail;
+            } else if (result.message) {
+                errorMsg = result.message;
+            }
+
+            // Display the polished text on your flat structural error box
             showFormError(errorMsg);
         }
 

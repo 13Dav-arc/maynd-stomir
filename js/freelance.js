@@ -169,8 +169,38 @@ submitBtn.addEventListener("click", async (e) => {
             alert("Application submitted successfully! We will contact you via WhatsApp.");
         } else {
             console.error("422 detail:", JSON.stringify(data));
-            const rawMsg = data.detail?.[0]?.msg || data.detail || data.message || "Submission failed.";
-            const errorMsg = typeof rawMsg === "string" ? rawMsg.replace("Value error, ", "") : "Submission validation failed.";
+            
+            let errorMsg = "Submission validation failed. Please check your inputs.";
+
+            if (data.detail && Array.isArray(data.detail)) {
+                // Extract the exact field name that caused the validation failure
+                const errorLocation = data.detail[0]?.loc?.[1] || "";
+                const backendMessage = data.detail[0]?.msg || "";
+
+                // Map raw developer text to premium, institutional UI text
+                if (errorLocation === "kahramaa_id_url" || backendMessage.includes("kahramaa")) {
+                    errorMsg = "Please upload a valid, clear photo of your Kahramaa Card.";
+                } else if (errorLocation === "photo" || errorLocation === "id_photo_url") {
+                    errorMsg = "Your ID photo upload is missing or invalid. Please snap a clear photo.";
+                } else if (errorLocation === "email") {
+                    errorMsg = "Please enter a valid email address.";
+                } else if (errorLocation === "phone_number") {
+                    errorMsg = "Please enter a valid 8-digit Qatar mobile phone number.";
+                } else if (errorLocation === "qid_number") {
+                    errorMsg = "Invalid QID. Please ensure you enter a valid 11-digit Qatar ID number.";
+                } else {
+                    // Clean, flat fallback for any unmapped structural fields
+                    errorMsg = typeof backendMessage === "string" 
+                        ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
+                        : "Please fill out all fields accurately.";
+                }
+            } else if (typeof data.detail === "string") {
+                errorMsg = data.detail;
+            } else if (data.message) {
+                errorMsg = data.message;
+            }
+
+            // Display the polished, user-friendly error string on the flat UI badge
             showFormError(errorMsg);
         }
 
