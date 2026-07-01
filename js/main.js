@@ -199,16 +199,25 @@ submitBtn.addEventListener("click", async (e) => {
                 showFormError("Submission acknowledged, but tracking ID could not be resolved.");
             }
         } else {
+            // 1. Log the raw data to the developer console for backend debugging
             console.error("422 detail:", JSON.stringify(result));
             
+            // 2. Establish a flat, premium fallback message
             let errorMsg = "Request validation failed. Please review your address and contact inputs.";
+            
+            // 3. Convert the response object to a string to detect infrastructure crashes
+            const rawString = JSON.stringify(result);
 
-            if (result.detail && Array.isArray(result.detail)) {
-                // Extract structural field name information from the validation matrix
+            // 4. Intercept database routing and table path errors (PGRST125)
+            if (rawString.includes("PGRST125") || rawString.includes("Invalid path specified")) {
+                errorMsg = "System Maintenance: The request submission gateway is currently being updated. Please try again in a few moments.";
+            } 
+            // 5. Parse standard FastAPI field arrays if the infrastructure is healthy
+            else if (result.detail && Array.isArray(result.detail)) {
                 const errorLocation = result.detail[0]?.loc?.[1] || "";
                 const backendMessage = result.detail[0]?.msg || "";
 
-                // Intercept raw backend validation strings and translate into institutional UI text
+                // Map specific problematic field keys to polished, corporate UI text
                 if (errorLocation === "job_photo_url" || errorLocation === "photo") {
                     errorMsg = "Please upload a clear, valid image highlighting the maintenance issue.";
                 } else if (errorLocation === "phone_number") {
@@ -220,7 +229,7 @@ submitBtn.addEventListener("click", async (e) => {
                 } else if (errorLocation === "preferred_date" || errorLocation === "preferred_time") {
                     errorMsg = "Please provide a valid preferred scheduling date and time window.";
                 } else {
-                    // Corporate fallback parsing logic for any remaining layout fields
+                    // Clean up default validation jargon if it hits an unmapped field
                     errorMsg = typeof backendMessage === "string" 
                         ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
                         : "Please ensure all address parameters and details are complete.";
@@ -231,7 +240,7 @@ submitBtn.addEventListener("click", async (e) => {
                 errorMsg = result.message;
             }
 
-            // Display the polished text on your flat structural error box
+            // 6. Push the clean notification string directly into your flat layout banner
             showFormError(errorMsg);
         }
 

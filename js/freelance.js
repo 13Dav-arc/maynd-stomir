@@ -171,13 +171,19 @@ submitBtn.addEventListener("click", async (e) => {
             console.error("422 detail:", JSON.stringify(data));
             
             let errorMsg = "Submission validation failed. Please check your inputs.";
+            
+            // Convert raw data to a string to check for hidden database errors
+            const rawString = JSON.stringify(data);
 
-            if (data.detail && Array.isArray(data.detail)) {
-                // Extract the exact field name that caused the validation failure
+            // 1. CATCH DATABASE ROUTING ERRORS BEFORE THEY HIT THE UI
+            if (rawString.includes("PGRST125") || rawString.includes("Invalid path specified")) {
+                errorMsg = "System Maintenance: The technician registration gateway is currently being updated. Please try again in a few moments.";
+            } 
+            // 2. CHANNELS FASTAPI INTERCEPTIONS
+            else if (data.detail && Array.isArray(data.detail)) {
                 const errorLocation = data.detail[0]?.loc?.[1] || "";
                 const backendMessage = data.detail[0]?.msg || "";
 
-                // Map raw developer text to premium, institutional UI text
                 if (errorLocation === "kahramaa_id_url" || backendMessage.includes("kahramaa")) {
                     errorMsg = "Please upload a valid, clear photo of your Kahramaa Card.";
                 } else if (errorLocation === "photo" || errorLocation === "id_photo_url") {
@@ -189,7 +195,6 @@ submitBtn.addEventListener("click", async (e) => {
                 } else if (errorLocation === "qid_number") {
                     errorMsg = "Invalid QID. Please ensure you enter a valid 11-digit Qatar ID number.";
                 } else {
-                    // Clean, flat fallback for any unmapped structural fields
                     errorMsg = typeof backendMessage === "string" 
                         ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
                         : "Please fill out all fields accurately.";
@@ -200,7 +205,7 @@ submitBtn.addEventListener("click", async (e) => {
                 errorMsg = data.message;
             }
 
-            // Display the polished, user-friendly error string on the flat UI badge
+            // Display the polished, professional notification text
             showFormError(errorMsg);
         }
 
