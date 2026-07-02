@@ -155,6 +155,7 @@ submitBtn.addEventListener("click", async (e) => {
             qid_number:       document.getElementById("qid-number").value,
             kahramaa_id_url:    kahramaa_photo_url,
             id_photo_url:     id_photo_url,
+            notes:            document.getElementById("description-note").value.trim() || null,
         };
         
         const response = await fetch(`${BASE_URL}/freelance_applications`, {
