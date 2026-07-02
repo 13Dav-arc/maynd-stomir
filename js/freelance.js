@@ -43,11 +43,11 @@ kahramaaInput.addEventListener("change", () => {
 });
 
 async function uploadIdPhoto(file) {
-    const virtualPath = `public/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
 
     const { data, error } = await supabaseClient.storage
         .from(BUCKET_NAME)
-        .upload(virtualPath, file, {
+        .upload(fileName, file, {
             cacheControl: "3600",
             upsert: false
         });
@@ -56,17 +56,17 @@ async function uploadIdPhoto(file) {
 
     const { data: urlData } = supabaseClient.storage
         .from(BUCKET_NAME)
-        .getPublicUrl(virtualPath);
+        .getPublicUrl(fileName);
 
     return urlData.publicUrl;
 }
 
 async function uploadKahramaaPhoto(file) {
-    const virtualPath = `public/kahramaa-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const fileName = `kahramaa-${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
 
     const { data, error } = await supabaseClient.storage
         .from(KAHRAMAA_BUCKET)
-        .upload(virtualPath, file, {
+        .upload(fileName, file, {
             cacheControl: "3600",
             upsert: false
         });
@@ -75,7 +75,7 @@ async function uploadKahramaaPhoto(file) {
 
     const { data: urlData } = supabaseClient.storage
         .from(KAHRAMAA_BUCKET)
-        .getPublicUrl(virtualPath);
+        .getPublicUrl(fileName);
 
     return urlData.publicUrl;
 }
