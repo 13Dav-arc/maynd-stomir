@@ -185,19 +185,11 @@ submitBtn.addEventListener("click", async (e) => {
 
         const result = await response.json();
 
-        if (response.ok && result.status === "success") {
+        if (response.ok && result.success === true) {
             // Show client notice as inline success instead of redirecting
-            const jobId = result.data?.[0]?.id;
+            const jobId = result.data?.[0]?.uuid || result.data?.[0]?.id;
             const successNotice = result.popup_data?.client_notice || "Application submitted successfully!";
             showSuccessModal(successNotice, jobId);
-        } else if (result.status === "success") {
-            // Fallback — redirect as before
-            const jobId = result.data[0].id;
-            if (jobId) {
-                window.location.href = `status.html?id=${jobId}`;
-            } else {
-                showFormError("Submission acknowledged, but tracking ID could not be resolved.");
-            }
         } else {
             // 1. Log the raw data to the developer console for backend debugging
             console.error("422 detail:", JSON.stringify(result));

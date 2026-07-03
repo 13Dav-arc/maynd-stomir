@@ -17,7 +17,9 @@ async function fetchJobById(jobId) {
         showLoading();
         const response = await fetch(`${BASE_URL}/jobs/${jobId}`);
         if (!response.ok) throw new Error("Job not found");
-        const job = await response.json();
+        const result = await response.json();
+        const job = result.data || result;
+        console.log(job);
         renderJobCards([job]);
     } catch (error) {
         console.error(error);
@@ -43,7 +45,9 @@ searchForm.addEventListener("submit", async (e) => {
         const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`);
         if (!response.ok) throw new Error("No jobs found");
         const result = await response.json();
-        const jobs = Array.isArray(result) ? result : [result];
+        const jobs = result.data
+        ? (Array.isArray(result.data) ? result.data : [result.data])
+        : (Array.isArray(result) ? result : [result]);
 
         if (jobs.length === 0) {
             showError("No jobs found for that phone number.");
@@ -60,7 +64,7 @@ searchForm.addEventListener("submit", async (e) => {
 function buildJobCardHTML(job) {
     const statusClass = job.status ? job.status.toLowerCase() : "pending";
     const technician = job.assigned_technician || "Not Assigned Yet";
-    const jobId = `#JOB-${String(job.id).padStart(4, "0")}`;
+    const jobId = `#JOB-${String(job.uuid || job.id).padStart(4, "0")}`;
 
     const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
     const scheduled = (dateObj && !isNaN(dateObj))
