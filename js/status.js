@@ -62,7 +62,8 @@ searchForm.addEventListener("submit", async (e) => {
 });
 
 function buildJobCardHTML(job) {
-    const statusClass = job.status ? job.status.toLowerCase() : "pending";
+    const displayStatus = job.assigned_technician ? "Assigned" : (job.status || "Pending");
+    const statusClass = displayStatus.toLowerCase();
     const technician = job.assigned_technician || "Not Assigned Yet";
     const jobId = `#JOB-${String(job.uuid || job.id).padStart(4, "0")}`;
 
@@ -83,7 +84,7 @@ function buildJobCardHTML(job) {
                     <div class="track-timestap small">Submitted ${submitted}</div>
                 </div>
                 <div class="track-right">
-                    <div class="status-badge ${statusClass}">${job.status || "Pending"}</div>
+                    <div class="status-badge ${statusClass}">${displayStatus}</div>
                 </div>
             </div>
             <div class="track-results-main">

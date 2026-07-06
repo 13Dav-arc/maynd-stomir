@@ -35,7 +35,23 @@
                 <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='login.html'" class="primary">
                     Logout
                 </button>
+                <button class="hamburger" id="hamburger" aria-label="Open menu">
+                    <i class="ti ti-menu-2"></i>
+                </button>
             </header>
+            <!-- Drawer -->
+            <div class="drawer-overlay" id="drawer-overlay"></div>
+            <div class="drawer" id="drawer">
+                <div class="drawer-header">
+                    <button class="drawer-close" id="drawer-close" aria-label="Close menu">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+                <nav class="drawer-nav">
+                    <a href="admin.html"><i class="ti ti-plus"></i> All Jobs</a>
+                    <a href="technicians.html"><i class="ti ti-tool"></i> Technicians</a>
+                </nav>
+            </div>
         </div>
         <div class="admin-content">
             <div class="admin-header">
@@ -159,5 +175,6 @@
         }
     </script>
     <script src="js/admin.js"></script>
+    <script src="js/nav.js"></script>
 </body>
 </html>
