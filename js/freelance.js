@@ -170,7 +170,7 @@ submitBtn.addEventListener("click", async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            alert("Application submitted successfully! We will contact you via Email.");
+            alert("Application submitted successfully! We would contact you via Email.");
         } else {
             console.error("422 detail:", JSON.stringify(data));
             
