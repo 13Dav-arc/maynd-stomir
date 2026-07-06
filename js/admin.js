@@ -32,8 +32,10 @@ async function fetchJobs() {
 
         if (!response.ok) throw new Error("Failed to fetch jobs");
 
-        const jobs = await response.json();
+        const result = await response.json();
+        const jobs = result.data || result;
         allJobs = jobs;
+        console.log(jobs);
         updateStatCards(jobs);
         renderTable(jobs);
 
@@ -87,7 +89,7 @@ function renderTable(jobs) {
             <tr>
                 <td>#${String(job.id).padStart(4, "0")}</td>
                 <td class="customer">
-                    <span class="name">${job.full_name}</span>
+                    <span class="name">${job.customer_name}</span>
                     <span class="small">${job.phone_number}</span>
                 </td>
                 <td>${job.category}</td>

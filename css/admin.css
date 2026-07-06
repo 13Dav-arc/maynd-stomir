@@ -117,8 +117,13 @@
     font-weight: 400;
 }
 .customer {
-    display: flex;
-    flex-direction: column;
+    align-items: center;
+}
+.customer .name {
+    display: block;
+}
+.customer .small {
+    display: block;
 }
 .assign-cell {
     display: flex;

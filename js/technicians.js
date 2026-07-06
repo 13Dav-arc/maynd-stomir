@@ -34,7 +34,8 @@ async function fetchTechnicians() {
 
         if (!response.ok) throw new Error("Failed to fetch technicians");
 
-        const technicians = await response.json();
+        const result = await response.json();
+        const technicians = result.data || result;
         console.log (technicians);
         allTechnicians = technicians;
 
@@ -101,8 +102,8 @@ function buildTechRowHTML(tech, index) {
                 </div>
             </td>
             <td>${tech.phone_number || "—"}</td>
-            <td>${tech.email || "—"}</td>
-            <td>${tech.trade ? tech.trade.toUpperCase() : "—"}</td>
+            <td>${tech.email_address || "—"}</td>
+            <td>${tech.trade_skill ? tech.trade_skill.toUpperCase() : "—"}</td>
             <td><span class="status-badge ${status.cls}">${status.label}</span></td>
             <td>${tech.completed_jobs_count || 0}</td>
             <td><i class="ti ti-chevron-down tech-chevron" id="chevron-${index}" aria-hidden="true"></i></td>
@@ -115,8 +116,12 @@ function buildTechRowHTML(tech, index) {
                         <span class="track-info">${tech.qid_number || "—"}</span>
                     </div>
                     <div class="tech-expand-field">
-                        <span class="track-list">Kahramaa ID</span>
-                        <span class="track-info">${tech.kahramaa_id || "N/A"}</span>
+                        <span class="track-list">Kahramaa ID Photo</span>
+                        <span class="track-info">
+                            ${tech.kahramaa_id_url
+                                ? `<a href="${tech.kahramaa_id_url}" target="_blank" style="color:var(--blue-accent); text-decoration:underline; font-size:0.8rem;">View Photo →</a>`
+                                : "Not uploaded"}
+                        </span>
                     </div>
                     <div class="tech-expand-field">
                         <span class="track-list">Assigned Jobs</span>

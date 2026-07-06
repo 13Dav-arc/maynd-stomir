@@ -153,10 +153,13 @@ submitBtn.addEventListener("click", async (e) => {
             trade:        document.getElementById("trade-skill").value,
             experience_years: parseInt(document.getElementById("experience-years").value, 10),
             qid_number:       document.getElementById("qid-number").value,
-            kahramaa_id_url:    kahramaa_photo_url,
             id_photo_url:     id_photo_url,
             notes:            document.getElementById("description-note").value.trim() || null,
         };
+
+        if (kahramaa_photo_url) {
+            body.kahramaa_id_url = kahramaa_photo_url || "";
+        }
         
         const response = await fetch(`${BASE_URL}/freelance_applications`, {
             method: "POST",
