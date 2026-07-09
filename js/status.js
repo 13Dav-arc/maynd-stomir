@@ -78,11 +78,10 @@ function buildJobCardHTML(job) {
         : "—";
 
     const completionBtn = displayStatus === "Assigned" 
-    ? `<div class="track-results-footer">
+    ? `
             <button class="complete-btn" onclick="markAsCompleted('${job.id || job.uuid}')">
                 <i class="ti ti-circle-check"></i> Mark as Completed
-            </button>
-       </div>`
+            </button>`
     : "";
 
     const jobCreatedAt = new Date(job.created_at);
@@ -90,11 +89,11 @@ function buildJobCardHTML(job) {
     const isEditable = (Date.now() - jobCreatedAt) < twoHoursInMs;
 
     const modificationMarkup = isEditable ? `
-        <div class="customer-actions">
+        
             <button class="cancel-btn" onclick="cancelJob('${job.id || job.uuid}')">
                 <i class="ti ti-trash"></i> Cancel Request
             </button>
-        </div>
+        
     ` :  `<p class="locked-notice">Modification window has passed (2 hours).</p>`;
 
     return `
@@ -135,8 +134,11 @@ function buildJobCardHTML(job) {
                     </button>
                 </div>
             </div>
-            ${completionBtn}
-            ${modificationMarkup}
+            <div class="track-results-footer">
+                ${completionBtn}
+                ${modificationMarkup}     
+            </div>
+            
         </div>
     `;
 }
