@@ -57,9 +57,14 @@ async function fetchTechnicians() {
 
 // UPDATE STAT CARDS
 function updateStatCards(technicians) {
-    totalTechEl.textContent     = technicians.length;
-    assignedCountEl.textContent = technicians.reduce((sum, t) => sum + (t.assigned_jobs_count || 0), 0);
-    jobsDoneEl.textContent      = technicians.reduce((sum, t) => sum + (t.completed_jobs_count || 0), 0);
+    totalTechEl.textContent = technicians.length;
+    
+    // Count the number of technicians currently marked as "Assigned"
+    assignedCountEl.textContent = technicians.filter(t => 
+        (t.status || "").trim().toUpperCase() === "ASSIGNED"
+    ).length;
+    
+    jobsDoneEl.textContent = technicians.reduce((sum, t) => sum + (t.completed_jobs_count || 0), 0);
 }
 
 

@@ -606,9 +606,6 @@ nav a.active {
 .locked-notice {
     font-size: 0.75rem;
     color: var(--text-muted);
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
 }
 .complete-btn:hover, .edit-btn:hover, .cancel-btn:hover {
     opacity: 0.85;
