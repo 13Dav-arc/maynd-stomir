@@ -1,4 +1,5 @@
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
+const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 const SUPABASE_URL = "https://sukssqwzatvmnwdxthoa.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1a3NzcXd6YXR2bW53ZHh0aG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MjE0NjgsImV4cCI6MjA5NjM5NzQ2OH0.sT0wK2IAksWIycIwNvVqKJdQvXax4w4rPE5Mw8eppNo";
 const BUCKET_NAME = "id-photos";
@@ -163,7 +164,7 @@ submitBtn.addEventListener("click", async (e) => {
         
         const response = await fetch(`${BASE_URL}/freelance_applications`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY},
             body: JSON.stringify(body)
         });
 

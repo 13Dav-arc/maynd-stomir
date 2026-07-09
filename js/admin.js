@@ -7,6 +7,7 @@ if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
 
 // --- CONFIG ---
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
+const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 
 // --- DOM References ---
 const tbody = document.querySelector(".dispatch-table tbody");
@@ -27,7 +28,7 @@ async function fetchJobs() {
 
         const response = await fetch(`${BASE_URL}/jobs`, {
             method: "GET",
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY }
         });
 
         if (!response.ok) throw new Error("Failed to fetch jobs");
@@ -78,12 +79,11 @@ function renderTable(jobs) {
         : "-";
 
         // Assign column — show input+button if pending, show number if assigned/completed
-        const assignCell = (job.status || "").toUpperCase() === "PENDING"
-            ? `<div class="assign-cell">
-                <input type="tel" placeholder="+974 xxxxxxxxxx" id="tech-input-${job.id}">
-                <button class="assign-btn" onclick="assignTechnician('${job.id}')">Assign →</button>
-               </div>`
-            : `<span class="small">${job.assigned_technician || "—"}</span>`;
+        const assignCell = job.assigned_technician
+            ? `<span class="small" style="color:var(--assigned)">${job.assigned_technician}</span>`
+            : `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
+        
+        const displayStatus = job.assigned_technician ? "Assigned" : (job.status || "Pending");
 
         return `
             <tr>
@@ -95,48 +95,22 @@ function renderTable(jobs) {
                 <td>${job.category}</td>
                 <td>${location}</td>
                 <td>${availability}</td>
-                <td><span class="status-badge ${(job.status || "pending").toLowerCase()}">${job.status || "Pending"}</span></td>
+                <td><span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span></td>
                 <td>${assignCell}</td>
             </tr>
         `;
     }).join("");
 }
 
-// ASSIGN TECHNICIAN — PATCH /jobs/{id}
-async function assignTechnician(jobId) {
-    const techInput = document.getElementById(`tech-input-${jobId}`);
-    const techPhone = techInput.value.trim();
-
-    if (!techPhone) {
-        alert("Please enter a technician phone number.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}/assign`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ assigned_technician: techPhone })
-        });
-
-        if (!response.ok) throw new Error("Failed to assign technician");
-
-        await fetchJobs();
-
-    } catch (error) {
-        console.error(error);
-        alert("Failed to assign technician. Try again.");
-    }
-}
 
 // SEARCH — filter by name, category, zone
 
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
     const filtered = allJobs.filter(job =>
-        job.full_name.toLowerCase().includes(query) ||
-        job.category.toLowerCase().includes(query) ||
-        job.description.toLowerCase().includes(query)
+        (job.customer_name || job.full_name).toLowerCase().includes(query) ||
+        (job.category || "").toLowerCase().includes(query) ||
+        (job.description || "").toLowerCase().includes(query)
     );
     renderTable(filtered);
 });

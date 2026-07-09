@@ -7,6 +7,7 @@ if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
 
 // --- CONFIG ---
 const TECH_BASE_URL = "https://msa-backend-drwt.onrender.com";
+const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 
 // --- DOM References ---
 const techTbody         = document.getElementById("tech-tbody");
@@ -29,7 +30,7 @@ async function fetchTechnicians() {
 
         const response = await fetch(`${TECH_BASE_URL}/workers`, {
             method: "GET",
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY }
         });
 
         if (!response.ok) throw new Error("Failed to fetch technicians");
@@ -200,10 +201,10 @@ function applyFilters() {
         const matchesSearch = !query ||
             (tech.full_name || "").toLowerCase().includes(query) ||
             (tech.phone_number || "").includes(query) ||
-            (tech.trade || "").toLowerCase().includes(query);
+            (tech.trade_skill || "").toLowerCase().includes(query);
 
         const matchesStatus = !statusVal || status === statusVal;
-        const matchesTrade  = !tradeVal  || (tech.trade || "").toLowerCase() === tradeVal;
+        const matchesTrade  = !tradeVal  || (tech.trade_skill || "").toLowerCase() === tradeVal;
 
         return matchesSearch && matchesStatus && matchesTrade;
     });

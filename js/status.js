@@ -1,6 +1,7 @@
 // MAYND STOMIR — Status Page Logic
 
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
+const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 
 const searchForm = document.querySelector(".form-search");
 const phoneInput = document.getElementById("phone-number");
@@ -15,7 +16,7 @@ window.addEventListener("DOMContentLoaded", () => {
 async function fetchJobById(jobId) {
     try {
         showLoading();
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}`);
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}`, {headers: { "X-API-Key": API_KEY}});
         if (!response.ok) throw new Error("Job not found");
         const result = await response.json();
         const job = result.data || result;
@@ -42,7 +43,7 @@ searchForm.addEventListener("submit", async (e) => {
 
     try {
         showLoading();
-        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`);
+        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`, {headers: { "X-API-Key": API_KEY}});
         if (!response.ok) throw new Error("No jobs found");
         const result = await response.json();
         const jobs = result.data
@@ -76,6 +77,14 @@ function buildJobCardHTML(job) {
         ? new Date(job.created_at).toLocaleString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })
         : "—";
 
+    const completionBtn = displayStatus === "Assigned" 
+    ? `<div class="track-results-footer">
+            <button class="complete-btn" onclick="markAsCompleted('${job.id || job.uuid}')">
+                <i class="ti ti-circle-check"></i> Mark as Completed
+            </button>
+       </div>`
+    : "";
+
     return `
         <div class="track-results-card">
             <div class="track-results-header">
@@ -108,9 +117,65 @@ function buildJobCardHTML(job) {
                     <div class="track-list">Technician</div>
                     <div class="track-info" style="color:${job.assigned_technician ? 'var(--assigned)' : 'var(--text-muted)'}">${technician}</div>
                 </div>
+                <div class="track-results-footer">
+                    <button class="copy-btn" id="copy-link-btn-${job.uuid || job.id}" onclick="copyJobLink('${job.uuid || job.id}')">
+                        <i class="ti ti-copy"></i> Copy link
+                    </button>
+                </div>
             </div>
+            ${completionBtn}
         </div>
     `;
+}
+
+async function markAsCompleted(jobId) {
+    if (!confirm("Confirm that the technician has completed the work?")) return;
+
+    try {
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}/complete`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json","X-API-Key": API_KEY }
+        });
+
+        if (response.ok) {
+            alert("Thank you! Your job has been marked as completed.");
+            window.location.reload();
+        } else {
+            alert("Could not update job status. Please try again.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Something went wrong. Check your connection and try again.");
+    }
+}
+
+function copyJobLink(jobId) {
+    const url = `${window.location.origin}/status.html?id=${jobId}`;
+    
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById(`copy-link-btn-${jobId}`);
+        btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+        btn.style.borderColor = 'var(--assigned)';
+        btn.style.color = 'var(--assigned)';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="ti ti-copy"></i> Copy link';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }, 2000);
+    }).catch(() => {
+        // Fallback for older browsers
+        const temp = document.createElement("input");
+        temp.value = url;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        const btn = document.getElementById(`copy-link-btn-${jobId}`);
+        btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="ti ti-copy"></i> Copy link';
+        }, 2000);
+    });
 }
 
 function renderJobCards(jobs) {
