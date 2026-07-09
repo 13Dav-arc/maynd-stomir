@@ -98,24 +98,52 @@
                                 <input type="text" name="qid_number" id="qid-number" placeholder="11-digit Qatar ID" required>
                             </div>
                         </div>
-                        <div class="personal">
-                            <div class="form-upload">
-                                <label for="experience-years">Years of Experience</label>
-                                <input type="number" name="experience_years" id="experience-years" placeholder="e.g 3" min="0" required>
-                            </div>
-                            <div class="form-upload">
-                                <label for="problem-category">Trade/Skill Category</label>
-                                <select name="trade_skill" id="trade-skill">
-                                    <option value="" selected disabled>Select Trade</option>
-                                    <option value="hvac">HVAC (AC & Ventilation)</option>
-                                    <option value="plumbing">Plumbing</option>
-                                    <option value="electrical">Electrical</option>
-                                    <option value="carpentry">Carpentry & Flooring</option>
-                                    <option value="appliance_repair">Appliance Repair</option>
-                                    <option value="cleaning">Cleaning & Pest Control</option>
-                                    <option value="masonry">Masonry, Tiling & Glass</option>
-                                    <option value="other">Other</option>
-                                </select>
+                        <div class="form-upload">
+                            <label for="experience-years">Years of Experience</label>
+                            <input type="number" name="experience_years" id="experience-years" placeholder="e.g 3" min="0" required>
+                        </div>
+                        <div class="form-upload">
+                            <label>Trade / Skill Categories</label>
+                            <div class="trade-checkbox-grid">
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="hvac"> HVAC (AC & Ventilation)
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="plumbing"> Plumbing
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="electrical"> Electrical
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="painting"> Painting
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="carpentry"> Carpentry
+                                </label>
+                                 <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="flooring"> Flooring
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="appliance_repair"> Appliance Repair
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="cleaning"> Cleaning
+                                </label>
+                                 <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="pest_control"> Pest Control
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="masonry"> Masonry & Tiling
+                                </label>
+                                 <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="glass_windows"> Glass & Windows
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="locks_security"> Locks & Security
+                                </label>
+                                <label class="trade-check">
+                                    <input type="checkbox" name="trade" value="other"> Other
+                                </label>
                             </div>
                         </div>
                         <div class="form-upload" id="kahramaa-field" style="display:none;">

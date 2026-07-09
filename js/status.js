@@ -85,6 +85,18 @@ function buildJobCardHTML(job) {
        </div>`
     : "";
 
+    const jobCreatedAt = new Date(job.created_at);
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    const isEditable = (Date.now() - jobCreatedAt) < twoHoursInMs;
+
+    const modificationMarkup = isEditable ? `
+        <div class="customer-actions">
+            <button class="cancel-btn" onclick="cancelJob('${job.id || job.uuid}')">
+                <i class="ti ti-trash"></i> Cancel Request
+            </button>
+        </div>
+    ` :  `<p class="locked-notice">Modification window has passed (2 hours).</p>`;
+
     return `
         <div class="track-results-card">
             <div class="track-results-header">
@@ -124,6 +136,7 @@ function buildJobCardHTML(job) {
                 </div>
             </div>
             ${completionBtn}
+            ${modificationMarkup}
         </div>
     `;
 }
@@ -146,6 +159,26 @@ async function markAsCompleted(jobId) {
     } catch (error) {
         console.error(error);
         alert("Something went wrong. Check your connection and try again.");
+    }
+}
+
+async function cancelJob(jobId) {
+    if (!confirm("Are you sure you want to cancel this request?")) return;
+
+    try {
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}/cancel`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-Key": API_KEY
+            }
+        });
+        if (!response.ok) throw new Error("Cancel failed");
+        alert("Your request has been cancelled.");
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+        alert("Failed to cancel. Please try again.");
     }
 }
 

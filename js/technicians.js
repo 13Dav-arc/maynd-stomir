@@ -63,12 +63,10 @@ function updateStatCards(technicians) {
 }
 
 
-// DERIVE DISPLAY STATUS
 function getDisplayStatus(tech) {
-    if ((tech.status || "").toUpperCase() === "PENDING") {
-        return { label: "Pending", cls: "pending" };
-    }
-    if (tech.assigned_jobs_count > 0) {
+    const backendStatus = (tech.status || "Available").trim();
+    
+    if (backendStatus.toUpperCase() === "ASSIGNED") {
         return { label: "Assigned", cls: "assigned" };
     }
     return { label: "Available", cls: "available" };

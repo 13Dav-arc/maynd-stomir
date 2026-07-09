@@ -547,23 +547,71 @@ nav a.active {
     font-size: 3rem;
     color: var(--assigned);
 }
-.complete-btn {
+.trade-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    padding: 0.8rem;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+}
+.trade-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.trade-check input[type="checkbox"] {
+    accent-color: var(--blue-accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.customer-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+.edit-btn, .cancel-btn, .complete-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--assigned);
     border: none;
     border-radius: 4px;
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1rem;
     font-size: 0.78rem;
-    color: var(--white);
-    cursor: pointer;
     font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
+    cursor: pointer;
     transition: opacity 0.2s ease;
 }
-.complete-btn:hover {
+.edit-btn {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+.cancel-btn {
+    background: rgba(192, 57, 43, 0.08);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    color: #c0392b;
+}
+.complete-btn {
+    background: rgba(46, 125, 82, 0.08);
+    border: 1px solid rgba(46, 125, 82, 0.3);
+    color: var(--assigned);
+}
+.locked-notice {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+.complete-btn:hover, .edit-btn:hover, .cancel-btn:hover {
     opacity: 0.85;
 }
 

@@ -12,21 +12,29 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const submitBtn = document.querySelector("button[type='submit']");
 const photoInput = document.getElementById("photo-upload");
 const uploadText = document.getElementById("id-upload-text");
-const tradeSelect = document.getElementById("trade-skill");
 const kahramaaField = document.getElementById("kahramaa-field");
 const kahramaaInput = document.getElementById("kahramaa-photo");
 const kahramaaUploadText = document.getElementById("kahramaa-upload-text");
 
-tradeSelect.addEventListener("change", () => {
-    const trade = tradeSelect.value;
-    if (trade === "electrical" || trade === "plumbing" || trade === "hvac") {
-        kahramaaField.style.display = "flex";
-        kahramaaInput.required = true;
-    } else {
-        kahramaaField.style.display = "none";
-        kahramaaInput.required = false;
-        kahramaaInput.value = "";
-    }
+document.querySelectorAll('input[name="trade"]').forEach(checkbox => {
+    checkbox.addEventListener("change", () => {
+        const selected = Array.from(
+            document.querySelectorAll('input[name="trade"]:checked')
+        ).map(el => el.value);
+
+        const needsKahramaa = selected.some(t =>
+            t === "electrical" || t === "plumbing" || t === "hvac"
+        );
+
+        if (needsKahramaa) {
+            kahramaaField.style.display = "flex";
+            kahramaaInput.required = true;
+        } else {
+            kahramaaField.style.display = "none";
+            kahramaaInput.required = false;
+            kahramaaInput.value = "";
+        }
+    });
 });
 
 // --- Show selected filename on photo pick ---
@@ -93,6 +101,22 @@ function hideFormError() {
     document.getElementById("form-error").style.display = "none";
 }
 
+function getCoordinates() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error("Geolocation not supported"));
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude
+            }),
+            (err) => reject(err)
+        );
+    });
+}
+
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -112,6 +136,15 @@ submitBtn.addEventListener("click", async (e) => {
     const qidNumber = document.getElementById("qid-number").value.trim();
     if (!/^\d{11}$/.test(qidNumber)) {
         showFormError("QID number must be exactly 11 digits.");
+        return;
+    }
+    
+    const checkedTrades = Array.from(
+        document.querySelectorAll('input[name="trade"]:checked')
+    ).map(el => el.value);
+
+    if (checkedTrades.length === 0) {
+        showFormError("Please select at least one trade skill.");
         return;
     }
 
@@ -144,6 +177,12 @@ submitBtn.addEventListener("click", async (e) => {
             kahramaa_photo_url = await uploadKahramaaPhoto(kahramaaPhotoFile);
         }
 
+        let coords = { lat: null, lng: null };
+        try {
+            coords = await getCoordinates();
+        } catch (err) {
+            console.warn("Location unavailable:", err.message);
+        }
        
         submitBtn.textContent = "Submitting...";
 
@@ -151,11 +190,13 @@ submitBtn.addEventListener("click", async (e) => {
             full_name:        document.getElementById("technician-name").value,
             phone_number:     document.getElementById("phone-number").value,
             email:            document.getElementById("email").value,
-            trade:        document.getElementById("trade-skill").value,
+            trade:            checkedTrades,
             experience_years: parseInt(document.getElementById("experience-years").value, 10),
             qid_number:       document.getElementById("qid-number").value,
             id_photo_url:     id_photo_url,
             notes:            document.getElementById("description-note").value.trim() || null,
+            tech_lat:         coords.lat,
+            tech_lng:         coords.lng
         };
 
         if (kahramaa_photo_url) {
