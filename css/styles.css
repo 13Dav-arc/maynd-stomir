@@ -619,6 +619,7 @@ nav a.active {
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
+    gap: 1rem;
 }
 .copy-btn {
     display: inline-flex;
