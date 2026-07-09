@@ -48,9 +48,9 @@ async function fetchJobs() {
 
 // UPDATE STAT CARDS
 function updateStatCards(jobs) {
-    pendingCount.textContent   = jobs.filter(j => j.status === "PENDING").length;
-    assignedCount.textContent  = jobs.filter(j => j.status === "ASSIGNED").length;
-    completedCount.textContent = jobs.filter(j => j.status === "COMPLETED").length;
+    pendingCount.textContent   = jobs.filter(j => (j.status || "").toUpperCase() === "PENDING").length;
+    assignedCount.textContent  = jobs.filter(j => (j.status || "").toUpperCase() === "ASSIGNED").length;
+    completedCount.textContent = jobs.filter(j => (j.status || "").toUpperCase() === "COMPLETED").length;
 }
 
 // RENDER TABLE ROWS
@@ -78,12 +78,25 @@ function renderTable(jobs) {
             })
         : "-";
 
-        // Assign column — show input+button if pending, show number if assigned/completed
-        const assignCell = job.assigned_technician
-            ? `<span class="small" style="color:var(--assigned)">${job.assigned_technician}</span>`
-            : `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
-        
-        const displayStatus = job.assigned_technician ? "Assigned" : (job.status || "Pending");
+        // admin.js — Replace displayStatus block inside renderTable loop
+        const rawStatus = (job.status || "").toUpperCase();
+        let displayStatus = "Pending";
+
+        if (rawStatus === "COMPLETED") {
+            displayStatus = "Completed";
+        } else if (job.assigned_technician) {
+            displayStatus = "Assigned";
+        } else if (job.status) {
+            displayStatus = job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase();
+        }
+
+
+        let assignCell = `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
+        if (rawStatus === "COMPLETED") {
+            assignCell = `<span class="small" style="color:var(--completed)">${job.assigned_technician || "Completed"}</span>`;
+        } else if (job.assigned_technician) {
+            assignCell = `<span class="small" style="color:var(--assigned)">${job.assigned_technician}</span>`;
+        }
 
         return `
             <tr>

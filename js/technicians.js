@@ -102,7 +102,9 @@ function buildTechRowHTML(tech, index) {
             </td>
             <td>${tech.phone_number || "—"}</td>
             <td>${tech.email_address || "—"}</td>
-            <td>${tech.trade_skill ? tech.trade_skill.toUpperCase() : "—"}</td>
+            <td>${Array.isArray(tech.trade_skill) 
+                ? tech.trade_skill.join(", ").toUpperCase() 
+                : (tech.trade_skill ? tech.trade_skill.toUpperCase() : "—")}</td>
             <td><span class="status-badge ${status.cls}">${status.label}</span></td>
             <td>${tech.completed_jobs_count || 0}</td>
             <td><i class="ti ti-chevron-down tech-chevron" id="chevron-${index}" aria-hidden="true"></i></td>
@@ -195,14 +197,23 @@ function applyFilters() {
 
     const filtered = allTechnicians.filter(tech => {
         const status = getDisplayStatus(tech).label.toLowerCase();
+        
+        // Convert array to searchable comma string safely
+        const tradeString = Array.isArray(tech.trade_skill) 
+            ? tech.trade_skill.join(", ").toLowerCase() 
+            : (tech.trade_skill || "").toLowerCase();
 
         const matchesSearch = !query ||
             (tech.full_name || "").toLowerCase().includes(query) ||
             (tech.phone_number || "").includes(query) ||
-            (tech.trade_skill || "").toLowerCase().includes(query);
+            tradeString.includes(query);
 
         const matchesStatus = !statusVal || status === statusVal;
-        const matchesTrade  = !tradeVal  || (tech.trade_skill || "").toLowerCase() === tradeVal;
+        
+        // Check if the selected trade dropdown value exists inside the technician's skills array
+        const matchesTrade  = !tradeVal || (Array.isArray(tech.trade_skill) 
+            ? tech.trade_skill.map(t => String(t).toLowerCase()).includes(tradeVal)
+            : tradeString === tradeVal);
 
         return matchesSearch && matchesStatus && matchesTrade;
     });
