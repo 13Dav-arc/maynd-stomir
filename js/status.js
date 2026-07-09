@@ -63,7 +63,17 @@ searchForm.addEventListener("submit", async (e) => {
 });
 
 function buildJobCardHTML(job) {
-    const displayStatus = job.assigned_technician ? "Assigned" : (job.status || "Pending");
+    const rawStatus = (job.status || "").toUpperCase();
+    let displayStatus = "Pending";
+
+    if (rawStatus === "COMPLETED") {
+        displayStatus = "Completed";
+    } else if (job.assigned_technician) {
+        displayStatus = "Assigned";
+    } else if (job.status) {
+        displayStatus = job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase();
+    }
+
     const statusClass = displayStatus.toLowerCase();
     const technician = job.assigned_technician || "Not Assigned Yet";
     const jobId = `#JOB-${String(job.uuid || job.id).padStart(4, "0")}`;
@@ -86,7 +96,7 @@ function buildJobCardHTML(job) {
 
     const jobCreatedAt = new Date(job.created_at);
     const twoHoursInMs = 2 * 60 * 60 * 1000;
-    const isEditable = (Date.now() - jobCreatedAt) < twoHoursInMs;
+    const isEditable = (Date.now() - jobCreatedAt) < twoHoursInMs  && displayStatus !== "Completed";
 
     const modificationMarkup = isEditable ? `
         
