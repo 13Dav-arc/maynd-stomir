@@ -68,6 +68,8 @@ function buildJobCardHTML(job) {
 
     if (rawStatus === "COMPLETED") {
         displayStatus = "Completed";
+    } else if (rawStatus=== "CANCELLED") {
+        displayStatus = "Cancelled";
     } else if (job.assigned_technician) {
         displayStatus = "Assigned";
     } else if (job.status) {
@@ -96,7 +98,7 @@ function buildJobCardHTML(job) {
 
     const jobCreatedAt = new Date(job.created_at);
     const twoHoursInMs = 2 * 60 * 60 * 1000;
-    const isEditable = (Date.now() - jobCreatedAt) < twoHoursInMs  && displayStatus !== "Completed";
+    const isEditable = (Date.now() - jobCreatedAt) < twoHoursInMs  && displayStatus !== "Completed" && displayStatus !== "Cancelled";
 
     const modificationMarkup = isEditable ? `
         
