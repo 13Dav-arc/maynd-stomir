@@ -101,6 +101,7 @@ function buildTechRowHTML(tech, index) {
     const status   = getDisplayStatus(tech);
     const initials = getInitials(tech.full_name);
     const isFreshApplicant = tech.is_approved === false && (tech.status || "").trim().toUpperCase() !== "REJECTED";
+    const technicianID = tech.uuid || tech.id || tech._id || tech.tech_id;
 
     return `
         <tr class="tech-row" id="tech-row-${index}" onclick="toggleExpand(${index})">
@@ -147,10 +148,10 @@ function buildTechRowHTML(tech, index) {
                     <!-- UPDATED GATEWAY: Only show buttons for fresh, unprocessed applicants -->
                     ${isFreshApplicant ? `
                     <div class="tech-approval-actions">
-                        <button onclick="event.stopPropagation(); processApproval('${tech.id}', true)" class="btn-action-approve">
+                        <button onclick="event.stopPropagation(); processApproval('${technicianID}', true)" class="btn-action-approve">
                             Approve & Activate
                         </button>
-                        <button onclick="event.stopPropagation(); processApproval('${tech.id}', false)" class="btn-action-reject">
+                        <button onclick="event.stopPropagation(); processApproval('${technicianID}', false)" class="btn-action-reject">
                             Reject
                         </button>
                     </div>
