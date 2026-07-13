@@ -167,7 +167,7 @@ async function processApproval(techId, isApproved) {
     if (!confirm(`Are you sure you want to ${actionText} this technician?`)) return;
 
     try {
-        const response = await fetch(`${TECH_BASE_URL}/admin/technicians/${techId}/review`, {
+        const response = await fetch(`${TECH_BASE_URL}/workers/${techId}/review`, {
             method: "PATCH",
             headers: { 
                 "Content-Type": "application/json", 
