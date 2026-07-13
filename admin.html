@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
     <meta name="mobile-web-app-capable" content="yes">
@@ -63,6 +63,15 @@
                         <option value="pending">Pending</option>
                         <option value="assigned">Assigned</option>
                         <option value="completed">Completed</option>
+                    </select>
+                    <select id="sort" class="filter-select">
+                        <option value="">Sort By (Default)</option>
+                        <option value="id-desc">Job ID: Highest First</option>
+                        <option value="id-asc">Job ID: Lowest First</option>
+                        <option value="name-asc">Customer Name: A to Z</option>
+                        <option value="name-desc">Customer Name: Z to A</option>
+                        <option value="date-desc">Availability: Newest First</option>
+                        <option value="date-asc">Availability: Oldest First</option>
                     </select>
                 </div>
             </div>

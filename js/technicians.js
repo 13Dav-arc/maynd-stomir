@@ -13,6 +13,7 @@ const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 const techTbody         = document.getElementById("tech-tbody");
 const searchInput       = document.getElementById("tech-search");
 const statusFilter      = document.getElementById("status-filter");
+const sortFilter        = document.getElementById("sort-filter");
 const tradeFilter       = document.getElementById("trade-filter");
 const totalTechEl       = document.getElementById("total-technicians");
 const assignedCountEl   = document.getElementById("assigned-technicians");
@@ -130,6 +131,14 @@ function buildTechRowHTML(tech, index) {
                         <span class="track-info">${tech.qid_number || "—"}</span>
                     </div>
                     <div class="tech-expand-field">
+                        <span class="track-list">QID Photo</span>
+                        <span class="track-info">
+                            ${qidPhotoURL
+                                ? `<a href="${qidPhotoURL}" target="_blank" style="color:var(--blue-accent); text-decoration:underline; font-size:0.8rem;">View QID →</a>`
+                                : "Not uploaded"}
+                        </span>
+                    </div>
+                    <div class="tech-expand-field">
                         <span class="track-list">Kahramaa ID Photo</span>
                         <span class="track-info">
                             ${tech.kahramaa_id_url
@@ -239,12 +248,16 @@ statusFilter.addEventListener("change", () => {
 tradeFilter.addEventListener("change", () => {
     applyFilters();
 });
+sortFilter.addEventListener("change", () => {
+    applyFilters();
+});
 
 // APPLY ALL FILTERS TOGETHER
 function applyFilters() {
     const query       = searchInput.value.toLowerCase();
     const statusVal   = statusFilter.value.toLowerCase();
     const tradeVal    = tradeFilter.value.toLowerCase();
+    const sortVal     = sortFilter.value;
 
     const filtered = allTechnicians.filter(tech => {
         const status = getDisplayStatus(tech).label.toLowerCase();
@@ -268,6 +281,31 @@ function applyFilters() {
 
         return matchesSearch && matchesStatus && matchesTrade;
     });
+    if (sortVal) {
+        filtered.sort((a, b) => {
+            if (sortVal === "name-asc") {
+                return (a.full_name || "").localeCompare(b.full_name || "");
+            }
+            if (sortVal === "name-desc") {
+                return (b.full_name || "").localeCompare(a.full_name || "");
+            }
+            if (sortVal === "jobs-desc") {
+                return (b.completed_jobs_count || 0) - (a.completed_jobs_count || 0);
+            }
+            if (sortVal === "date-desc") {
+                // Safely handles created_at, joined_at, or standard timestamp strings
+                const dateA = new Date(a.created_at || a.joined_at || 0);
+                const dateB = new Date(b.created_at || b.joined_at || 0);
+                return dateB - dateA; // Newest first
+            }
+            if (sortVal === "date-asc") {
+                const dateA = new Date(a.created_at || a.joined_at || 0);
+                const dateB = new Date(b.created_at || b.joined_at || 0);
+                return dateA - dateB; // Oldest first
+            }
+            return 0;
+        });
+    }
 
     renderTable(filtered);
 }

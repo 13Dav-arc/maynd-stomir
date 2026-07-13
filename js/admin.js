@@ -116,31 +116,64 @@ function renderTable(jobs) {
 }
 
 
-// SEARCH — filter by name, category, zone
-
-searchInput.addEventListener("input", () => {
+function applyFilters() {
     const query = searchInput.value.toLowerCase();
-    const formattedId = `#${String(job.id).padStart(4, "0")}`.toLowerCase();
-    const rawId = String(job.id).toLowerCase();
+    const filterVal = filterSelect.value;
+    const sortVal = sortSelect.value;
 
-    const filtered = allJobs.filter(job =>
-        rawId.includes(query) || formattedId.includes(query) ||
-        (job.customer_name || job.full_name).toLowerCase().includes(query) ||
-        (job.category || "").toLowerCase().includes(query) ||
-        (job.description || "").toLowerCase().includes(query) 
-    );
+    // 1. Filter jobs by Search Input and Status Dropdown
+    let filtered = allJobs.filter(job => {
+        const formattedId = `#${String(job.id).padStart(4, "0")}`.toLowerCase();
+        const rawId = String(job.id).toLowerCase();
+        const customerName = (job.customer_name || job.full_name || "").toLowerCase();
+
+        const matchesSearch = !query ||
+            rawId.includes(query) || 
+            formattedId.includes(query) ||
+            customerName.includes(query) ||
+            (job.category || "").toLowerCase().includes(query) ||
+            (job.description || "").toLowerCase().includes(query);
+
+        const matchesStatus = !filterVal || (job.status || "").toUpperCase() === filterVal.toUpperCase();
+
+        return matchesSearch && matchesStatus;
+    });
+
+    if (sortVal) {
+        filtered.sort((a, b) => {
+            if (sortVal === "id-desc") {
+                return b.id - a.id; // Highest job ID first
+            }
+            if (sortVal === "id-asc") {
+                return a.id - b.id; // Lowest job ID first
+            }
+            if (sortVal === "name-asc") {
+                return (a.customer_name || "").localeCompare(b.customer_name || "");
+            }
+            if (sortVal === "name-desc") {
+                return (b.customer_name || "").localeCompare(a.customer_name || "");
+            }
+            if (sortVal === "date-desc") {
+                const dateA = new Date(a.customer_availability || 0);
+                const dateB = new Date(b.customer_availability || 0);
+                return dateB - dateA; // Newest scheduled date first
+            }
+            if (sortVal === "date-asc") {
+                const dateA = new Date(a.customer_availability || 0);
+                const dateB = new Date(b.customer_availability || 0);
+                return dateA - dateB; // Oldest scheduled date first
+            }
+            return 0;
+        });
+    }
+
     renderTable(filtered);
-});
+}
 
-// FILTER — by status dropdown
+searchInput.addEventListener("input", applyFilters);
+filterSelect.addEventListener("change", applyFilters);
+sortSelect.addEventListener("change", applyFilters);
 
-filterSelect.addEventListener("change", () => {
-    const value = filterSelect.value;
-    const filtered = value
-        ? allJobs.filter(job => (job.status || "").toUpperCase() === value.toUpperCase())
-        : allJobs;
-    renderTable(filtered);
-});
 
 function showTableLoading() {
     tbody.innerHTML = `
@@ -151,6 +184,5 @@ function showTableLoading() {
         </tr>`;
 }
 
-// INIT — load jobs on page load
 
 fetchJobs();

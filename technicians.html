@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -77,13 +77,26 @@
                     <select id="trade-filter">
                         <option value="">All Trades</option>
                         <option value="hvac">HVAC</option>
-                        <option value="plumbing">Plumbing</option>
-                        <option value="electrical">Electrical</option>
-                        <option value="carpentry">Carpentry & Flooring</option>
-                        <option value="appliance_repair">Appliance Repair</option>
-                        <option value="cleaning">Cleaning & Pest Control</option>
-                        <option value="masonry">Masonry, Tiling & Glass</option>
-                        <option value="other">Other</option>
+                            <option value="plumbing">Plumbing</option>
+                            <option value="electrical">Electrical</option>
+                            <option value="painting">Painting</option>
+                            <option value="carpentry">Carpentry</option>
+                            <option value="flooring">Flooring</option>
+                            <option value="appliance_repair">Appliance Repair</option>
+                            <option value="pest_control">Pest Control</option>
+                            <option value="cleaning">Deep Cleaning</option>
+                            <option value="masonry">Masonry / Tiling</option>
+                            <option value="glass_windows">Glass & Windows</option>
+                            <option value="locks_security">Locks & Security</option>
+                            <option value="other">Other</option>
+                    </select>
+                    <select id="sort-filter" class="filter-select">
+                        <option value="">Sort By (Default)</option>
+                        <option value="name-asc">Name: A to Z</option>
+                        <option value="name-desc">Name: Z to A</option>
+                        <option value="date-desc">Newest Joined</option>
+                        <option value="date-asc">Oldest Joined</option>
+                        <option value="jobs-desc">Most Jobs Completed</option>
                     </select>
                 </div>
             </div>
