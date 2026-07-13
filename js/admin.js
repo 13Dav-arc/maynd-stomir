@@ -88,25 +88,44 @@ function renderTable(jobs) {
         const rawStatus = (job.status || "").toUpperCase();
         let displayStatus = "Pending";
 
-        if (rawStatus === "COMPLETED") {
+        if (rawStatus === "CANCELLED") {
+            displayStatus = "Cancelled";
+        } else if (rawStatus === "COMPLETED") {
             displayStatus = "Completed";
-        } else if (job.assigned_technician) {
+        } else if (hasTechnician) {
             displayStatus = "Assigned";
         } else if (job.status) {
             displayStatus = job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase();
         }
 
 
-        let assignCell = `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
-        if (rawStatus === "COMPLETED") {
-            assignCell = `<span class="small" style="color:var(--completed)">${technicianName || "Completed"}</span>`;
-        } else if (hasTechnician) {
+        let assignCell = "";
+
+        if (hasTechnician) {
+            // Determine text color based on job status
+            let techColor = "var(--assigned)";
+            if (rawStatus === "COMPLETED") techColor = "var(--completed)";
+            if (rawStatus === "CANCELLED") techColor = "var(--text-muted)";
+
             assignCell = `
                 <div style="display: flex; flex-direction: column;">
-                    <span class="small" style="color:var(--assigned); font-weight:600;">${technicianName}</span>
-                    ${technicianPhone ? `<a href="tel:${technicianPhone}" class="small" style="color:var(--text-muted); text-decoration:none; font-size:0.75rem;"><i class="ti ti-phone" style="font-size:0.8rem;"></i> ${technicianPhone}</a>` : ''}
+                    <span class="small" style="color:${techColor}; font-weight:600;">${technicianName}</span>
+                    ${technicianPhone ? `
+                        <a href="tel:${technicianPhone}" class="small" style="color:var(--text-muted); text-decoration:none; font-size:0.75rem; margin-top: 2px; display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="ti ti-phone" style="font-size:0.8rem;"></i> ${technicianPhone}
+                        </a>` 
+                    : ''}
                 </div>
             `;
+        } else {
+            // Default states when no technician is assigned
+            if (rawStatus === "CANCELLED") {
+                assignCell = `<span class="small" style="color:var(--text-muted); font-style: italic;">No tech assigned</span>`;
+            } else if (rawStatus === "COMPLETED") {
+                assignCell = `<span class="small" style="color:var(--completed)">Completed (Unassigned)</span>`;
+            } else {
+                assignCell = `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
+            }
         }
 
         return `
