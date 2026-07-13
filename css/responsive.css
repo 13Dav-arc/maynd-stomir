@@ -49,6 +49,7 @@
     gap: 2rem;
     transition: right 0.3s ease;
     border-left: 1px solid var(--blue-mid);
+    bottom: 0;
 }
 .drawer.open {
     right: 0;
@@ -102,6 +103,9 @@
 .drawer-footer {
     padding-top: 1rem;
     border-top: 1px solid var(--blue-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 /* RESPONSIVE — show hamburger, hide desktop nav */
@@ -134,7 +138,7 @@
     header nav {
         display: none;
     }
-    header > div > button {
+    header > div > .primary {
         display: none;
     }
 

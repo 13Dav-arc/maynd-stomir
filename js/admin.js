@@ -120,10 +120,14 @@ function renderTable(jobs) {
 
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
+    const formattedId = `#${String(job.id).padStart(4, "0")}`.toLowerCase();
+    const rawId = String(job.id).toLowerCase();
+
     const filtered = allJobs.filter(job =>
+        rawId.includes(query) || formattedId.includes(query) ||
         (job.customer_name || job.full_name).toLowerCase().includes(query) ||
         (job.category || "").toLowerCase().includes(query) ||
-        (job.description || "").toLowerCase().includes(query)
+        (job.description || "").toLowerCase().includes(query) 
     );
     renderTable(filtered);
 });

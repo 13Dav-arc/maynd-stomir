@@ -69,14 +69,20 @@ function updateStatCards(technicians) {
 
 
 function getDisplayStatus(tech) {
-    const backendStatus = (tech.status || "Available").trim();
-    
-    if (backendStatus.toUpperCase() === "ASSIGNED") {
-        return { label: "Assigned", cls: "assigned" };
-    }
-    return { label: "Available", cls: "available" };
-}
+    const backendStatus = (tech.status || "awaiting_approval").trim().toLowerCase();
 
+    switch (backendStatus) {
+        case "assigned":
+            return { label: "Assigned", cls: "assigned" };
+        case "rejected":
+            return { label: "Rejected", cls: "rejected" };
+        case "awaiting_approval":
+            return { label: "Awaiting Approval", cls: "pending" }; // Uses your var(--pending) color
+        case "available":
+        default:
+            return { label: "Available", cls: "available" };
+    }
+}
 
 // GET INITIALS FROM NAME
 function getInitials(name) {
@@ -94,6 +100,7 @@ function getInitials(name) {
 function buildTechRowHTML(tech, index) {
     const status   = getDisplayStatus(tech);
     const initials = getInitials(tech.full_name);
+    const isFreshApplicant = tech.is_approved === false && (tech.status || "").trim().toUpperCase() !== "REJECTED";
 
     return `
         <tr class="tech-row" id="tech-row-${index}" onclick="toggleExpand(${index})">
@@ -137,12 +144,48 @@ function buildTechRowHTML(tech, index) {
                         <span class="track-list">Completed Jobs</span>
                         <span class="track-info">${tech.completed_jobs_count || 0}</span>
                     </div>
+                    <!-- UPDATED GATEWAY: Only show buttons for fresh, unprocessed applicants -->
+                    ${isFreshApplicant ? `
+                    <div class="tech-approval-actions">
+                        <button onclick="event.stopPropagation(); processApproval('${tech.id}', true)" class="btn-action-approve">
+                            Approve & Activate
+                        </button>
+                        <button onclick="event.stopPropagation(); processApproval('${tech.id}', false)" class="btn-action-reject">
+                            Reject
+                        </button>
+                    </div>
+                    ` : ''}
                 </div>
             </td>
         </tr>
     `;
 }
 
+async function processApproval(techId, isApproved) {
+    const actionText = isApproved ? "approve and activate" : "reject";
+    if (!confirm(`Are you sure you want to ${actionText} this technician?`)) return;
+
+    try {
+        const response = await fetch(`${TECH_BASE_URL}/admin/technicians/${techId}/review`, {
+            method: "PATCH",
+            headers: { 
+                "Content-Type": "application/json", 
+                "X-API-Key": API_KEY 
+            },
+            body: JSON.stringify({ is_approved: isApproved })
+        });
+
+        if (!response.ok) throw new Error("Failed to process approval status change.");
+
+        alert(isApproved ? "Technician approved and activated!" : "Application rejected.");
+        
+        // Re-fetch clean data arrays to dynamically update table views
+        fetchTechnicians();
+    } catch (error) {
+        console.error(error);
+        alert(`Error handling update: ${error.message}`);
+    }
+}
 
 // RENDER TABLE
 function renderTable(technicians) {

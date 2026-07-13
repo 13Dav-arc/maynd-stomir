@@ -23,7 +23,8 @@
     /* 4. FLAT BADGE INDICATORS (No Blurs, Rigid Corporate Badging) */
     --pending:      #B45309;   
     --assigned:     #15803D;   
-    --completed:    #0369A1;   
+    --completed:    #0369A1;
+    --rejected:     #DC3545;
 
     /* 5. BRAND IDENTITY INVERSION (Guarantees .primary Button Stability) */
     --shadow:       rgba(15, 23, 42, 0.04); 
@@ -63,6 +64,7 @@ header {
     padding: 20px 30px;
     z-index: 100;
     border-bottom: 1px var(--blue-light) solid;
+    top: 0;
 }
 
 /* GENERALS */
@@ -123,6 +125,7 @@ nav a:focus{
     background: var(--blue-accent) !important;
     border: none !important;
     transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    align-items: center;
 }
 .primary:hover {
     background: var(--blue-light) !important;
@@ -635,4 +638,13 @@ nav a.active {
 .copy-btn:hover {
     border-color: var(--blue-accent);
     color: var(--blue-accent);
+}
+a.primary {
+    text-decoration: none;
+    text-align: center;
+    font-weight: 600;
+}
+.emergency-contact {
+    display: flex;
+    gap: 0.2rem;
 }

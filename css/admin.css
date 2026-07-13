@@ -176,6 +176,10 @@
     color: var(--completed);
     border-color: var(--completed);
 }
+.rejected {
+    color: var(--rejected);
+    border-color: var(--rejected);
+}
 .tech-name-cell {
     display: flex;
     align-items: center;
@@ -214,4 +218,32 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+}
+.btn-action-approve {
+    background-color: var(--assigned);
+    color: var(--text-inverse);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-action-reject {
+    background-color: transparent;
+    color: var(--rejected);
+    border: 1px solid var(--rejected);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+}
+.tech-approval-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    gap: 12px;
 }
