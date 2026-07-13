@@ -103,6 +103,7 @@ function buildTechRowHTML(tech, index) {
     const initials = getInitials(tech.full_name);
     const isFreshApplicant = tech.is_approved === false && (tech.status || "").trim().toUpperCase() !== "REJECTED";
     const technicianID = tech.uuid || tech.id || tech._id || tech.tech_id;
+    const qidPhotoURL = tech.id_photo_url || tech.id_url;
 
     return `
         <tr class="tech-row" id="tech-row-${index}" onclick="toggleExpand(${index})">

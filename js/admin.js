@@ -16,6 +16,7 @@ const filterSelect = document.getElementById("filter");
 const pendingCount = document.querySelector(".dispatch-card.pending .card-num");
 const assignedCount = document.querySelector(".dispatch-card.assigned .card-num");
 const completedCount = document.querySelector(".dispatch-card.completed .card-num");
+const sortSelect = document.getElementById("sort");
 
 
 let allJobs = [];
