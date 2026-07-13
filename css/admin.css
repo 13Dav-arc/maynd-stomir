@@ -251,11 +251,14 @@
 .tech-info-cell {
     display: flex;
     flex-direction: column;
-    gap: 2px; /* Cleaner than using margin-top on the link */
+    gap: 2px;
+    align-items: center;
 }
 
 .tech-info-cell .tech-name {
     font-weight: 600;
+    display: flex;
+
 }
 
 .tech-info-cell .tech-phone {
