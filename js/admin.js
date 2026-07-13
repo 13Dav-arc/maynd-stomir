@@ -108,11 +108,11 @@ function renderTable(jobs) {
             if (rawStatus === "CANCELLED") techColor = "var(--text-muted)";
 
             assignCell = `
-                <div style="display: flex; flex-direction: column;">
-                    <span class="small" style="color:${techColor}; font-weight:600;">${technicianName}</span>
+                <div class="tech-info-cell">
+                    <span class="small tech-name" style="color: ${techColor};">${technicianName}</span>
                     ${technicianPhone ? `
-                        <a href="tel:${technicianPhone}" class="small" style="color:var(--text-muted); text-decoration:none; font-size:0.75rem; margin-top: 2px; display: inline-flex; align-items: center; gap: 4px;">
-                            <i class="ti ti-phone" style="font-size:0.8rem;"></i> ${technicianPhone}
+                        <a href="tel:${technicianPhone}" class="small tech-phone">
+                            <i class="ti ti-phone"></i> ${technicianPhone}
                         </a>` 
                     : ''}
                 </div>
