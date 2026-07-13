@@ -80,7 +80,7 @@ function getDisplayStatus(tech) {
             return { label: "Awaiting Approval", cls: "pending" }; // Uses your var(--pending) color
         case "available":
         default:
-            return { label: "Available", cls: "available" };
+            return { label: "Available", cls: "completed" };
     }
 }
 
@@ -167,13 +167,15 @@ async function processApproval(techId, isApproved) {
     if (!confirm(`Are you sure you want to ${actionText} this technician?`)) return;
 
     try {
-        const response = await fetch(`${TECH_BASE_URL}/workers/${techId}/review`, {
+        const response = await fetch(`${TECH_BASE_URL}/workers/${techId}/approve`, {
             method: "PATCH",
             headers: { 
                 "Content-Type": "application/json", 
                 "X-API-Key": API_KEY 
             },
-            body: JSON.stringify({ is_approved: isApproved })
+            body: JSON.stringify({ 
+                approval_status: isApproved ? "approved" : "rejected" 
+            })
         });
 
         if (!response.ok) throw new Error("Failed to process approval status change.");
