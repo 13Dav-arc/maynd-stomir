@@ -79,6 +79,11 @@ function renderTable(jobs) {
             })
         : "-";
 
+        const assignedTech = job.assigned_technician;
+        const hasTechnician = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
+        const technicianName = hasTechnician ? assignedTech.name : null;
+        const technicianPhone = hasTechnician ? assignedTech.phone : null;
+
         // admin.js — Replace displayStatus block inside renderTable loop
         const rawStatus = (job.status || "").toUpperCase();
         let displayStatus = "Pending";
@@ -94,9 +99,14 @@ function renderTable(jobs) {
 
         let assignCell = `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
         if (rawStatus === "COMPLETED") {
-            assignCell = `<span class="small" style="color:var(--completed)">${job.assigned_technician || "Completed"}</span>`;
-        } else if (job.assigned_technician) {
-            assignCell = `<span class="small" style="color:var(--assigned)">${job.assigned_technician}</span>`;
+            assignCell = `<span class="small" style="color:var(--completed)">${technicianName || "Completed"}</span>`;
+        } else if (hasTechnician) {
+            assignCell = `
+                <div style="display: flex; flex-direction: column;">
+                    <span class="small" style="color:var(--assigned); font-weight:600;">${technicianName}</span>
+                    ${technicianPhone ? `<a href="tel:${technicianPhone}" class="small" style="color:var(--text-muted); text-decoration:none; font-size:0.75rem;"><i class="ti ti-phone" style="font-size:0.8rem;"></i> ${technicianPhone}</a>` : ''}
+                </div>
+            `;
         }
 
         return `
