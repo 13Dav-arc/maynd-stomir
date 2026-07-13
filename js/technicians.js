@@ -253,20 +253,38 @@ sortFilter.addEventListener("change", () => {
     applyFilters();
 });
 
-// APPLY ALL FILTERS TOGETHER
+// APPLY ALL FILTERS TOGETHER (WITH VALUE MAPPING)
 function applyFilters() {
     const query       = searchInput.value.toLowerCase();
     const statusVal   = statusFilter.value.toLowerCase();
-    const tradeVal    = tradeFilter.value.toLowerCase();
+    const tradeVal    = tradeFilter.value; 
     const sortVal     = sortFilter.value;
+
+    
+    const tradeMap = {
+        "appliance_repair": "appliance repair",
+        "masonry": "masonry & tiling",
+        "glass_windows": "glass & windows",
+        "locks_security": "locks & security",
+        "cleaning": "deep cleaning" 
+    };
+
+    
+    const targetTrade = tradeMap[tradeVal] || tradeVal.toLowerCase();
 
     const filtered = allTechnicians.filter(tech => {
         const status = getDisplayStatus(tech).label.toLowerCase();
         
-        // Convert array to searchable comma string safely
-        const tradeString = Array.isArray(tech.trade_skill) 
-            ? tech.trade_skill.join(", ").toLowerCase() 
-            : (tech.trade_skill || "").toLowerCase();
+        
+        let techSkills = [];
+        if (Array.isArray(tech.trade_skill)) {
+            techSkills = tech.trade_skill.map(t => String(t).trim().toLowerCase());
+        } else if (tech.trade_skill) {
+            techSkills = [String(tech.trade_skill).trim().toLowerCase()];
+        }
+
+        
+        const tradeString = techSkills.join(", ");
 
         const matchesSearch = !query ||
             (tech.full_name || "").toLowerCase().includes(query) ||
@@ -275,13 +293,13 @@ function applyFilters() {
 
         const matchesStatus = !statusVal || status === statusVal;
         
-        // Check if the selected trade dropdown value exists inside the technician's skills array
-        const matchesTrade  = !tradeVal || (Array.isArray(tech.trade_skill) 
-            ? tech.trade_skill.map(t => String(t).toLowerCase()).includes(tradeVal)
-            : tradeString === tradeVal);
+        
+        const matchesTrade = !tradeVal || techSkills.includes(targetTrade);
 
         return matchesSearch && matchesStatus && matchesTrade;
     });
+
+    // Sort the filtered array
     if (sortVal) {
         filtered.sort((a, b) => {
             if (sortVal === "name-asc") {
@@ -294,15 +312,14 @@ function applyFilters() {
                 return (b.completed_jobs_count || 0) - (a.completed_jobs_count || 0);
             }
             if (sortVal === "date-desc") {
-                // Safely handles created_at, joined_at, or standard timestamp strings
                 const dateA = new Date(a.created_at || a.joined_at || 0);
                 const dateB = new Date(b.created_at || b.joined_at || 0);
-                return dateB - dateA; // Newest first
+                return dateB - dateA;
             }
             if (sortVal === "date-asc") {
                 const dateA = new Date(a.created_at || a.joined_at || 0);
                 const dateB = new Date(b.created_at || b.joined_at || 0);
-                return dateA - dateB; // Oldest first
+                return dateA - dateB;
             }
             return 0;
         });
