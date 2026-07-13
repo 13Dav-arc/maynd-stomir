@@ -264,6 +264,7 @@ function applyFilters() {
     const tradeMap = {
         "appliance_repair": "appliance repair",
         "masonry": "masonry & tiling",
+        "pest_control" : "pest control",
         "glass_windows": "glass & windows",
         "locks_security": "locks & security",
         "cleaning": "deep cleaning" 
