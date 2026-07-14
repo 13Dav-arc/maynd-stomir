@@ -41,6 +41,7 @@
     right: -280px;
     width: 280px;
     height: 100vh;
+    height: 100dvh;
     background: var(--blue-dark);
     z-index: 400;
     display: flex;
@@ -49,6 +50,7 @@
     gap: 2rem;
     transition: right 0.3s ease;
     border-left: 1px solid var(--blue-mid);
+    overflow-y: auto;
     /* bottom: 0; */
 }
 .drawer.open {
