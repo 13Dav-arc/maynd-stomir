@@ -84,9 +84,9 @@ function buildJobCardHTML(job) {
     const technicianPhone = hasTechnician ? assignedTech.phone : null;
 
     const technician = hasTechnician ? ` <div class="tech-info-cell">
-                    <span class="small tech-name" style="color: ${statusClass};">${technicianName}</span>
+                    <span class="tech-name" style="color: ${statusClass};">${technicianName}</span>
                     ${technicianPhone ? `
-                        <a href="tel:${technicianPhone}" class="small tech-phone">
+                        <a href="tel:${technicianPhone}" class="tech-phone">
                             <i class="ti ti-phone"></i> ${technicianPhone}
                         </a>` 
                     : ''}
