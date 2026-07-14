@@ -658,14 +658,11 @@ a.primary {
 .tech-info-cell .tech-name {
     font-weight: 700;
     display: flex;
-    font-size: 0.85rem;
-
 }
 
 .tech-info-cell .tech-phone {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
     gap: 4px;
