@@ -77,7 +77,22 @@ function buildJobCardHTML(job) {
     }
 
     const statusClass = displayStatus.toLowerCase();
-    const technician = job.assigned_technician || "Not Assigned Yet";
+    
+    const assignedTech = job.assigned_technician;
+    const hasTechnician = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
+    const technicianName = hasTechnician ? assignedTech.name : null;
+    const technicianPhone = hasTechnician ? assignedTech.phone : null;
+
+    const technician = hasTechnician ? ` <div class="tech-info-cell">
+                    <span class="small tech-name" style="color: ${statusClass};">${technicianName}</span>
+                    ${technicianPhone ? `
+                        <a href="tel:${technicianPhone}" class="small tech-phone">
+                            <i class="ti ti-phone"></i> ${technicianPhone}
+                        </a>` 
+                    : ''}
+                </div>
+            ` : "";
+
     const jobId = `#JOB-${String(job.uuid || job.id).padStart(4, "0")}`;
 
     const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;

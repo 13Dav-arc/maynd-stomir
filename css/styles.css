@@ -648,3 +648,28 @@ a.primary {
     display: flex;
     gap: 0.2rem;
 }
+.tech-info-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+}
+
+.tech-info-cell .tech-name {
+    font-weight: 600;
+    display: flex;
+
+}
+
+.tech-info-cell .tech-phone {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tech-info-cell .tech-phone i {
+    font-size: 0.8rem;
+}
