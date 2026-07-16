@@ -1,6 +1,10 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/partners", "destination": "/freelance.html" }
+    { "source": "/partners", "destination": "/freelance.html" },
+    {
+      "source": "/partners/",
+      "destination": "/freelance.html"
+    }
   ]
 }
