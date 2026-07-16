@@ -270,7 +270,7 @@
 
         // If already logged in, go straight to dashboard
         if (sessionStorage.getItem("maynd_admin_auth") === "true") {
-            window.location.href = "admin.html";
+            window.location.href = "/admin";
         }
 
         const loginBtn = document.getElementById("login-btn");
@@ -298,7 +298,7 @@
 
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 sessionStorage.setItem("maynd_admin_auth", "true");
-                window.location.href = "admin.html";
+                window.location.href = "/admin";
             } else {
                 errorMsg.textContent = "Incorrect username or password. Please try again.";
                 errorMsg.classList.add("show");

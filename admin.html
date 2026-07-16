@@ -6,7 +6,7 @@
     <title>Admin page</title>
     <script>
         if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
-            window.location.href = "login.html";
+            window.location.href = "/login";
         }
     </script>
     <link rel="stylesheet" href="css/styles.css">
@@ -29,10 +29,10 @@
             <header>
                 <div class="logo">Maynd<span class="logo">Stomir</span></div>
                 <nav>
-                    <a href="admin.html" class="active">All Jobs</a>
-                    <a href="technicians.html">Technicians</a>
+                    <a href="/admin" class="active">All Jobs</a>
+                    <a href="/technicians">Technicians</a>
                 </nav>
-                <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='login.html'" class="primary">
+                <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='/login'" class="primary">
                     Logout
                 </button>
                 <button class="hamburger" id="hamburger" aria-label="Open menu">
@@ -48,8 +48,8 @@
                     </button>
                 </div>
                 <nav class="drawer-nav">
-                    <a href="admin.html"><i class="ti ti-plus"></i> All Jobs</a>
-                    <a href="technicians.html"><i class="ti ti-tool"></i> Technicians</a>
+                    <a href="/admin"><i class="ti ti-plus"></i> All Jobs</a>
+                    <a href="/technicians"><i class="ti ti-tool"></i> Technicians</a>
                 </nav>
             </div>
         </div>
@@ -111,7 +111,7 @@
             </div>
         </div>
          <nav class="bottom-nav">
-            <a href="admin.html" class="active">
+            <a href="/admin" class="active">
                 <i class="ti ti-plus"></i>
                 <span>All Jobs</span>
             </a>
