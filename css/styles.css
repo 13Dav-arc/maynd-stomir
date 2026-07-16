@@ -582,6 +582,12 @@ nav a.active {
     margin: 0.5rem 0 1.5rem;
     line-height: 1.4;
 }
+.confirm-actions-modal {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+}
 .trade-checkbox-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

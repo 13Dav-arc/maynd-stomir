@@ -122,6 +122,24 @@
         </div>
     </div>
 
+    <div class="success-modal" id="confirm-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text">Cancel Request??</h3>
+            <p id="success-modal-subtext" class="success-modal-subtext">
+                Are you sure you want to cancel this request? This action cannot be undone
+            </p>
+            <div class="confirm-actions-modal">
+                <button class="primary" onclick="closeConfirmModal()">
+                    No
+                </button>
+                <button class="primary assigned" onclick="proceedWithCancellation()">
+                    Yes
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
         <div class="pwa-content">
             <i class="ti ti-download"></i>

@@ -215,25 +215,43 @@ async function markAsCompleted(jobId) {
 }
 
 async function cancelJob(jobId) {
-    if (!confirm("Are you sure you want to cancel this request?")) return;
-
-    try {
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}/cancel`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-Key": API_KEY
-            }
-        });
-        if (response.ok) {
-            showSuccessModal("Thank you! Your job has been cancelled.");
-        } else {
-            showFormError("Could not cancel job. Please try again.");
+    function requestCancellation() {
+        const confirmModal = document.getElementById("confirm-modal");
+        if (confirmModal) {
+            confirmModal.style.display = "flex"; 
         }
-    } catch (error) {
-        console.error(error);
-        showFormError("Failed to cancel. Please try again.");
     }
+
+    
+    function closeConfirmModal() {
+        const confirmModal = document.getElementById("confirm-modal");
+        if (confirmModal) {
+            confirmModal.style.display = "none"; // Simply hide it
+        }
+    }
+
+    function proceedWithCancellation() {
+        closeConfirmModal();
+
+        try {
+            const response = await fetch(`${BASE_URL}/jobs/${jobId}/cancel`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-Key": API_KEY
+                }
+            });
+            if (response.ok) {
+                showSuccessModal("Thank you! Your job has been cancelled.");
+            } else {
+                showFormError("Could not cancel job. Please try again.");
+            }
+        } catch (error) {
+            console.error(error);
+            showFormError("Failed to cancel. Please try again.");
+        }
+    }
+    
 }
 
 function copyJobLink(jobId) {
