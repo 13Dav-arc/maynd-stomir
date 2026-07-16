@@ -124,7 +124,7 @@
 
     <div class="success-modal" id="confirm-modal" style="display:none;">
         <div class="success-modal-card">
-            <i class="ti ti-circle-check"></i>
+            <i class="ti ti-circle-x"></i>
             <h3 id="success-modal-text">Cancel Request??</h3>
             <p id="success-modal-subtext" class="success-modal-subtext">
                 Are you sure you want to cancel this request? This action cannot be undone
@@ -133,7 +133,7 @@
                 <button class="primary" onclick="closeConfirmModal()">
                     No
                 </button>
-                <button class="primary assigned" onclick="proceedWithCancellation()">
+                <button class="primary" style="background-color: var(--assigned);" onclick="proceedWithCancellation()">
                     Yes
                 </button>
             </div>
@@ -150,7 +150,7 @@
                 <button class="primary" onclick="closeCompleteConfirmModal()">
                     No
                 </button>
-                <button class="primary assigned" onclick="proceedWithCompletion()">
+                <button class="primary" style="background-color: var(--assigned);" onclick="proceedWithCompletion()">
                     Yes
                 </button>
             </div>

@@ -218,12 +218,14 @@ function closeCompleteConfirmModal() {
 
 async function proceedWithCompletion() {
     if (!activeJobIdForCompletion) return;
+
+    const jobIdToSend = activeJobIdForCompletion;
     
     closeCompleteConfirmModal();
 
     try {
         showLoading();
-        const response = await fetch(`${BASE_URL}/jobs/${activeJobIdForCompletion}/complete`, {
+        const response = await fetch(`${BASE_URL}/jobs/${jobIdToSend}/complete`, {
             method: "PATCH",
             headers: { 
                 "Content-Type": "application/json",
@@ -267,11 +269,13 @@ function closeConfirmModal() {
 async function proceedWithCancellation() {
     if (!activeJobIdForCancellation) return;
     
+    const jobIdToSend = activeJobIdForCancellation;
+
     closeConfirmModal();
 
     try {
         showLoading();
-        const response = await fetch(`${BASE_URL}/jobs/${activeJobIdForCancellation}/cancel`, {
+        const response = await fetch(`${BASE_URL}/jobs/${jobIdToSend}/cancel`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
