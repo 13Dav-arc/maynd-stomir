@@ -44,7 +44,7 @@
 .hero {
     background: var(--blue-dark);
     min-height: 100vh;
-    padding-top: 70px;
+    padding-top: 100px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -248,7 +248,7 @@
 
 /* SERVICES */
 .services-section {
-    padding: 4rem 3rem;
+    padding: 6rem 3rem;
     background: var(--cream);
 }
 .section-header {
@@ -463,7 +463,7 @@
 /* ABOUT */
 .about-section {
     background: var(--white);
-    padding: 4rem 3rem;
+    padding:6rem 3rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
@@ -617,7 +617,7 @@
 /* CAREER */
 .career-section {
     background: var(--off-white);
-    padding: 4rem 3rem;
+    padding: 6rem 3rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;

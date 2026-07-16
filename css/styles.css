@@ -768,3 +768,41 @@ a.primary {
   cursor: pointer;
   padding: 0 0.3rem;
 }
+
+
+.corporate-partner-note {
+    border: 1px solid var(--blue-light); 
+    background: var(--blue-mid);         
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    margin-top: 2rem;
+}
+
+.corporate-title {
+    font-size: 0.85rem;
+    color: var(--text-inverse);          
+    font-weight: bold;
+    font-family: 'Syne', sans-serif;     
+}
+
+.corporate-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);            
+    margin-top: 0.25rem;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.corporate-email {
+    color: var(--gold);                  
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.corporate-email:hover {
+    color: var(--gold-light);           
+}
+.corporate-title i {
+    font-size: 1.1rem;
+    color: var(--gold);                  
+}
