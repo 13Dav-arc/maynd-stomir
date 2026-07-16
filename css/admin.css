@@ -273,3 +273,21 @@
 .tech-info-cell .tech-phone i {
     font-size: 0.8rem;
 }
+
+
+.skeleton-line {
+  height: 18px;
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%); /* Using charcoal variations[cite: 4] */
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: loading-pulse 1.5s infinite;
+}
+
+@keyframes loading-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

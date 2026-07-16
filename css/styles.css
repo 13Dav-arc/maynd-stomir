@@ -1,3 +1,25 @@
+@view-transition {
+  navigation: auto;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0F172A; 
+}
+
+/* Scrollbar handle */
+::-webkit-scrollbar-thumb {
+  background: #5C0F1A; 
+  border-radius: 4px;
+}
+
+/* Hover style for the scrollbar handle */
+::-webkit-scrollbar-thumb:hover {
+  background: #8B1A2B; 
+}
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
 :root {
@@ -670,4 +692,79 @@ a.primary {
 
 .tech-info-cell .tech-phone i {
     font-size: 0.8rem;
+}
+
+/* --- CUSTOM PWA BANNER (Using CSS Variables) --- */
+.pwa-banner {
+  position: fixed;
+  bottom: 80px; /* Positions it cleanly right above your bottom navigation bar */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background: var(--blue-mid); /* Swapped to slate canvas */
+  border: 1px solid var(--blue-light); /* Swapped to red brand accent */
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px var(--shadow); /* Clean corporate flat shadow */
+  z-index: 9999;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-inverse); /* High contrast text */
+}
+
+.pwa-content {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.pwa-content i {
+  font-size: 1.5rem;
+  color: var(--gold); /* Kept legacy gold fallback for alert/action items */
+}
+
+.pwa-text strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-inverse);
+}
+
+.pwa-text p {
+  font-size: 0.72rem;
+  color: var(--text-muted); /* Safe, low-contrast supporting text */
+}
+
+.pwa-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pwa-btn-primary {
+  background: var(--blue-accent); /* Flat brand interactive primary button */
+  color: var(--text-inverse);
+  border: none;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  transition: background 0.2s ease;
+}
+
+.pwa-btn-primary:hover {
+  background: var(--blue-light); /* Hover feedback state */
+}
+
+.pwa-btn-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
 }

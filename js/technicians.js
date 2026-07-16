@@ -329,13 +329,35 @@ function applyFilters() {
     renderTable(filtered);
 }
 
-// LOADING STATE
+
 function showTableLoading() {
     techTbody.innerHTML = `
-        <tr>
-            <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted)">
-                Loading technicians...
-            </td>
+        <tr class="skeleton-row">
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+        </tr>
+        <tr class="skeleton-row">
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+        </tr>
+        <tr class="skeleton-row">
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
+            <td><div class="skeleton-line"></div></td>
         </tr>`;
 }
 
