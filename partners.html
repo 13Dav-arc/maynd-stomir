@@ -206,12 +206,26 @@
         </nav>
     </div>
 
+    <!-- Success Modal (Initially Hidden) -->
+    <div class="success-modal" id="success-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text">Application Submitted!</h3>
+            <p id="success-modal-subtext" style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0 1.5rem; line-height: 1.4;">
+                Dear <span id="applicant-name" style="color: var(--text-inverse); font-weight: bold;">[Name]</span>, Application submitted successfully! We would contact you via Email.
+            </p>
+            <button class="primary" onclick="resetFormAndCloseModal()">
+                OK
+            </button>
+        </div>
+    </div>
+
     <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
         <div class="pwa-content">
             <i class="ti ti-download"></i>
             <div class="pwa-text">
-            <strong>Install Maynd Stomir</strong>
-            <p>Receive job updates & track statuses instantly</p>
+                <strong>Install Maynd Stomir</strong>
+                <p>Receive job updates & track statuses instantly</p>
             </div>
         </div>
         <div class="pwa-actions">

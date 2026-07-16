@@ -94,6 +94,10 @@
                     </div>
                 </div>
                 <div class="track-results-container" id="track-results-container"></div>
+                <div class="form-error" id="form-error" style="display:none;">
+                            <i class="ti ti-alert-circle"></i>
+                            <span id="form-error-text"></span>
+                </div>
             </div>
         </div>
          <nav class="bottom-nav">
@@ -107,6 +111,17 @@
             </a>
         </nav>
     </div>
+
+    <div class="success-modal" id="success-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text"></h3>
+            <button class="primary" onclick="window.location.reload()">
+                OK
+            </button>
+        </div>
+    </div>
+
     <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
         <div class="pwa-content">
             <i class="ti ti-download"></i>

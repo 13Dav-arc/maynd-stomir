@@ -62,6 +62,8 @@ searchForm.addEventListener("submit", async (e) => {
     }
 });
 
+
+
 function buildJobCardHTML(job) {
     const rawStatus = (job.status || "").toUpperCase();
     let displayStatus = "Pending";
@@ -170,6 +172,28 @@ function buildJobCardHTML(job) {
     `;
 }
 
+function showFormError(message) {
+    const errorDiv = document.getElementById("form-error");
+    const errorText = document.getElementById("form-error-text");
+    errorText.textContent = message;
+    errorDiv.style.display = "flex";
+    errorDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function showSuccessModal(message) {
+    
+    const successModal = document.getElementById("success-modal");
+    const textMessage= document.getElementById("success-modal-text");
+
+    if (successModal) {
+        if (textMessage) {
+            textMessage.textContent = message;
+        }
+
+        successModal.style.display = "flex";
+    }
+}
+
 async function markAsCompleted(jobId) {
     if (!confirm("Confirm that the technician has completed the work?")) return;
 
@@ -180,14 +204,13 @@ async function markAsCompleted(jobId) {
         });
 
         if (response.ok) {
-            alert("Thank you! Your job has been marked as completed.");
-            window.location.reload();
+            showSuccessModal("Thank you! Your job has been marked as completed.");
         } else {
-            alert("Could not update job status. Please try again.");
+            showFormError("Could not update job status. Please try again.");
         }
     } catch (error) {
         console.error(error);
-        alert("Something went wrong. Check your connection and try again.");
+        showFormError("Something went wrong. Check your connection and try again.");
     }
 }
 
@@ -202,12 +225,14 @@ async function cancelJob(jobId) {
                 "X-API-Key": API_KEY
             }
         });
-        if (!response.ok) throw new Error("Cancel failed");
-        alert("Your request has been cancelled.");
-        window.location.reload();
+        if (response.ok) {
+            showSuccessModal("Thank you! Your job has been cancelled.");
+        } else {
+            showFormError("Could not cancel job. Please try again.");
+        }
     } catch (error) {
         console.error(error);
-        alert("Failed to cancel. Please try again.");
+        showFormError("Failed to cancel. Please try again.");
     }
 }
 

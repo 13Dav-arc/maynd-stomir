@@ -101,6 +101,33 @@ function hideFormError() {
     document.getElementById("form-error").style.display = "none";
 }
 
+function showSuccessModal() {
+    
+    const successModal = document.getElementById("success-modal");
+    const namePlaceholder = document.getElementById("applicant-name");
+    const fullNameInput = document.getElementById("technician-name");
+
+    if (successModal) {
+        if (namePlaceholder && fullNameInput) {
+            namePlaceholder.textContent = fullNameInput.value.trim();
+        }
+        
+        successModal.style.display = "flex";
+    }
+}
+
+function resetFormAndCloseModal() {
+    const form = document.querySelector("form");
+    if (form) {
+        form.reset(); 
+    }
+
+    const successModal = document.getElementById("success-modal");
+    if (successModal) {
+        successModal.style.display = "none";
+    }
+}
+
 function getCoordinates() {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
@@ -212,7 +239,7 @@ submitBtn.addEventListener("click", async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            alert("Application submitted successfully! We would contact you via Email.");
+            showSuccessModal();
         } else {
             console.error("422 detail:", JSON.stringify(data));
             
