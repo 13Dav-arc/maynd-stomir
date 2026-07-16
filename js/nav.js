@@ -1,4 +1,4 @@
-    const currentPage = window.location.pathname.split("/").pop();
+    // const currentPage = window.location.pathname.split("/").pop();
     const hamburger = document.getElementById("hamburger");
     const drawer = document.getElementById("drawer");
     const overlay = document.getElementById("drawer-overlay");
