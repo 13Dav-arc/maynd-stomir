@@ -6,7 +6,7 @@ const CACHE_NAME = "maynd-stomir-v67";
 const ASSETS = [
     "/request.html",
     "/status.html",
-    "/freelance.html",
+    "/partners.html",
     "/privacy.html",
     "/css/styles.css",
     "/css/admin.css",
