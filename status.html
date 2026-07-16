@@ -139,6 +139,23 @@
             </div>
         </div>
     </div>
+    <div class="success-modal" id="complete-confirm-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text">Complete work?</h3>
+            <p id="success-modal-subtext" class="success-modal-subtext">
+                Are you sure you want to confirm that the technician has successfully completed the work?
+            </p>
+            <div class="confirm-actions-modal">
+                <button class="primary" onclick="closeCompleteConfirmModal()">
+                    No
+                </button>
+                <button class="primary assigned" onclick="proceedWithCompletion()">
+                    Yes
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
         <div class="pwa-content">

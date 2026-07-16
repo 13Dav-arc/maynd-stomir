@@ -194,13 +194,41 @@ function showSuccessModal(message) {
     }
 }
 
-async function markAsCompleted(jobId) {
-    if (!confirm("Confirm that the technician has completed the work?")) return;
+//========================= COMPLETE JOB LOGIC =======================================
+let activeJobIdForCompletion = null;
+
+
+function markAsCompleted(jobId) {
+    activeJobIdForCompletion = jobId; 
+    const completeConfirmModal = document.getElementById("complete-confirm-modal");
+    if (completeConfirmModal) {
+        completeConfirmModal.style.display = "flex"; 
+    }
+}
+
+// 2. Triggered if they click "Cancel" on the complete confirmation modal
+function closeCompleteConfirmModal() {
+    const completeConfirmModal = document.getElementById("complete-confirm-modal");
+    if (completeConfirmModal) {
+        completeConfirmModal.style.display = "none";
+    }
+    activeJobIdForCompletion = null; 
+}
+
+
+async function proceedWithCompletion() {
+    if (!activeJobIdForCompletion) return;
+    
+    closeCompleteConfirmModal();
 
     try {
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}/complete`, {
+        showLoading();
+        const response = await fetch(`${BASE_URL}/jobs/${activeJobIdForCompletion}/complete`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json","X-API-Key": API_KEY }
+            headers: { 
+                "Content-Type": "application/json",
+                "X-API-Key": API_KEY 
+            }
         });
 
         if (response.ok) {
@@ -214,44 +242,51 @@ async function markAsCompleted(jobId) {
     }
 }
 
+//============= CANCEL JOB LOGIC =============================================
+let activeJobIdForCancellation = null;
+
+
 function cancelJob(jobId) {
-    function requestCancellation() {
-        const confirmModal = document.getElementById("confirm-modal");
-        if (confirmModal) {
-            confirmModal.style.display = "flex"; 
-        }
+    activeJobIdForCancellation = jobId; // Store the ID temporarily
+    const confirmModal = document.getElementById("confirm-modal");
+    if (confirmModal) {
+        confirmModal.style.display = "flex"; 
     }
+}
 
+
+function closeConfirmModal() {
+    const confirmModal = document.getElementById("confirm-modal");
+    if (confirmModal) {
+        confirmModal.style.display = "none";
+    }
+    activeJobIdForCancellation = null; // Clear the stored ID
+}
+
+
+async function proceedWithCancellation() {
+    if (!activeJobIdForCancellation) return;
     
-    function closeConfirmModal() {
-        const confirmModal = document.getElementById("confirm-modal");
-        if (confirmModal) {
-            confirmModal.style.display = "none"; // Simply hide it
-        }
-    }
+    closeConfirmModal();
 
-     async function proceedWithCancellation() {
-        closeConfirmModal();
-
-        try {
-            const response = await fetch(`${BASE_URL}/jobs/${jobId}/cancel`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-Key": API_KEY
-                }
-            });
-            if (response.ok) {
-                showSuccessModal("Thank you! Your job has been cancelled.");
-            } else {
-                showFormError("Could not cancel job. Please try again.");
+    try {
+        showLoading();
+        const response = await fetch(`${BASE_URL}/jobs/${activeJobIdForCancellation}/cancel`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-Key": API_KEY
             }
-        } catch (error) {
-            console.error(error);
-            showFormError("Failed to cancel. Please try again.");
+        });
+        if (response.ok) {
+            showSuccessModal("Thank you! Your job has been cancelled.");
+        } else {
+            showFormError("Could not cancel job. Please try again.");
         }
+    } catch (error) {
+        console.error(error);
+        showFormError("Failed to cancel. Please try again.");
     }
-    
 }
 
 function copyJobLink(jobId) {
