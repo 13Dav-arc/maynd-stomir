@@ -214,7 +214,7 @@ async function markAsCompleted(jobId) {
     }
 }
 
-async function cancelJob(jobId) {
+function cancelJob(jobId) {
     function requestCancellation() {
         const confirmModal = document.getElementById("confirm-modal");
         if (confirmModal) {
@@ -230,7 +230,7 @@ async function cancelJob(jobId) {
         }
     }
 
-    function proceedWithCancellation() {
+     async function proceedWithCancellation() {
         closeConfirmModal();
 
         try {
