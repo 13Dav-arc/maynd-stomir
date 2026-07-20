@@ -7,7 +7,7 @@
     top: 0;
     z-index: 200;
     height: 70px;
-    background: var(--maroon-deep);
+    background: var(--blue-dark);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -609,10 +609,10 @@
     color: var(--white);
 }
 .landing-footer .logo span {
-    color: var(--gold);
+    color: var(--maroon-deep);
 }
 .landing-nav .logo span {
-    color: var(--gold);
+    color: var(--maroon-deep);
 }
 /* CAREER */
 .career-section {
