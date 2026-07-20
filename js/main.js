@@ -72,7 +72,7 @@ function showSuccessModal(message, jobId) {
         const trackBtn = modal.querySelector("button");
         if (trackBtn) {
             trackBtn.onclick = () => {
-                window.location.href = `status.html?id=${jobId}`;
+                window.location.href = `/status?id=${jobId}`;
             };
         }
     }
@@ -188,7 +188,7 @@ submitBtn.addEventListener("click", async (e) => {
 
         if (response.ok && result.success === true) {
             // Show client notice as inline success instead of redirecting
-            const jobId = result.data?.[0]?.uuid || result.data?.[0]?.id;
+            const jobId = result.data?.[0]?.tracking_token || result.data?.[0]?.uuid || result.data?.[0]?.id;
             const successNotice = result.popup_data?.client_notice || "Your request has been received and a technician has been assigned. You will be notified shortly!";
             showSuccessModal(successNotice, jobId);
         } else {

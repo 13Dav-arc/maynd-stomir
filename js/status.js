@@ -10,7 +10,15 @@ const resultsContainer = document.getElementById("track-results-container");
 window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
-    if (jobId) fetchJobById(jobId);
+
+    if (jobId) {
+        if (/^\d+$/.test(jobId)) {
+            showError("Invalid or outdated tracking link. Please search using your phone number below or use your secure tracking link.");
+            return;
+        }
+
+        fetchJobById(jobId);
+    }
 });
 
 async function fetchJobById(jobId) {
@@ -53,6 +61,13 @@ searchForm.addEventListener("submit", async (e) => {
         if (jobs.length === 0) {
             showError("No jobs found for that phone number.");
             return;
+        }
+
+        const firstJob = jobs[0];
+        const secureToken = firstJob.tracking_token || firstJob.uuid;
+        if (secureToken) {
+            const cleanUrl = `${window.location.pathname}?id=${secureToken}`;
+            window.history.replaceState(null, "", cleanUrl);
         }
 
         renderJobCards(jobs);
