@@ -84,6 +84,7 @@ function buildJobCardHTML(job) {
     const hasTechnician = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
     const technicianName = hasTechnician ? assignedTech.name : null;
     const technicianPhone = hasTechnician ? assignedTech.phone : null;
+    const tokenOrId = job.tracking_token || job.uuid || job.id;
 
     const technician = hasTechnician ? ` <div class="tech-info-cell">
                     <span class="tech-name" style="color: ${statusClass};">${technicianName}</span>
@@ -95,7 +96,9 @@ function buildJobCardHTML(job) {
                 </div>
             ` : "";
 
-    const jobId = `#JOB-${String(job.uuid || job.id).padStart(4, "0")}`;
+
+    const displayId = job.id ? String(job.id).padStart(4, "0") : (tokenOrId ? String(tokenOrId).slice(0, 8) : "0000");
+    const jobId = `#JOB-${displayId}`;
 
     const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
     const scheduled = (dateObj && !isNaN(dateObj))
@@ -108,7 +111,7 @@ function buildJobCardHTML(job) {
 
     const completionBtn = displayStatus === "Assigned" 
     ? `
-            <button class="complete-btn" onclick="markAsCompleted('${job.id || job.uuid}')">
+            <button class="complete-btn" onclick="markAsCompleted('${tokenOrId}')">
                 <i class="ti ti-circle-check"></i> Mark as Completed
             </button>`
     : "";
@@ -119,7 +122,7 @@ function buildJobCardHTML(job) {
 
     const modificationMarkup = isEditable ? `
         
-            <button class="cancel-btn" onclick="cancelJob('${job.id || job.uuid}')">
+            <button class="cancel-btn" onclick="cancelJob('${tokenOrId}')">
                 <i class="ti ti-trash"></i> Cancel Request
             </button>
         
@@ -158,7 +161,7 @@ function buildJobCardHTML(job) {
                     <div class="track-info" style="color:${job.assigned_technician ? 'var(--assigned)' : 'var(--text-muted)'}">${technician}</div>
                 </div>
                 <div class="track-results-footer">
-                    <button class="copy-btn" id="copy-link-btn-${job.uuid || job.id}" onclick="copyJobLink('${job.uuid || job.id}')">
+                    <button class="copy-btn" id="copy-link-btn-${tokenOrId}" onclick="copyJobLink('${tokenOrId}')">
                         <i class="ti ti-copy"></i> Copy link
                     </button>
                 </div>
@@ -294,7 +297,7 @@ async function proceedWithCancellation() {
 }
 
 function copyJobLink(jobId) {
-    const url = `${window.location.origin}/status.html?id=${jobId}`;
+    const url = `${window.location.origin}${window.location.pathname}?id=${jobId}`;
     
     navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById(`copy-link-btn-${jobId}`);
