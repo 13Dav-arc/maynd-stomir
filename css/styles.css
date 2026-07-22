@@ -820,4 +820,80 @@ a.primary {
 .corporate-title i {
     font-size: 1.1rem;
     color: var(--gold);                  
+}.callout-notice {
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--blue-accent);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+.callout-notice-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--blue-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.callout-notice-header i {
+    font-size: 1rem;
+}
+.callout-notice-body p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 0.6rem;
+}
+.callout-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.callout-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+.callout-list li i {
+    color: var(--assigned);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+.callout-agree {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.callout-agree input[type="checkbox"] {
+    accent-color: var(--blue-accent);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    cursor: pointer;
+}
+.callout-agree .terms-link {
+    color: var(--blue-accent);
+    text-decoration: underline;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+}
+
+.callout-agree .terms-link:hover {
+    opacity: 0.8;
 }

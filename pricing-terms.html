@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing & Service Terms — MAYND STOMIR</title>
+    <!-- Tabler Icons & Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icons/favicon.png">
+    <style>
+        :root {
+            /* 1. SOLID BASE CANVASES */
+            --blue-dark:    #0F172A;   
+            --blue-mid:     #1E293B;   
+            --blue-soft:    #F8FAFC;   
+            --white:        #FFFFFF;   
+            --off-white:    #F8FAFC;   
+            --border:       #E2E8F0;   
+
+            /* 2. THE SCALPEL BRAND BALANCERS */
+            --blue-accent:  #5C0F1A;   
+            --blue-light:   #8B1A2B;   
+            --blue-accent-bg: #5C0F1A; 
+
+            /* 3. TYPOGRAPHY TEXT CONTRAST CONTROL */
+            --text-primary: #0F172A;   
+            --text-muted:   #64748B;   
+            --text-inverse: #FFFFFF;   
+
+            /* 4. FLAT BADGE INDICATORS */
+            --pending:      #B45309;   
+            --assigned:     #15803D;   
+            --completed:    #0369A1;
+            --rejected:     #DC3545;
+
+            /* 5. BRAND IDENTITY INVERSION */
+            --shadow:       rgba(15, 23, 42, 0.04); 
+            --gold:         #C9A84C;   
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--off-white);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        h1, h2, h3, .logo, button {
+            font-family: 'Syne', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            font-weight: 700;
+            color: var(--blue-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+        }
+
+        .terms-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .term-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--blue-accent);
+            border-radius: 4px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .term-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .term-card-header i {
+            font-size: 1.3rem;
+            color: var(--blue-accent);
+            background: rgba(92, 15, 26, 0.08);
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .term-card-header h2 {
+            font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .term-card p {
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            color: var(--text-muted);
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(92, 15, 26, 0.1);
+            color: var(--blue-accent);
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(0.65rem, 1vw, 0.75rem);
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2px;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .highlight-box {
+            background: var(--blue-dark);
+            border: 1px solid var(--blue-light);
+            padding: 1.5rem;
+            border-radius: 4px;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            color: var(--text-inverse);
+        }
+
+        .highlight-box i {
+            color: var(--gold);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .highlight-box h3 {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 700;
+            color: var(--text-inverse);
+            margin-bottom: 0.3rem;
+        }
+
+        .highlight-box p {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: var(--border);
+        }
+
+        .footer-action {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--blue-accent);
+            color: var(--text-inverse);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: var(--blue-light);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header class="header">
+            <div class="brand-badge">
+                <i class="ti ti-shield-check"></i> Maynd Stomir Agency Terms
+            </div>
+            <h1>Pricing & Service Terms</h1>
+            <p class="subtitle">Complete transparency on our dispatch fees, quotes, and payment policy.</p>
+        </header>
+
+        <main class="terms-section">
+
+            <div class="term-card">
+                <div class="term-card-header">
+                    <i class="ti ti-receipt"></i>
+                    <h2>1. Standard Call-Out & Diagnostic Fee</h2>
+                </div>
+                <p>Every requested dispatch incurs a mandatory baseline fee of <strong>QAR 150</strong>. This non-refundable fee guarantees partner dispatch, covers operational travel expenses, and includes up to 60 minutes of on-site inspection or basic labor.</p>
+                <span class="badge">Mandatory Baseline</span>
+            </div>
+
+            <div class="term-card">
+                <div class="term-card-header">
+                    <i class="ti ti-calculator"></i>
+                    <h2>2. Transparent On-Site Quotes</h2>
+                </div>
+                <p>If repairs require specialized hardware parts or extended labor hours, our technician will assess the scope and submit an official quote directly to Maynd Stomir operations. You will receive an official digital invoice prior to any work execution.</p>
+            </div>
+
+            <div class="term-card">
+                <div class="term-card-header">
+                    <i class="ti ti-truck-delivery"></i>
+                    <h2>3. Material Sourcing Fee</h2>
+                </div>
+                <p>When technicians are required to leave the site to acquire specific replacement parts from suppliers, a flat <strong>QAR 50 Material Sourcing Fee</strong> is applied to cover logistics, fuel, and handling time.</p>
+            </div>
+
+            <div class="highlight-box">
+                <i class="ti ti-lock"></i>
+                <div>
+                    <h3>100% Cashless Escrow Security</h3>
+                    <p>To protect both client quality and platform guarantees, <strong>technicians are strictly prohibited from collecting cash or negotiating prices on-site</strong>. All transactions are settled digitally via Maynd Stomir secure payment links.</p>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="footer-action">
+            <a href="javascript:window.close();" class="back-btn">
+                <i class="ti ti-arrow-left"></i> Return to Booking Form
+            </a>
+        </footer>
+
+    </div>
+
+</body>
+</html>

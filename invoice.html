@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #MS-1092 — MAYND STOMIR</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 1. SOLID BASE CANVASES */
+            --blue-dark:    #0F172A;   
+            --blue-mid:     #1E293B;   
+            --blue-soft:    #F8FAFC;   
+            --white:        #FFFFFF;   
+            --off-white:    #F8FAFC;   
+            --border:       #E2E8F0;   
+
+            /* 2. THE SCALPEL BRAND BALANCERS */
+            --blue-accent:  #5C0F1A;   
+            --blue-light:   #8B1A2B;   
+
+            /* 3. TYPOGRAPHY TEXT CONTRAST CONTROL */
+            --text-primary: #0F172A;   
+            --text-muted:   #64748B;   
+            --text-inverse: #FFFFFF;   
+
+            /* 4. FLAT BADGE INDICATORS */
+            --pending:      #B45309;   
+            --assigned:     #15803D;   
+            --completed:    #0369A1;
+
+            --shadow:       rgba(15, 23, 42, 0.04); 
+            --gold:         #C9A84C;   
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--off-white);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            padding: 2rem 1rem;
+        }
+
+        h1, h2, h3, .logo, button, .invoice-number, .total-label {
+            font-family: 'Syne', sans-serif;
+        }
+
+        .invoice-card {
+            max-width: 650px;
+            margin: 0 auto;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo {
+            text-transform: uppercase;
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+            font-weight: 800;
+            color: var(--blue-dark);
+        }
+
+        .logo span {
+            color: var(--blue-accent);
+        }
+
+        .brand-subtitle {
+            font-size: clamp(0.7rem, 1.8vw, 0.78rem);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-number {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 800;
+            color: var(--blue-accent);
+        }
+
+        .invoice-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            padding: 1.2rem;
+            background: var(--off-white);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--pending);
+            background: rgba(180, 83, 9, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
+            text-transform: uppercase;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .invoice-table th {
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .invoice-table td {
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .invoice-table td.amount {
+            text-align: right;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .invoice-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .total-label {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .total-amount {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--blue-accent);
+        }
+
+        .pay-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            background: var(--blue-accent);
+            color: var(--text-inverse);
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
+            margin-top: 1.5rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pay-btn:hover {
+            background: var(--blue-light);
+        }
+
+        .escrow-notice {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .escrow-notice i {
+            color: var(--assigned);
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="invoice-card">
+        
+        <div class="invoice-header">
+            <div>
+                <div class="logo">MAYND <span>STOMIR</span></div>
+                <div class="brand-subtitle">Enterprise Maintenance Platform</div>
+            </div>
+            <div class="invoice-meta">
+                <div class="invoice-number">#MS-1092</div>
+                <div class="invoice-date">Date: July 22, 2026</div>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <div>
+                <div class="meta-label">Billed To</div>
+                <div class="meta-value">John Doe</div>
+                <div class="meta-value" style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">Zone 55, Street 240, Bldg 12</div>
+            </div>
+            <div>
+                <div class="meta-label">Category</div>
+                <div class="meta-value">Electrical Repair & Parts</div>
+                <div class="meta-label" style="margin-top: 0.5rem;">Status</div>
+                <span class="status-badge">Pending Payment</span>
+            </div>
+        </div>
+
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Call-Out & Diagnostic Fee</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Baseline dispatch & on-site inspection</div>
+                    </td>
+                    <td class="amount">150 QAR</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Replacement Parts</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Thermostat Unit</div>
+                    </td>
+                    <td class="amount">200 QAR</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Material Sourcing Fee</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Supplier procurement & logistics</div>
+                    </td>
+                    <td class="amount">50 QAR</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Extended Labor (2 Hours)</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Component replacement & safety check</div>
+                    </td>
+                    <td class="amount">50 QAR</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="invoice-total">
+            <div class="total-label">Total Due</div>
+            <div class="total-amount">450 QAR</div>
+        </div>
+
+        <a href="#" class="pay-btn">
+            <i class="ti ti-lock"></i> Pay Securely via Digital Gateway
+        </a>
+
+        <div class="escrow-notice">
+            <i class="ti ti-shield-check"></i>
+            <span>Protected by Maynd Stomir Escrow. Technicians do not collect cash on site.</span>
+        </div>
+
+    </div>
+
+</body>
+</html>

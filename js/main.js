@@ -116,6 +116,13 @@ submitBtn.addEventListener("click", async (e) => {
         return;
     }
 
+    const termsAgreed = document.getElementById("callout-agree")?.checked;
+
+    if (!termsAgreed) {
+        showFormError("Please confirm that you agree to the QAR 150 Call-Out Fee and Pricing Terms before submitting.");
+        return;
+    }
+
     const scheduledDateVal = document.getElementById("scheduled-date").value;
     const scheduledTimeVal = document.getElementById("scheduled-time").value;
 
