@@ -95,6 +95,42 @@ function getCoordinates() {
     });
 }
 
+function openProblemModal() {
+    document.getElementById('problemModalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden'; // Stop background scroll
+}
+
+function closeProblemModal() {
+    document.getElementById('problemModalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function closeProblemModalOnBackdrop(event) {
+    if (event.target.classList.contains('select-modal-overlay')) {
+        closeProblemModal();
+    }
+}
+
+function handleProblemSelect(radioElem) {
+    const selectedVal = radioElem.value;
+    const selectedLabel = radioElem.getAttribute('data-label');
+
+    const hiddenInput = document.getElementById('problem-category');
+    hiddenInput.value = selectedVal;
+
+    // 2. Update visible field text
+    const displaySpan = document.getElementById('selectedCategoryText');
+    displaySpan.innerText = selectedLabel;
+    
+    const triggerBox = document.getElementById('selectTrigger');
+    triggerBox.classList.add('selected');
+
+    // 3. Smooth auto-close after tap
+    setTimeout(() => {
+        closeProblemModal();
+    }, 150);
+}
+
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 

@@ -120,7 +120,7 @@
                                 <input type="text" name="building_number" id="building-number" placeholder="BDG e.g 20" required>
                             </div>
                         </div>
-                        <div class="form-upload">
+                        <!-- <div class="form-upload">
                             <label for="problem-category">Category</label>
                             <select name="category" id="problem-category" required>
                                 <option value="" selected disabled>Select Problem</option>
@@ -138,6 +138,106 @@
                                 <option value="locks_security">Locks & Security</option>
                                 <option value="other">Other</option>
                             </select>
+                        </div> -->
+                        <!-- CUSTOM TRIGGER FIELD -->
+                        <div class="form-upload">
+                            <label>Category</label>
+                            <div class="custom-select-trigger" id="selectTrigger" onclick="openProblemModal()">
+                                <span id="selectedCategoryText">Select Problem</span>
+                                <i class="ti ti-chevron-down"></i>
+                            </div>
+                            <!-- Hidden required input for form validation & submission -->
+                            <input type="hidden" name="category" id="problem-category" value="" required>
+                        </div>
+
+                        <!-- MOBILE BOTTOM-SHEET MODAL -->
+                        <div class="select-modal-overlay" id="problemModalOverlay" onclick="closeProblemModalOnBackdrop(event)">
+                            <div class="select-modal-card">
+                                <div class="select-modal-header">
+                                    <h3>Select Problem</h3>
+                                    <button type="button" class="close-modal-btn" onclick="closeProblemModal()">&times;</button>
+                                </div>
+                                
+                                <div class="select-options-list">
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">HVAC</span>
+                                        <input type="radio" name="modal_problem_opt" value="hvac" data-label="HVAC" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Plumbing</span>
+                                        <input type="radio" name="modal_problem_opt" value="plumbing" data-label="Plumbing" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Electrical</span>
+                                        <input type="radio" name="modal_problem_opt" value="electrical" data-label="Electrical" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Painting</span>
+                                        <input type="radio" name="modal_problem_opt" value="painting" data-label="Painting" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Carpentry</span>
+                                        <input type="radio" name="modal_problem_opt" value="carpentry" data-label="Carpentry" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Flooring</span>
+                                        <input type="radio" name="modal_problem_opt" value="flooring" data-label="Flooring" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Appliance Repair</span>
+                                        <input type="radio" name="modal_problem_opt" value="appliance_repair" data-label="Appliance Repair" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Pest Control</span>
+                                        <input type="radio" name="modal_problem_opt" value="pest_control" data-label="Pest Control" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Deep Cleaning</span>
+                                        <input type="radio" name="modal_problem_opt" value="cleaning" data-label="Deep Cleaning" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Masonry / Tiling</span>
+                                        <input type="radio" name="modal_problem_opt" value="masonry" data-label="Masonry / Tiling" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Glass & Windows</span>
+                                        <input type="radio" name="modal_problem_opt" value="glass_windows" data-label="Glass & Windows" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Locks & Security</span>
+                                        <input type="radio" name="modal_problem_opt" value="locks_security" data-label="Locks & Security" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Other</span>
+                                        <input type="radio" name="modal_problem_opt" value="other" data-label="Other" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-upload">
                             <label for="description-note">Description of Issue</label>
