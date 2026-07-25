@@ -95,6 +95,53 @@ function getCoordinates() {
     });
 }
 
+// Qatar QARS Address Geocoder
+async function geocodeQatarAddress(zone, street, building) {
+    // Attempt 1: Structured Building, Street, Zone query
+    try {
+        const query = encodeURIComponent(`${building} ${street} ${zone} Qatar`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=qa&limit=1`);
+        const data = await res.json();
+
+        if (data && data.length > 0) {
+            return {
+                lat: parseFloat(data[0].lat),
+                lng: parseFloat(data[0].lon)
+            };
+        }
+    } catch (e) {
+        console.warn("Primary geocoding attempt skipped:", e);
+    }
+
+    // Attempt 2: Street & Zone query fallback
+    try {
+        const query2 = encodeURIComponent(`Street ${street}, Zone ${zone}, Qatar`);
+        const res2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query2}&countrycodes=qa&limit=1`);
+        const data2 = await res2.json();
+
+        if (data2 && data2.length > 0) {
+            return {
+                lat: parseFloat(data2[0].lat),
+                lng: parseFloat(data2[0].lon)
+            };
+        }
+    } catch (e) {
+        console.warn("Secondary street geocoding skipped:", e);
+    }
+
+    // Attempt 3: HTML5 Device Geolocation
+    try {
+        const deviceCoords = await getCoordinates();
+        if (deviceCoords && deviceCoords.lat && deviceCoords.lng) {
+            return deviceCoords;
+        }
+    } catch (err) {
+        console.warn("Device geolocation unavailable:", err.message);
+    }
+
+    return { lat: null, lng: null };
+}
+
 function openProblemModal() {
     document.getElementById('problemModalOverlay').classList.add('active');
     document.body.style.overflow = 'hidden'; // Stop background scroll
@@ -184,6 +231,23 @@ submitBtn.addEventListener("click", async (e) => {
     try {
         // Disable button while processing
         submitBtn.disabled = true;
+        submitBtn.textContent = "Resolving location...";
+
+        const zoneNumber = document.getElementById("zone-number").value.trim();
+        const streetNumber = document.getElementById("street-number").value.trim();
+        const buildingNumber = document.getElementById("building-number").value.trim();
+        const descriptionText = document.getElementById("description-note").value.trim();
+
+        // Convert Zone/Street/Building into dynamic lat/lng
+        let coords = await geocodeQatarAddress(zoneNumber, streetNumber, buildingNumber);
+
+        if (!coords.lat || !coords.lng) {
+            showFormError("Could not locate the specified Zone/Street/Building address. Please verify your Blue Plate details.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Maintenance Request";
+            return;
+        }
+
         submitBtn.textContent = "Uploading photo...";
 
         // Step 1: Upload photo to Supabase, get back public URL
@@ -195,23 +259,14 @@ submitBtn.addEventListener("click", async (e) => {
         const scheduledDateValue = document.getElementById("scheduled-date").value;
         const scheduledTimeValue = document.getElementById("scheduled-time").value;
 
-        const zoneNumber = document.getElementById("zone-number").value;
-        const streetNumber = document.getElementById("street-number").value;
-        const buildingNumber = document.getElementById("building-number").value;
-        const descriptionText = document.getElementById("description-note").value;
-
-        let coords = { lat: null, lng: null };
-        try {
-            coords = await getCoordinates();
-        } catch (err) {
-            console.warn("Location unavailable:", err.message);
-        }
-
         const body = {
-            full_name:      document.getElementById("customer-name").value,
-            phone_number:   document.getElementById("phone-number").value,
-            email:          document.getElementById("customer-email").value,
+            full_name:      document.getElementById("customer-name").value.trim(),
+            phone_number:   document.getElementById("phone-number").value.trim(),
+            email:          document.getElementById("customer-email").value.trim(),
             category:       document.getElementById("problem-category").value,
+            zone_number:    zoneNumber,
+            street_number:  streetNumber,
+            building_number: buildingNumber,
             description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
             job_photo_url:  photo_url,
             preferred_date: scheduledDateValue,
