@@ -120,6 +120,14 @@
                                 <input type="text" name="building_number" id="building-number" placeholder="BDG e.g 20" required>
                             </div>
                         </div>
+                        <!-- MAP PREVIEW BOX -->
+                        <div id="location-preview-container" style="display: none; margin-top: 1rem;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">
+                                <i class="ti ti-map-pin" style="color: var(--blue-accent);"></i> Confirm Your Location:
+                            </label>
+                            <div id="map-preview" style="width: 100%; height: 220px; border-radius: 8px; border: 1px solid var(--border); margin-top: 0.5rem; overflow: hidden;"></div>
+                            <div id="location-match-text" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;"></div>
+                        </div>
                         <!-- <div class="form-upload">
                             <label for="problem-category">Category</label>
                             <select name="category" id="problem-category" required>

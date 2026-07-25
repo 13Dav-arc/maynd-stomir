@@ -5,7 +5,6 @@ const SUPABASE_URL = "https://sukssqwzatvmnwdxthoa.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1a3NzcXd6YXR2bW53ZHh0aG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MjE0NjgsImV4cCI6MjA5NjM5NzQ2OH0.sT0wK2IAksWIycIwNvVqKJdQvXax4w4rPE5Mw8eppNo";
 const BUCKET_NAME = "job-photos";
 
-
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- DOM References ---
@@ -78,7 +77,7 @@ function showSuccessModal(message, jobId) {
     }
 }
 
-// Get user coordinates
+// Get user coordinates fallback
 function getCoordinates() {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
@@ -95,28 +94,35 @@ function getCoordinates() {
     });
 }
 
-// Qatar QARS Address Geocoder
+// Google Places Text Search Lookup for Qatar Blue Plate
 async function geocodeQatarAddress(zone, street, building) {
-    // Attempt 1: Structured Building, Street, Zone query
+    // Combine fields into Places Text Search string query
+    const queryText = `Zone ${zone}, Street ${street}, Building ${building}, Doha, Qatar`;
+
+    // Attempt 1: Query backend Places Text Search proxy endpoint
     try {
-        const query = encodeURIComponent(`${building} ${street} ${zone} Qatar`);
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=qa&limit=1`);
+        const res = await fetch(`${BASE_URL}/geocode/places-textsearch`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+            body: JSON.stringify({ query: queryText })
+        });
         const data = await res.json();
 
-        if (data && data.length > 0) {
+        if (data && data.results && data.results.length > 0) {
+            const place = data.results[0];
             return {
-                lat: parseFloat(data[0].lat),
-                lng: parseFloat(data[0].lon)
+                lat: place.geometry.location.lat,
+                lng: place.geometry.location.lng
             };
         }
     } catch (e) {
-        console.warn("Primary geocoding attempt skipped:", e);
+        console.warn("Places Text Search query skipped:", e);
     }
 
-    // Attempt 2: Street & Zone query fallback
+    // Attempt 2: Structured OpenStreetMap search fallback
     try {
-        const query2 = encodeURIComponent(`Street ${street}, Zone ${zone}, Qatar`);
-        const res2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query2}&countrycodes=qa&limit=1`);
+        const query = encodeURIComponent(`Building ${building}, Street ${street}, Zone ${zone}, Qatar`);
+        const res2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=qa&limit=1`);
         const data2 = await res2.json();
 
         if (data2 && data2.length > 0) {
@@ -126,7 +132,7 @@ async function geocodeQatarAddress(zone, street, building) {
             };
         }
     } catch (e) {
-        console.warn("Secondary street geocoding skipped:", e);
+        console.warn("Secondary geocoding lookup skipped:", e);
     }
 
     // Attempt 3: HTML5 Device Geolocation
@@ -165,14 +171,14 @@ function handleProblemSelect(radioElem) {
     const hiddenInput = document.getElementById('problem-category');
     hiddenInput.value = selectedVal;
 
-    // 2. Update visible field text
+    // Update visible field text
     const displaySpan = document.getElementById('selectedCategoryText');
     displaySpan.innerText = selectedLabel;
     
     const triggerBox = document.getElementById('selectTrigger');
     triggerBox.classList.add('selected');
 
-    // 3. Smooth auto-close after tap
+    // Smooth auto-close after tap
     setTimeout(() => {
         closeProblemModal();
     }, 150);
@@ -229,7 +235,6 @@ submitBtn.addEventListener("click", async (e) => {
     }
 
     try {
-        // Disable button while processing
         submitBtn.disabled = true;
         submitBtn.textContent = "Resolving location...";
 
@@ -238,7 +243,7 @@ submitBtn.addEventListener("click", async (e) => {
         const buildingNumber = document.getElementById("building-number").value.trim();
         const descriptionText = document.getElementById("description-note").value.trim();
 
-        // Convert Zone/Street/Building into dynamic lat/lng
+        // Convert Zone/Street/Building text string via Places Text Search
         let coords = await geocodeQatarAddress(zoneNumber, streetNumber, buildingNumber);
 
         if (!coords.lat || !coords.lng) {
@@ -255,7 +260,7 @@ submitBtn.addEventListener("click", async (e) => {
 
         submitBtn.textContent = "Submitting...";
 
-        // payload
+        // Payload
         const scheduledDateValue = document.getElementById("scheduled-date").value;
         const scheduledTimeValue = document.getElementById("scheduled-time").value;
 
@@ -275,7 +280,6 @@ submitBtn.addEventListener("click", async (e) => {
             client_lng:     coords.lng    
         };
 
-        
         const response = await fetch(`${BASE_URL}/jobs`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
@@ -285,30 +289,22 @@ submitBtn.addEventListener("click", async (e) => {
         const result = await response.json();
 
         if (response.ok && result.success === true) {
-            // Show client notice as inline success instead of redirecting
             const jobId = result.data?.[0]?.tracking_token || result.data?.[0]?.uuid || result.data?.[0]?.id;
             const successNotice = result.popup_data?.client_notice || "Your request has been received and a technician has been assigned. You will be notified shortly!";
             showSuccessModal(successNotice, jobId);
         } else {
-            // 1. Log the raw data to the developer console for backend debugging
             console.error("422 detail:", JSON.stringify(result));
             
-            // 2. Establish a flat, premium fallback message
             let errorMsg = "Request validation failed. Please review your address and contact inputs.";
-            
-            // 3. Convert the response object to a string to detect infrastructure crashes
             const rawString = JSON.stringify(result);
 
-            // 4. Intercept database routing and table path errors (PGRST125)
             if (rawString.includes("PGRST125") || rawString.includes("Invalid path specified")) {
                 errorMsg = "System Maintenance: The request submission gateway is currently being updated. Please try again in a few moments.";
             } 
-            // 5. Parse standard FastAPI field arrays if the infrastructure is healthy
             else if (result.detail && Array.isArray(result.detail)) {
                 const errorLocation = result.detail[0]?.loc?.[1] || "";
                 const backendMessage = result.detail[0]?.msg || "";
 
-                // Map specific problematic field keys to polished, corporate UI text
                 if (errorLocation === "job_photo_url" || errorLocation === "photo") {
                     errorMsg = "Please upload a clear, valid image highlighting the maintenance issue.";
                 } else if (errorLocation === "phone_number") {
@@ -320,7 +316,6 @@ submitBtn.addEventListener("click", async (e) => {
                 } else if (errorLocation === "preferred_date" || errorLocation === "preferred_time") {
                     errorMsg = "Please provide a valid preferred scheduling date and time window.";
                 } else {
-                    // Clean up default validation jargon if it hits an unmapped field
                     errorMsg = typeof backendMessage === "string" 
                         ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
                         : "Please ensure all address parameters and details are complete.";
@@ -331,7 +326,6 @@ submitBtn.addEventListener("click", async (e) => {
                 errorMsg = result.message;
             }
 
-            // 6. Push the clean notification string directly into your flat layout banner
             showFormError(errorMsg);
         }
 
