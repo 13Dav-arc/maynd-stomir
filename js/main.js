@@ -96,10 +96,9 @@ function getCoordinates() {
 
 // Google Places Text Search Lookup for Qatar Blue Plate
 async function geocodeQatarAddress(zone, street, building) {
-    // Combine fields into Places Text Search string query
     const queryText = `Zone ${zone}, Street ${street}, Building ${building}, Doha, Qatar`;
 
-    // Attempt 1: Query backend Places Text Search proxy endpoint
+    // Attempt 1: Query Places Text Search proxy endpoint
     try {
         const res = await fetch(`${BASE_URL}/geocode/places-textsearch`, {
             method: "POST",
@@ -112,7 +111,8 @@ async function geocodeQatarAddress(zone, street, building) {
             const place = data.results[0];
             return {
                 lat: place.geometry.location.lat,
-                lng: place.geometry.location.lng
+                lng: place.geometry.location.lng,
+                formatted_address: place.formatted_address || queryText
             };
         }
     } catch (e) {
@@ -128,7 +128,8 @@ async function geocodeQatarAddress(zone, street, building) {
         if (data2 && data2.length > 0) {
             return {
                 lat: parseFloat(data2[0].lat),
-                lng: parseFloat(data2[0].lon)
+                lng: parseFloat(data2[0].lon),
+                formatted_address: `Zone ${zone}, Street ${street}, Building ${building}, Qatar`
             };
         }
     } catch (e) {
@@ -139,18 +140,52 @@ async function geocodeQatarAddress(zone, street, building) {
     try {
         const deviceCoords = await getCoordinates();
         if (deviceCoords && deviceCoords.lat && deviceCoords.lng) {
-            return deviceCoords;
+            return {
+                lat: deviceCoords.lat,
+                lng: deviceCoords.lng,
+                formatted_address: `Zone ${zone}, Street ${street}, Building ${building}, Qatar`
+            };
         }
     } catch (err) {
         console.warn("Device geolocation unavailable:", err.message);
     }
 
-    return { lat: null, lng: null };
+    return { lat: null, lng: null, formatted_address: null };
 }
+
+// OPTION A: Show Address Confirmation Card Banner
+function showAddressConfirmation(formattedAddress) {
+    const card = document.getElementById("address-confirm-card");
+    const addressSpan = document.getElementById("detected-address-text");
+    
+    if (card && addressSpan) {
+        addressSpan.innerText = formattedAddress;
+        card.style.display = "block";
+    }
+}
+
+// Auto-trigger address lookup when user finishes typing address inputs
+["zone-number", "street-number", "building-number"].forEach(id => {
+    const inputElem = document.getElementById(id);
+    if (inputElem) {
+        inputElem.addEventListener("blur", async () => {
+            const z = document.getElementById("zone-number")?.value.trim();
+            const s = document.getElementById("street-number")?.value.trim();
+            const b = document.getElementById("building-number")?.value.trim();
+
+            if (z && s && b) {
+                const coords = await geocodeQatarAddress(z, s, b);
+                if (coords && coords.lat && coords.lng) {
+                    showAddressConfirmation(coords.formatted_address || `Zone ${z}, Street ${s}, Building ${b}, Qatar`);
+                }
+            }
+        });
+    }
+});
 
 function openProblemModal() {
     document.getElementById('problemModalOverlay').classList.add('active');
-    document.body.style.overflow = 'hidden'; // Stop background scroll
+    document.body.style.overflow = 'hidden'; 
 }
 
 function closeProblemModal() {
@@ -171,14 +206,12 @@ function handleProblemSelect(radioElem) {
     const hiddenInput = document.getElementById('problem-category');
     hiddenInput.value = selectedVal;
 
-    // Update visible field text
     const displaySpan = document.getElementById('selectedCategoryText');
     displaySpan.innerText = selectedLabel;
     
     const triggerBox = document.getElementById('selectTrigger');
     triggerBox.classList.add('selected');
 
-    // Smooth auto-close after tap
     setTimeout(() => {
         closeProblemModal();
     }, 150);
@@ -252,6 +285,9 @@ submitBtn.addEventListener("click", async (e) => {
             submitBtn.textContent = "Submit Maintenance Request";
             return;
         }
+
+        // Show banner on submit if not already visible
+        showAddressConfirmation(coords.formatted_address || `Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}, Qatar`);
 
         submitBtn.textContent = "Uploading photo...";
 

@@ -120,6 +120,17 @@
                                 <input type="text" name="building_number" id="building-number" placeholder="BDG e.g 20" required>
                             </div>
                         </div>
+
+                        <!-- OPTION A: SLEEK ADDRESS CONFIRMATION CARD -->
+                        <div id="address-confirm-card" class="address-confirm-card" style="display: none;">
+                            <div class="confirm-card-content">
+                                <i class="ti ti-map-pin"></i>
+                                <div class="confirm-text">
+                                    <span class="confirm-label">Detected Location</span>
+                                    <span id="detected-address-text" class="confirm-address">Resolving address...</span>
+                                </div>
+                            </div>
+                        </div>
                         <!-- MAP PREVIEW BOX -->
                         <div id="location-preview-container" style="display: none; margin-top: 1rem;">
                             <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">
