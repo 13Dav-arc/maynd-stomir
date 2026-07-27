@@ -5,11 +5,9 @@ if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
 
 // MAYND STOMIR — Admin Dashboard Logic
 
-// --- CONFIG ---
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 
-// --- DOM References ---
 const tbody = document.querySelector(".dispatch-table tbody");
 const searchInput = document.querySelector("input[name='search_field']");
 const filterSelect = document.getElementById("filter");
@@ -18,14 +16,11 @@ const assignedCount = document.querySelector(".dispatch-card.assigned .card-num"
 const completedCount = document.querySelector(".dispatch-card.completed .card-num");
 const sortSelect = document.getElementById("sort");
 
-
 let allJobs = [];
-// FETCH ALL JOBS — GET /jobs
 
 async function fetchJobs() {
     try {
-
-        showTableLoading()
+        showTableLoading();
 
         const response = await fetch(`${BASE_URL}/jobs`, {
             method: "GET",
@@ -37,7 +32,7 @@ async function fetchJobs() {
         const result = await response.json();
         const jobs = result.data || result;
         allJobs = jobs;
-        console.log(jobs);
+
         updateStatCards(jobs);
         renderTable(jobs);
 
@@ -47,14 +42,25 @@ async function fetchJobs() {
     }
 }
 
-// UPDATE STAT CARDS
+// UPDATE STAT CARDS FOR 6-STATE SYSTEM
 function updateStatCards(jobs) {
-    pendingCount.textContent   = jobs.filter(j => (j.status || "").toUpperCase() === "PENDING").length;
-    assignedCount.textContent  = jobs.filter(j => (j.status || "").toUpperCase() === "ASSIGNED").length;
-    completedCount.textContent = jobs.filter(j => (j.status || "").toUpperCase() === "COMPLETED").length;
+    // Queued / Pending Dispatch
+    pendingCount.textContent = jobs.filter(j => {
+        const s = (j.status || "").toLowerCase();
+        return s === "pending" || s === "pending_dispatch" || s === "unassigned_queued";
+    }).length;
+
+    // Active In-Progress Jobs (Dispatched, Diagnostics, Awaiting Payment, Paid)
+    assignedCount.textContent = jobs.filter(j => {
+        const s = (j.status || "").toLowerCase();
+        return s === "assigned" || s === "dispatched" || s === "in_diagnostics" || s === "accepted" || s === "awaiting_payment" || s === "paid";
+    }).length;
+
+    // Completed
+    completedCount.textContent = jobs.filter(j => (j.status || "").toLowerCase() === "completed").length;
 }
 
-// RENDER TABLE ROWS
+// RENDER TABLE ROWS WITH DYNAMIC GRANULAR BADGES
 function renderTable(jobs) {
     if (jobs.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted)">No jobs found.</td></tr>`;
@@ -62,50 +68,36 @@ function renderTable(jobs) {
     }
 
     tbody.innerHTML = jobs.map(job => {
-        // Format scheduled date
-        const date = job.preferred_date
-            ? `${job.preferred_date} ${job.preferred_time || ""}`.trim()
-            : "—";
-
-        // Location shorthand
-       const location = job.description || "—";
-
-       const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
+        const location = job.description || "—";
+        const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
 
         const availability = (dateObj && !isNaN(dateObj))
-        ? dateObj.toLocaleString("en-GB", {
-            day: "numeric", month: "long", year: "numeric",
-            hour: "2-digit", minute: "2-digit"
+            ? dateObj.toLocaleString("en-GB", {
+                day: "numeric", month: "short", year: "numeric",
+                hour: "2-digit", minute: "2-digit"
             })
-        : "-";
+            : "-";
 
         const assignedTech = job.assigned_technician;
         const hasTechnician = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
         const technicianName = hasTechnician ? assignedTech.name : null;
         const technicianPhone = hasTechnician ? assignedTech.phone : null;
 
-        // admin.js — Replace displayStatus block inside renderTable loop
-        const rawStatus = (job.status || "").toUpperCase();
-        let displayStatus = "Pending";
-
-        if (rawStatus === "CANCELLED") {
-            displayStatus = "Cancelled";
-        } else if (rawStatus === "COMPLETED") {
-            displayStatus = "Completed";
-        } else if (hasTechnician) {
-            displayStatus = "Assigned";
-        } else if (job.status) {
-            displayStatus = job.status.charAt(0).toUpperCase() + job.status.slice(1).toLowerCase();
-        }
-
+        const rawStatus = (job.status || "").toLowerCase();
+        
+        let displayBadge = `<span class="status-badge pending">Queued</span>`;
+        if (rawStatus === "dispatched") displayBadge = `<span class="status-badge assigned">Dispatched</span>`;
+        else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") displayBadge = `<span class="status-badge assigned">On-Site</span>`;
+        else if (rawStatus === "awaiting_payment") displayBadge = `<span class="status-badge pending">Awaiting Payment</span>`;
+        else if (rawStatus === "paid") displayBadge = `<span class="status-badge assigned">Paid / In Repair</span>`;
+        else if (rawStatus === "completed") displayBadge = `<span class="status-badge completed">Completed</span>`;
+        else if (rawStatus === "cancelled") displayBadge = `<span class="status-badge cancelled">Cancelled</span>`;
 
         let assignCell = "";
-
         if (hasTechnician) {
-            // Determine text color based on job status
             let techColor = "var(--assigned)";
-            if (rawStatus === "COMPLETED") techColor = "var(--completed)";
-            if (rawStatus === "CANCELLED") techColor = "var(--text-muted)";
+            if (rawStatus === "completed") techColor = "var(--completed)";
+            if (rawStatus === "cancelled") techColor = "var(--text-muted)";
 
             assignCell = `
                 <div class="tech-info-cell">
@@ -113,15 +105,13 @@ function renderTable(jobs) {
                     ${technicianPhone ? `
                         <a href="tel:${technicianPhone}" class="small tech-phone">
                             <i class="ti ti-phone"></i> ${technicianPhone}
-                        </a>` 
-                    : ''}
+                        </a>` : ''}
                 </div>
             `;
         } else {
-            // Default states when no technician is assigned
-            if (rawStatus === "CANCELLED") {
+            if (rawStatus === "cancelled") {
                 assignCell = `<span class="small" style="color:var(--text-muted); font-style: italic;">No tech assigned</span>`;
-            } else if (rawStatus === "COMPLETED") {
+            } else if (rawStatus === "completed") {
                 assignCell = `<span class="small" style="color:var(--completed)">Completed (Unassigned)</span>`;
             } else {
                 assignCell = `<span class="small" style="color:var(--pending); font-weight:600;">Awaiting Auto-Match</span>`;
@@ -132,26 +122,24 @@ function renderTable(jobs) {
             <tr>
                 <td>#${String(job.id).padStart(4, "0")}</td>
                 <td class="customer">
-                    <span class="name">${job.customer_name}</span>
-                    <span class="small">${job.phone_number}</span>
+                    <span class="name">${job.customer_name || job.full_name || "—"}</span>
+                    <span class="small">${job.phone_number || "—"}</span>
                 </td>
-                <td>${job.category}</td>
+                <td>${job.category || "—"}</td>
                 <td>${location}</td>
                 <td>${availability}</td>
-                <td><span class="status-badge ${displayStatus.toLowerCase()}">${displayStatus}</span></td>
+                <td>${displayBadge}</td>
                 <td>${assignCell}</td>
             </tr>
         `;
     }).join("");
 }
 
-
 function applyFilters() {
     const query = searchInput.value.toLowerCase();
-    const filterVal = filterSelect.value;
+    const filterVal = filterSelect.value.toLowerCase();
     const sortVal = sortSelect.value;
 
-    // 1. Filter jobs by Search Input and Status Dropdown
     let filtered = allJobs.filter(job => {
         const formattedId = `#${String(job.id).padStart(4, "0")}`.toLowerCase();
         const rawId = String(job.id).toLowerCase();
@@ -164,35 +152,24 @@ function applyFilters() {
             (job.category || "").toLowerCase().includes(query) ||
             (job.description || "").toLowerCase().includes(query);
 
-        const matchesStatus = !filterVal || (job.status || "").toUpperCase() === filterVal.toUpperCase();
+        const rawStatus = (job.status || "").toLowerCase();
+        let matchesStatus = !filterVal;
+
+        if (filterVal === "pending") matchesStatus = rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued";
+        else if (filterVal === "assigned") matchesStatus = rawStatus === "assigned" || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted";
+        else if (filterVal === "awaiting_payment") matchesStatus = rawStatus === "awaiting_payment";
+        else if (filterVal === "paid") matchesStatus = rawStatus === "paid";
+        else if (filterVal === "completed") matchesStatus = rawStatus === "completed";
 
         return matchesSearch && matchesStatus;
     });
 
     if (sortVal) {
         filtered.sort((a, b) => {
-            if (sortVal === "id-desc") {
-                return b.id - a.id; // Highest job ID first
-            }
-            if (sortVal === "id-asc") {
-                return a.id - b.id; // Lowest job ID first
-            }
-            if (sortVal === "name-asc") {
-                return (a.customer_name || "").localeCompare(b.customer_name || "");
-            }
-            if (sortVal === "name-desc") {
-                return (b.customer_name || "").localeCompare(a.customer_name || "");
-            }
-            if (sortVal === "date-desc") {
-                const dateA = new Date(a.customer_availability || 0);
-                const dateB = new Date(b.customer_availability || 0);
-                return dateB - dateA; // Newest scheduled date first
-            }
-            if (sortVal === "date-asc") {
-                const dateA = new Date(a.customer_availability || 0);
-                const dateB = new Date(b.customer_availability || 0);
-                return dateA - dateB; // Oldest scheduled date first
-            }
+            if (sortVal === "id-desc") return b.id - a.id;
+            if (sortVal === "id-asc") return a.id - b.id;
+            if (sortVal === "name-asc") return (a.customer_name || "").localeCompare(b.customer_name || "");
+            if (sortVal === "name-desc") return (b.customer_name || "").localeCompare(a.customer_name || "");
             return 0;
         });
     }
@@ -204,37 +181,10 @@ searchInput.addEventListener("input", applyFilters);
 filterSelect.addEventListener("change", applyFilters);
 sortSelect.addEventListener("change", applyFilters);
 
-
 function showTableLoading() {
     tbody.innerHTML = `
-        <tr class="skeleton-row">
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-        </tr>
-        <tr class="skeleton-row">
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-        </tr>
-        <tr class="skeleton-row">
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-        </tr>`;
+        <tr class="skeleton-row"><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td></tr>
+        <tr class="skeleton-row"><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td></tr>`;
 }
-
 
 fetchJobs();

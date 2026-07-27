@@ -241,7 +241,7 @@ submitBtn.addEventListener("click", async (e) => {
     const termsAgreed = document.getElementById("callout-agree")?.checked;
 
     if (!termsAgreed) {
-        showFormError("Please confirm that you agree to the QAR 150 Call-Out Fee and Pricing Terms before submitting.");
+        showFormError("Please confirm that you agree to the QAR 50 Call-Out Fee and Pricing Terms before submitting.");
         return;
     }
 

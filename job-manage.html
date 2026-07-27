@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Job — MAYND STOMIR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icons/favicon.png">
+    <meta name="theme-color" content="#1E293B">
+</head>
+<body>
+    <div class="track-layout" id="track-layout">
+        <header>
+            <a href="/" style="text-decoration: none; color: white;">
+                <div class="logo">Maynd<span class="logo">Stomir</span></div>
+            </a>
+            <div class="brand-subtitle" style="color: #94A3B8; font-size: 0.8rem; font-weight: 600;">
+                TECHNICIAN PORTAL
+            </div>
+        </header>
+
+        <div class="page-layout" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+            <div class="result-content" style="padding-top: 2rem;">
+                
+                <!-- Loading State -->
+                <div id="portal-loading" class="track-results-card">
+                    <div class="track-results-main" style="text-align: center; padding: 3rem;">
+                        <i class="ti ti-loader-2 ti-spin" style="font-size: 2rem; color: var(--blue-accent);"></i>
+                        <p style="margin-top: 0.5rem; font-weight: 600; color: var(--text-muted);">Fetching Job Request...</p>
+                    </div>
+                </div>
+
+                <!-- Main Reusable Job Card -->
+                <div id="portal-content" class="track-results-card" style="display: none;">
+                    
+                    <!-- Header Bar -->
+                    <div class="track-results-header">
+                        <div class="track-left">
+                            <div class="track-title" id="job-id-display">#JOB-0000</div>
+                            <div class="track-timestap small" id="job-submitted-time">Submitted —</div>
+                        </div>
+                        <div class="track-right">
+                            <div class="status-badge assigned" id="job-status-badge">ASSIGNED</div>
+                        </div>
+                    </div>
+
+                    <!-- Main Data Fields Grid -->
+                    <div class="track-results-main">
+                        
+                        <!-- Phase Banner -->
+                        <div id="callout-banner" class="callout-notice" style="margin-bottom: 1rem;">
+                            <div class="callout-notice-header">
+                                <i id="state-icon" class="ti ti-alert-circle"></i>
+                                <span id="state-title">Phase 0: Action Required</span>
+                            </div>
+                            <div class="callout-notice-body">
+                                <p id="state-desc" style="margin-bottom:0;">Please review job specifications below and accept or decline this dispatch request.</p>
+                            </div>
+                        </div>
+
+                        <!-- Customer Details -->
+                        <div class="track-fields">
+                            <div class="track-list">Customer Name</div>
+                            <div class="track-info" id="cust-name">—</div>
+                        </div>
+                        <div class="track-fields">
+                            <div class="track-list">Contact Phone</div>
+                            <div class="track-info" id="cust-phone">—</div>
+                        </div>
+                        <div class="track-fields">
+                            <div class="track-list">Trade Category</div>
+                            <div class="track-info" id="job-category">—</div>
+                        </div>
+                        <div class="track-fields">
+                            <div class="track-list">Address / Location</div>
+                            <div class="track-info" id="job-location">—</div>
+                        </div>
+                        <div class="track-fields">
+                            <div class="track-list">Description</div>
+                            <div class="track-info" id="job-description">—</div>
+                        </div>
+
+                        <!-- Issue Photo View -->
+                        <div id="photo-container" class="track-fields" style="display: none; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+                            <div class="track-list">Uploaded Photo</div>
+                            <a id="photo-link" href="#" target="_blank" style="width: 100%;">
+                                <img id="job-photo" src="" alt="Issue Photo" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);">
+                            </a>
+                        </div>
+
+                        <!-- PHASE 0: ACCEPT / DECLINE ACTIONS -->
+                        <div id="accept-reject-section" style="margin-top: 1rem;">
+                            <div style="display: flex; gap: 0.8rem;">
+                                <button id="accept-job-btn" class="primary" style="flex: 1; background: var(--assigned) !important;">
+                                    <i class="ti ti-check"></i> Accept Job
+                                </button>
+                                <button id="reject-job-btn" class="cancel-btn" style="flex: 1; justify-content: center; height: auto;">
+                                    <i class="ti ti-x"></i> Decline Job
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PHASE A: DIAGNOSTIC QUOTE FORM -->
+                        <div id="quote-section" style="display: none; margin-top: 1rem;">
+                            <div class="info-header" style="margin-bottom: 1rem;">
+                                <h3 style="font-size: 1.1rem;">Diagnostic Quote Entry</h3>
+                                <div class="small">Input total costs to auto-generate the customer invoice link.</div>
+                            </div>
+
+                            <form id="quote-form" class="form-search" style="margin-bottom: 0;">
+                                <div class="personal">
+                                    <div class="form-upload">
+                                        <label for="parts-cost">Parts Cost (QAR)</label>
+                                        <input type="number" id="parts-cost" min="0" placeholder="0" required>
+                                    </div>
+                                    <div class="form-upload">
+                                        <label for="sourcing-fee">Sourcing Fee (QAR)</label>
+                                        <input type="number" id="sourcing-fee" min="0" placeholder="0" value="0" required>
+                                    </div>
+                                </div>
+                                <div class="form-upload">
+                                    <label for="labor-cost">Labor Cost (QAR)</label>
+                                    <input type="number" id="labor-cost" min="0" placeholder="0" required>
+                                </div>
+                                <div class="form-upload">
+                                    <label for="quote-notes">Diagnosis Notes</label>
+                                    <textarea id="quote-notes" placeholder="e.g., Replaced burnt circuit breaker and verified wiring load." required></textarea>
+                                </div>
+
+                                <button type="submit" id="submit-quote-btn" class="primary" style="width: 100%; margin-top: 0.5rem;">
+                                    <i class="ti ti-file-text"></i> Generate & Send Invoice
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- PHASE C/D: EXECUTION & FINAL COMPLETION -->
+                        <div id="completion-section" style="display: none; margin-top: 1rem;">
+                            <button id="complete-job-btn" class="complete-btn" style="width: 100%; justify-content: center; padding: 0.8rem; font-size: 0.9rem;">
+                                <i class="ti ti-circle-check"></i> Confirm Work Completed & Release Partner
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Error Container -->
+                <div class="form-error" id="form-error" style="display:none; margin-top: 1rem;">
+                    <i class="ti ti-alert-circle"></i>
+                    <span id="form-error-text"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Reusable Success Modal -->
+    <div class="success-modal" id="success-modal" style="display:none;">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check"></i>
+            <h3 id="success-modal-text">Action Processed</h3>
+            <button class="primary" onclick="window.location.reload()">OK</button>
+        </div>
+    </div>
+
+    <script src="js/job-manage.js"></script>
+</body>
+</html>

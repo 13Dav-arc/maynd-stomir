@@ -409,6 +409,14 @@
         font-size: 0.7rem;
         padding: 0.4rem 0.5rem;
     }
+    #accept-reject-section > div {
+        flex-direction: column !important;
+        gap: 0.6rem !important;
+    }
+    
+    #accept-reject-section button {
+        width: 100% !important;
+    }
 }
 /* ── BOTTOM NAV — PWA only ── */
 .bottom-nav {

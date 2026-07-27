@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice #MS-1092 — MAYND STOMIR</title>
+    <title>Invoice — MAYND STOMIR</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <style>
@@ -233,22 +233,22 @@
                 <div class="brand-subtitle">Enterprise Maintenance Platform</div>
             </div>
             <div class="invoice-meta">
-                <div class="invoice-number">#MS-1092</div>
-                <div class="invoice-date">Date: July 22, 2026</div>
+                <div class="invoice-number" id="inv-id">#MS-0000</div>
+                <div class="invoice-date" id="inv-date">Date: —</div>
             </div>
         </div>
 
         <div class="details-grid">
             <div>
                 <div class="meta-label">Billed To</div>
-                <div class="meta-value">John Doe</div>
-                <div class="meta-value" style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">Zone 55, Street 240, Bldg 12</div>
+                <div class="meta-value" id="inv-customer-name">Loading...</div>
+                <div class="meta-value" id="inv-customer-address" style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">—</div>
             </div>
             <div>
                 <div class="meta-label">Category</div>
-                <div class="meta-value">Electrical Repair & Parts</div>
+                <div class="meta-value" id="inv-category">—</div>
                 <div class="meta-label" style="margin-top: 0.5rem;">Status</div>
-                <span class="status-badge">Pending Payment</span>
+                <span class="status-badge" id="inv-status">Pending Payment</span>
             </div>
         </div>
 
@@ -265,38 +265,38 @@
                         <strong>Call-Out & Diagnostic Fee</strong>
                         <div style="font-size: 0.78rem; color: var(--text-muted);">Baseline dispatch & on-site inspection</div>
                     </td>
-                    <td class="amount">150 QAR</td>
+                    <td class="amount">50 QAR</td>
                 </tr>
                 <tr>
                     <td>
                         <strong>Replacement Parts</strong>
-                        <div style="font-size: 0.78rem; color: var(--text-muted);">Thermostat Unit</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);" id="inv-parts-note">As quoted on site</div>
                     </td>
-                    <td class="amount">200 QAR</td>
+                    <td class="amount" id="inv-parts-cost">0 QAR</td>
                 </tr>
                 <tr>
                     <td>
                         <strong>Material Sourcing Fee</strong>
                         <div style="font-size: 0.78rem; color: var(--text-muted);">Supplier procurement & logistics</div>
                     </td>
-                    <td class="amount">50 QAR</td>
+                    <td class="amount" id="inv-sourcing-fee">0 QAR</td>
                 </tr>
                 <tr>
                     <td>
-                        <strong>Extended Labor (2 Hours)</strong>
-                        <div style="font-size: 0.78rem; color: var(--text-muted);">Component replacement & safety check</div>
+                        <strong>Extended Labor</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Component repair & safety check</div>
                     </td>
-                    <td class="amount">50 QAR</td>
+                    <td class="amount" id="inv-labor-cost">0 QAR</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="invoice-total">
             <div class="total-label">Total Due</div>
-            <div class="total-amount">450 QAR</div>
+            <div class="total-amount" id="inv-total-amount">50 QAR</div>
         </div>
 
-        <a href="#" class="pay-btn">
+        <a href="#" id="inv-pay-btn" class="pay-btn">
             <i class="ti ti-lock"></i> Pay Securely via Digital Gateway
         </a>
 
@@ -307,5 +307,7 @@
 
     </div>
 
+    <!-- Dynamic Invoice Script -->
+    <script src="js/invoice.js"></script>
 </body>
 </html>

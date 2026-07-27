@@ -72,13 +72,19 @@ function updateStatCards(technicians) {
 function getDisplayStatus(tech) {
     const backendStatus = (tech.status || "awaiting_approval").trim().toLowerCase();
 
+    // Rejection Cooldown Flag
+    if (tech.cooldown_until && new Date(tech.cooldown_until) > new Date()) {
+        return { label: "Rejection Cooldown", cls: "pending" };
+    }
+
     switch (backendStatus) {
         case "assigned":
+        case "busy":
             return { label: "Assigned", cls: "assigned" };
         case "rejected":
             return { label: "Rejected", cls: "rejected" };
         case "awaiting_approval":
-            return { label: "Awaiting Approval", cls: "pending" }; // Uses your var(--pending) color
+            return { label: "Awaiting Approval", cls: "pending" };
         case "available":
         default:
             return { label: "Available", cls: "completed" };
