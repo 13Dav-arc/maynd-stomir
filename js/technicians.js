@@ -57,37 +57,45 @@ async function fetchTechnicians() {
 
 
 // UPDATE STAT CARDS
+// UPDATE STAT CARDS
 function updateStatCards(technicians) {
     totalTechEl.textContent = technicians.length;
     
-    // Count the number of technicians currently marked as "Assigned"
-    assignedCountEl.textContent = technicians.filter(t => 
-        (t.status || "").trim().toUpperCase() === "ASSIGNED"
-    ).length;
+    assignedCountEl.textContent = technicians.filter(t => {
+        const rawStatus = (t.status || "").trim().toLowerCase();
+        
+        const inCooldown = t.cooldown_until && new Date(t.cooldown_until) > new Date();
+        
+        return rawStatus === "assigned" || rawStatus === "busy" || inCooldown;
+    }).length;
     
-    jobsDoneEl.textContent = technicians.reduce((sum, t) => sum + (t.completed_jobs_count || 0), 0);
+    jobsDoneEl.textContent = technicians.reduce((sum, t) => {
+        const completedCount = parseInt(t.completed_jobs_count || t.jobs_completed || 0, 10);
+        return sum + (isNaN(completedCount) ? 0 : completedCount);
+    }, 0);
 }
 
 
 function getDisplayStatus(tech) {
-    const backendStatus = (tech.status || "awaiting_approval").trim().toLowerCase();
+    const rawStatus = (tech.status || "awaiting_approval").trim().toLowerCase();
 
-    // Rejection Cooldown Flag
     if (tech.cooldown_until && new Date(tech.cooldown_until) > new Date()) {
-        return { label: "Rejection Cooldown", cls: "pending" };
+        return { label: "Rejection Cooldown", cls: "pending", key: "cooldown" };
     }
 
-    switch (backendStatus) {
+    switch (rawStatus) {
         case "assigned":
         case "busy":
-            return { label: "Assigned", cls: "assigned" };
+            return { label: "Assigned", cls: "assigned", key: "assigned" };
         case "rejected":
-            return { label: "Rejected", cls: "rejected" };
+            return { label: "Rejected", cls: "rejected", key: "rejected" };
         case "awaiting_approval":
-            return { label: "Awaiting Approval", cls: "pending" };
+        case "pending":
+            return { label: "Awaiting Approval", cls: "pending", key: "awaiting_approval" };
         case "available":
+        case "approved":
         default:
-            return { label: "Available", cls: "completed" };
+            return { label: "Available", cls: "completed", key: "available" };
     }
 }
 
@@ -261,72 +269,87 @@ sortFilter.addEventListener("change", () => {
 
 // APPLY ALL FILTERS TOGETHER (WITH VALUE MAPPING)
 function applyFilters() {
-    const query       = searchInput.value.toLowerCase();
-    const statusVal   = statusFilter.value.toLowerCase();
-    const tradeVal    = tradeFilter.value; 
-    const sortVal     = sortFilter.value;
+    const query     = searchInput.value.toLowerCase().trim();
+    const statusVal = statusFilter.value.toLowerCase().trim();
+    const tradeVal  = tradeFilter.value.toLowerCase().trim(); 
+    const sortVal   = sortFilter.value;
 
-    
+    // Direct mapping from HTML option values to exact backend database strings
     const tradeMap = {
+        "hvac": "hvac",
+        "plumbing": "plumbing",
+        "electrical": "electrical",
+        "painting": "painting",
+        "carpentry": "carpentry",
+        "flooring": "flooring",
         "appliance_repair": "appliance repair",
+        "pest_control": "pest control",
+        "cleaning": "deep cleaning",
         "masonry": "masonry & tiling",
-        "pest_control" : "pest control",
         "glass_windows": "glass & windows",
         "locks_security": "locks & security",
-        "cleaning": "deep cleaning" 
+        "other": "other"
     };
 
-    
-    const targetTrade = tradeMap[tradeVal] || tradeVal.toLowerCase();
+    const targetTrade = tradeMap[tradeVal] || tradeVal;
 
     const filtered = allTechnicians.filter(tech => {
-        const status = getDisplayStatus(tech).label.toLowerCase();
-        
-        
+        const statusObj = getDisplayStatus(tech);
+        const displayLabel = statusObj.label.toLowerCase();
+        const statusKey = statusObj.key;
+        const rawBackendStatus = (tech.status || "").toLowerCase();
+
+        // 1. SKILLS EXTRACTION & NORMALIZATION
         let techSkills = [];
         if (Array.isArray(tech.trade_skill)) {
             techSkills = tech.trade_skill.map(t => String(t).trim().toLowerCase());
         } else if (tech.trade_skill) {
             techSkills = [String(tech.trade_skill).trim().toLowerCase()];
         }
+        const tradeString = techSkills.join(" ");
 
-        
-        const tradeString = techSkills.join(", ");
-
+        // 2. SEARCH MATCHING (Name, Phone, Email, Trade)
         const matchesSearch = !query ||
             (tech.full_name || "").toLowerCase().includes(query) ||
             (tech.phone_number || "").includes(query) ||
+            (tech.email_address || "").toLowerCase().includes(query) ||
             tradeString.includes(query);
 
-        const matchesStatus = !statusVal || status === statusVal;
-        
-        
-        const matchesTrade = !tradeVal || techSkills.includes(targetTrade);
+        // 3. STATUS MATCHING
+        let matchesStatus = !statusVal;
+        if (statusVal) {
+            matchesStatus = 
+                statusKey === statusVal || 
+                displayLabel === statusVal ||
+                rawBackendStatus === statusVal ||
+                (statusVal === "awaiting_approval" && (rawBackendStatus === "pending" || rawBackendStatus === "awaiting_approval")) ||
+                (statusVal === "assigned" && (rawBackendStatus === "busy" || rawBackendStatus === "assigned"));
+        }
+
+        // 4. TRADE MATCHING (Checks exact backend strings OR flexible substring matches)
+        let matchesTrade = !tradeVal;
+        if (tradeVal) {
+            matchesTrade = techSkills.some(skill => {
+                const cleanSkill = skill.replace(/_/g, " ");
+                const cleanTarget = targetTrade.replace(/_/g, " ");
+                return cleanSkill.includes(cleanTarget) || cleanTarget.includes(cleanSkill);
+            });
+        }
 
         return matchesSearch && matchesStatus && matchesTrade;
     });
 
-    // Sort the filtered array
+    // 5. SORTING LOGIC
     if (sortVal) {
         filtered.sort((a, b) => {
-            if (sortVal === "name-asc") {
-                return (a.full_name || "").localeCompare(b.full_name || "");
-            }
-            if (sortVal === "name-desc") {
-                return (b.full_name || "").localeCompare(a.full_name || "");
-            }
-            if (sortVal === "jobs-desc") {
-                return (b.completed_jobs_count || 0) - (a.completed_jobs_count || 0);
-            }
+            if (sortVal === "name-asc") return (a.full_name || "").localeCompare(b.full_name || "");
+            if (sortVal === "name-desc") return (a.full_name || "").localeCompare(b.full_name || "");
+            if (sortVal === "jobs-desc") return (b.completed_jobs_count || 0) - (a.completed_jobs_count || 0);
             if (sortVal === "date-desc") {
-                const dateA = new Date(a.created_at || a.joined_at || 0);
-                const dateB = new Date(b.created_at || b.joined_at || 0);
-                return dateB - dateA;
+                return new Date(b.created_at || b.joined_at || 0) - new Date(a.created_at || a.joined_at || 0);
             }
             if (sortVal === "date-asc") {
-                const dateA = new Date(a.created_at || a.joined_at || 0);
-                const dateB = new Date(b.created_at || b.joined_at || 0);
-                return dateA - dateB;
+                return new Date(a.created_at || a.joined_at || 0) - new Date(b.created_at || b.joined_at || 0);
             }
             return 0;
         });

@@ -44,20 +44,20 @@ async function fetchJobs() {
 
 // UPDATE STAT CARDS FOR 6-STATE SYSTEM
 function updateStatCards(jobs) {
-    // Queued / Pending Dispatch
+    // 1. Queued / Pending Dispatch
     pendingCount.textContent = jobs.filter(j => {
-        const s = (j.status || "").toLowerCase();
+        const s = (j.status || "").trim().toLowerCase();
         return s === "pending" || s === "pending_dispatch" || s === "unassigned_queued";
     }).length;
 
-    // Active In-Progress Jobs (Dispatched, Diagnostics, Awaiting Payment, Paid)
+    // 2. Active In-Progress Jobs
     assignedCount.textContent = jobs.filter(j => {
-        const s = (j.status || "").toLowerCase();
-        return s === "assigned" || s === "dispatched" || s === "in_diagnostics" || s === "accepted" || s === "awaiting_payment" || s === "paid";
+        const s = (j.status || "").trim().toLowerCase();
+        return s === "assigned" || s === "dispatched" || s === "in_diagnostics" || s === "accepted" || s === "awaiting_payment" || s === "paid" || s === "pending_completion";
     }).length;
 
-    // Completed
-    completedCount.textContent = jobs.filter(j => (j.status || "").toLowerCase() === "completed").length;
+    // 3. Completed
+    completedCount.textContent = jobs.filter(j => (j.status || "").trim().toLowerCase() === "completed").length;
 }
 
 // RENDER TABLE ROWS WITH DYNAMIC GRANULAR BADGES
@@ -83,13 +83,14 @@ function renderTable(jobs) {
         const technicianName = hasTechnician ? assignedTech.name : null;
         const technicianPhone = hasTechnician ? assignedTech.phone : null;
 
-        const rawStatus = (job.status || "").toLowerCase();
+        const rawStatus = (job.status || "").trim().toLowerCase();
         
         let displayBadge = `<span class="status-badge pending">Queued</span>`;
         if (rawStatus === "dispatched") displayBadge = `<span class="status-badge assigned">Dispatched</span>`;
         else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") displayBadge = `<span class="status-badge assigned">On-Site</span>`;
         else if (rawStatus === "awaiting_payment") displayBadge = `<span class="status-badge pending">Awaiting Payment</span>`;
         else if (rawStatus === "paid") displayBadge = `<span class="status-badge assigned">Paid / In Repair</span>`;
+        else if (rawStatus === "pending_completion") displayBadge = `<span class="status-badge pending">Awaiting Verification</span>`;
         else if (rawStatus === "completed") displayBadge = `<span class="status-badge completed">Completed</span>`;
         else if (rawStatus === "cancelled") displayBadge = `<span class="status-badge cancelled">Cancelled</span>`;
 
@@ -135,9 +136,10 @@ function renderTable(jobs) {
     }).join("");
 }
 
+// APPLY FILTERS & SEARCH
 function applyFilters() {
-    const query = searchInput.value.toLowerCase();
-    const filterVal = filterSelect.value.toLowerCase();
+    const query = searchInput.value.toLowerCase().trim();
+    const filterVal = filterSelect.value.toLowerCase().trim();
     const sortVal = sortSelect.value;
 
     let filtered = allJobs.filter(job => {
@@ -152,14 +154,20 @@ function applyFilters() {
             (job.category || "").toLowerCase().includes(query) ||
             (job.description || "").toLowerCase().includes(query);
 
-        const rawStatus = (job.status || "").toLowerCase();
+        const rawStatus = (job.status || "").trim().toLowerCase();
         let matchesStatus = !filterVal;
 
-        if (filterVal === "pending") matchesStatus = rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued";
-        else if (filterVal === "assigned") matchesStatus = rawStatus === "assigned" || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted";
-        else if (filterVal === "awaiting_payment") matchesStatus = rawStatus === "awaiting_payment";
-        else if (filterVal === "paid") matchesStatus = rawStatus === "paid";
-        else if (filterVal === "completed") matchesStatus = rawStatus === "completed";
+        if (filterVal === "pending") {
+            matchesStatus = rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued";
+        } else if (filterVal === "assigned") {
+            matchesStatus = rawStatus === "assigned" || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted" || rawStatus === "pending_completion";
+        } else if (filterVal === "awaiting_payment") {
+            matchesStatus = rawStatus === "awaiting_payment";
+        } else if (filterVal === "paid") {
+            matchesStatus = rawStatus === "paid";
+        } else if (filterVal === "completed") {
+            matchesStatus = rawStatus === "completed";
+        }
 
         return matchesSearch && matchesStatus;
     });
@@ -168,8 +176,10 @@ function applyFilters() {
         filtered.sort((a, b) => {
             if (sortVal === "id-desc") return b.id - a.id;
             if (sortVal === "id-asc") return a.id - b.id;
-            if (sortVal === "name-asc") return (a.customer_name || "").localeCompare(b.customer_name || "");
-            if (sortVal === "name-desc") return (b.customer_name || "").localeCompare(a.customer_name || "");
+            if (sortVal === "name-asc") return (a.customer_name || a.full_name || "").localeCompare(b.customer_name || b.full_name || "");
+            if (sortVal === "name-desc") return (b.customer_name || b.full_name || "").localeCompare(a.customer_name || a.full_name || "");
+            if (sortVal === "date-desc") return new Date(b.customer_availability || 0) - new Date(a.customer_availability || 0);
+            if (sortVal === "date-asc") return new Date(a.customer_availability || 0) - new Date(b.customer_availability || 0);
             return 0;
         });
     }
