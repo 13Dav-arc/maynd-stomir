@@ -63,7 +63,9 @@ function renderInvoiceData(job) {
     const payBtn = document.getElementById("inv-pay-btn");
     const statusBadge = document.getElementById("inv-status");
 
-    if ((job.status || "").toLowerCase() === "paid") {
+    const rawStatus = (job.status || "").toLowerCase();
+
+    if (rawStatus === "paid") {
         statusBadge.innerText = "Paid";
         statusBadge.style.color = "var(--assigned)";
         statusBadge.style.background = "rgba(21, 128, 61, 0.1)";
@@ -71,12 +73,17 @@ function renderInvoiceData(job) {
         payBtn.innerHTML = `<i class="ti ti-circle-check"></i> Invoice Paid & Cleared`;
         payBtn.removeAttribute("href");
         payBtn.style.cursor = "default";
-    } else if (job.payment_url) {
-        payBtn.href = job.payment_url;
     } else {
-        payBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            alert("Payment checkout link is being prepared by the gateway. Please refresh in a moment.");
-        });
+        const hasLiveGateway = job.payment_url && !job.payment_url.includes("pay-placeholder");
+
+        if (hasLiveGateway) {
+            payBtn.href = job.payment_url;
+        } else {
+            // Placeholder / Staging alert until live payment link is provided by backend
+            payBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                alert("Payment checkout link is being generated. If testing on staging, request Ini to update payment_url.");
+            });
+        }
     }
 }

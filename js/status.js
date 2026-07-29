@@ -125,11 +125,11 @@ function buildJobCardHTML(job) {
     const jobId = `#JOB-${displayId}`;
 
     // Action Buttons
-    const payInvoiceBtn = (rawStatus === "awaiting_payment" && job.payment_url)
-        ? `<a href="${job.payment_url}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF;">
-            <i class="ti ti-credit-card"></i> Pay Invoice Now
-           </a>`
-        : "";
+    const payInvoiceBtn = (rawStatus === "awaiting_payment")
+    ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF;">
+        <i class="ti ti-receipt"></i> View & Pay Invoice
+       </a>`
+    : "";
 
     const canMarkComplete = rawStatus === "paid" || rawStatus === "pending_completion";
     const completionBtn = canMarkComplete 

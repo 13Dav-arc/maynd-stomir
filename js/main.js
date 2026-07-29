@@ -14,8 +14,14 @@ const uploadText = document.querySelector(".upload-text");
 const scheduledDate = document.getElementById("scheduled-date");
 const scheduledTime = document.getElementById("scheduled-time");
 
-// Initialize scheduling controls
+// Initialize scheduling controls & restrict past dates
 window.addEventListener("DOMContentLoaded", () => {
+    if (scheduledDate) {
+        // Prevent selecting past dates in the calendar picker
+        const todayStr = new Date().toISOString().split("T")[0];
+        scheduledDate.setAttribute("min", todayStr);
+    }
+
     if (scheduledTime && scheduledDate) {
         scheduledTime.disabled = !scheduledDate.value;
     }
@@ -270,6 +276,36 @@ if (submitBtn) {
         const scheduledDateVal = document.getElementById("scheduled-date")?.value;
         const scheduledTimeVal = document.getElementById("scheduled-time")?.value;
 
+        // 1. DATE VALIDATION: Prevent selecting past days
+        if (scheduledDateVal) {
+            const selectedDate = new Date(scheduledDateVal);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+                showFormError("Please select a valid future date for your maintenance request.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Maintenance Request";
+                return;
+            }
+        }
+
+        // 2. TIME VALIDATION: Strictly restrict hours between 8:00 AM (08:00) and 5:00 PM (17:00)
+        if (scheduledTimeVal) {
+            const [hours, minutes] = scheduledTimeVal.split(":").map(Number);
+            const timeInMinutes = hours * 60 + minutes;
+            const startWindow = 8 * 60;  // 8:00 AM
+            const endWindow = 17 * 60;   // 5:00 PM
+
+            if (timeInMinutes < startWindow || timeInMinutes > endWindow) {
+                showFormError("Preferred service time must be scheduled between 8:00 AM and 5:00 PM.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Maintenance Request";
+                return;
+            }
+        }
+
+        // 3. LEAD TIME VALIDATION: Ensure at least 3 hours advance notice
         if (scheduledDateVal && scheduledTimeVal) {
             const scheduledDateTime = new Date(`${scheduledDateVal}T${scheduledTimeVal}`);
             const minAllowed = new Date(Date.now() + 3 * 60 * 60 * 1000);

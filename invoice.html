@@ -221,6 +221,22 @@
             color: var(--assigned);
             font-size: 1.1rem;
         }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            .pay-btn, .escrow-notice, #inv-download-btn {
+                display: none !important;
+            }
+            .invoice-card {
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -299,6 +315,10 @@
         <a href="#" id="inv-pay-btn" class="pay-btn">
             <i class="ti ti-lock"></i> Pay Securely via Digital Gateway
         </a>
+
+        <button id="inv-download-btn" onclick="window.print()" class="pay-btn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); margin-top: 0.75rem;">
+            <i class="ti ti-printer"></i> Print / Download PDF
+        </button>
 
         <div class="escrow-notice">
             <i class="ti ti-shield-check"></i>
