@@ -69,20 +69,23 @@ searchForm.addEventListener("submit", async (e) => {
 });
 
 function buildJobCardHTML(job) {
-    const rawStatus = (job.status || "").toLowerCase();
+    const rawStatus = (job.status || "").trim().toLowerCase();
     
+    // States where the technician has ACTUALLY accepted the job
+    const isAccepted = ["in_diagnostics", "accepted", "awaiting_payment", "paid", "pending_completion", "completed"].includes(rawStatus);
+
     let displayStatus = "Pending Dispatch";
     let statusClass = "pending";
     let statusDescription = "Matching you with the nearest available technician.";
 
-    if (rawStatus === "dispatched") {
+    if (rawStatus === "dispatched" || rawStatus === "pending_dispatch") {
+        displayStatus = "Pending Dispatch";
+        statusClass = "pending";
+        statusDescription = "Matching you with the nearest available technician.";
+    } else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") {
         displayStatus = "Technician Assigned";
         statusClass = "assigned";
-        statusDescription = "Technician notified and preparing to arrive.";
-    } else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") {
-        displayStatus = "Technician On-Site";
-        statusClass = "assigned";
-        statusDescription = "Technician is inspecting equipment and preparing quote.";
+        statusDescription = "Technician has accepted your request and is en route / inspecting equipment.";
     } else if (rawStatus === "awaiting_payment") {
         displayStatus = "Invoice Ready";
         statusClass = "pending";
@@ -101,7 +104,6 @@ function buildJobCardHTML(job) {
         statusDescription = "Request cancelled.";
     }
 
-    
     if (job.tech_completed && !job.client_completed) {
         statusDescription = "Technician has finished repair! Please verify the work and confirm completion below.";
     }
@@ -112,11 +114,12 @@ function buildJobCardHTML(job) {
     const technicianPhone = hasTechnician ? assignedTech.phone : null;
     const tokenOrId = job.tracking_token || job.uuid || job.id;
 
-    const technician = hasTechnician ? ` 
+    // ONLY SHOW TECHNICIAN DETAILS ONCE OFFICIALLY ACCEPTED
+    const technician = (isAccepted && hasTechnician) ? ` 
         <div class="tech-info-cell">
-            <span class="tech-name" style="color: var(--assigned);">${technicianName}</span>
-            ${technicianPhone ? `<a href="tel:${technicianPhone}" class="tech-phone"><i class="ti ti-phone"></i> ${technicianPhone}</a>` : ''}
-        </div>` : '<span class="small" style="color:var(--text-muted)">Matching technician...</span>';
+            <span class="tech-name" style="color: var(--assigned); font-weight: 600;">${technicianName}</span>
+            ${technicianPhone ? `<a href="tel:${technicianPhone}" class="tech-phone" style="margin-left: 0.5rem;"><i class="ti ti-phone"></i> ${technicianPhone}</a>` : ''}
+        </div>` : '<span class="small" style="color:var(--text-muted)">Finding nearest technician...</span>';
 
     const displayId = job.id ? String(job.id).padStart(4, "0") : (tokenOrId ? String(tokenOrId).slice(0, 8) : "0000");
     const jobId = `#JOB-${displayId}`;
@@ -128,7 +131,7 @@ function buildJobCardHTML(job) {
            </a>`
         : "";
 
-    const completionBtn = (rawStatus === "paid" || rawStatus === "dispatched" || rawStatus === "in_diagnostics") 
+    const completionBtn = (rawStatus === "paid" || rawStatus === "in_diagnostics" || rawStatus === "accepted") 
         ? `<button class="complete-btn" onclick="markAsCompleted('${tokenOrId}')">
                 <i class="ti ti-circle-check"></i> Mark as Completed
            </button>`
@@ -217,7 +220,8 @@ async function proceedWithCompletion() {
         showLoading();
         const response = await fetch(`${BASE_URL}/jobs/${jobIdToSend}/complete`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY }
+            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+            body: JSON.stringify({ role: "client" })
         });
 
         if (response.ok) {

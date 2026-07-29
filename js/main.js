@@ -1,4 +1,4 @@
-// --- CONFIG 
+// --- CONFIG ---
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 const SUPABASE_URL = "https://sukssqwzatvmnwdxthoa.supabase.co";
@@ -14,22 +14,29 @@ const uploadText = document.querySelector(".upload-text");
 const scheduledDate = document.getElementById("scheduled-date");
 const scheduledTime = document.getElementById("scheduled-time");
 
-scheduledTime.disabled = true;
-
-scheduledDate.addEventListener("change", () => {
-    if (scheduledDate.value) {
-        scheduledTime.disabled = false;
-    } else {
-        scheduledTime.disabled = true;
+// Initialize scheduling controls
+window.addEventListener("DOMContentLoaded", () => {
+    if (scheduledTime && scheduledDate) {
+        scheduledTime.disabled = !scheduledDate.value;
     }
 });
 
-photoInput.addEventListener("change", () => {
-    const file = photoInput.files[0];
-    if (file) {
-        uploadText.textContent = `Selected: ${file.name}`;
-    }
-});
+if (scheduledDate) {
+    scheduledDate.addEventListener("change", () => {
+        if (scheduledTime) {
+            scheduledTime.disabled = !scheduledDate.value;
+        }
+    });
+}
+
+if (photoInput) {
+    photoInput.addEventListener("change", () => {
+        const file = photoInput.files[0];
+        if (file && uploadText) {
+            uploadText.textContent = `Selected: ${file.name}`;
+        }
+    });
+}
 
 async function uploadPhoto(file) {
     const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
@@ -53,21 +60,25 @@ async function uploadPhoto(file) {
 function showFormError(message) {
     const errorDiv = document.getElementById("form-error");
     const errorText = document.getElementById("form-error-text");
-    errorText.textContent = message;
-    errorDiv.style.display = "flex";
-    errorDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (errorDiv && errorText) {
+        errorText.textContent = message;
+        errorDiv.style.display = "flex";
+        errorDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
 }
 
 function hideFormError() {
-    document.getElementById("form-error").style.display = "none";
+    const errorDiv = document.getElementById("form-error");
+    if (errorDiv) errorDiv.style.display = "none";
 }
 
 function showSuccessModal(message, jobId) {
     const modal = document.getElementById("success-modal");
-    document.getElementById("success-modal-text").textContent = message;
-    modal.style.display = "flex";
+    const textEl = document.getElementById("success-modal-text");
+    if (textEl) textEl.textContent = message;
+    if (modal) modal.style.display = "flex";
 
-    if (jobId) {
+    if (jobId && modal) {
         const trackBtn = modal.querySelector("button");
         if (trackBtn) {
             trackBtn.onclick = () => {
@@ -112,7 +123,7 @@ async function geocodeQatarAddress(zone, street, building) {
             return {
                 lat: place.geometry.location.lat,
                 lng: place.geometry.location.lng,
-                formatted_address: place.formatted_address || queryText
+                formatted_address: place.formatted_address || `Zone ${zone}, Street ${street}, Building ${building}, Qatar`
             };
         }
     } catch (e) {
@@ -150,10 +161,15 @@ async function geocodeQatarAddress(zone, street, building) {
         console.warn("Device geolocation unavailable:", err.message);
     }
 
-    return { lat: null, lng: null, formatted_address: null };
+    // Attempt 4: DEFAULT FALLBACK (Doha Center Coords) — Ensures form submit is NEVER blocked
+    return { 
+        lat: 25.2854, 
+        lng: 51.5310, 
+        formatted_address: `Zone ${zone}, Street ${street}, Building ${building}, Qatar` 
+    };
 }
 
-// OPTION A: Show Address Confirmation Card Banner
+// Show Address Confirmation Card Banner
 function showAddressConfirmation(formattedAddress) {
     const card = document.getElementById("address-confirm-card");
     const addressSpan = document.getElementById("detected-address-text");
@@ -174,23 +190,28 @@ function showAddressConfirmation(formattedAddress) {
             const b = document.getElementById("building-number")?.value.trim();
 
             if (z && s && b) {
-                const coords = await geocodeQatarAddress(z, s, b);
-                if (coords && coords.lat && coords.lng) {
-                    showAddressConfirmation(coords.formatted_address || `Zone ${z}, Street ${s}, Building ${b}, Qatar`);
-                }
+                // Dynamically display the typed address immediately!
+                showAddressConfirmation(`Zone ${z}, Street ${s}, Building ${b}, Qatar`);
+                await geocodeQatarAddress(z, s, b);
             }
         });
     }
 });
 
 function openProblemModal() {
-    document.getElementById('problemModalOverlay').classList.add('active');
-    document.body.style.overflow = 'hidden'; 
+    const overlay = document.getElementById('problemModalOverlay');
+    if (overlay) {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeProblemModal() {
-    document.getElementById('problemModalOverlay').classList.remove('active');
-    document.body.style.overflow = '';
+    const overlay = document.getElementById('problemModalOverlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 }
 
 function closeProblemModalOnBackdrop(event) {
@@ -204,172 +225,163 @@ function handleProblemSelect(radioElem) {
     const selectedLabel = radioElem.getAttribute('data-label');
 
     const hiddenInput = document.getElementById('problem-category');
-    hiddenInput.value = selectedVal;
+    if (hiddenInput) hiddenInput.value = selectedVal;
 
     const displaySpan = document.getElementById('selectedCategoryText');
-    displaySpan.innerText = selectedLabel;
+    if (displaySpan) displaySpan.innerText = selectedLabel;
     
     const triggerBox = document.getElementById('selectTrigger');
-    triggerBox.classList.add('selected');
+    if (triggerBox) triggerBox.classList.add('selected');
 
     setTimeout(() => {
         closeProblemModal();
     }, 150);
 }
 
-submitBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
+if (submitBtn) {
+    submitBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
 
-    hideFormError(); 
+        hideFormError(); 
 
-    const customerName = document.getElementById("customer-name").value.trim();
-    if (customerName.split(' ').filter(n => n).length < 2) {
-        showFormError("Please enter your full name. Must match the names on your Uploaded QID.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Maintenance Request";
-        return;
-    }
-
-    const phoneNumber = document.getElementById("phone-number").value.trim();
-    if (!/^\d{8}$/.test(phoneNumber)) {
-        showFormError("Phone number must be exactly 8 digits.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Maintenance Request";
-        return;
-    }
-
-    const termsAgreed = document.getElementById("callout-agree")?.checked;
-
-    if (!termsAgreed) {
-        showFormError("Please confirm that you agree to the QAR 50 Call-Out Fee and Pricing Terms before submitting.");
-        return;
-    }
-
-    const scheduledDateVal = document.getElementById("scheduled-date").value;
-    const scheduledTimeVal = document.getElementById("scheduled-time").value;
-
-    if (scheduledDateVal && scheduledTimeVal) {
-        const scheduledDateTime = new Date(`${scheduledDateVal}T${scheduledTimeVal}`);
-        const minAllowed = new Date(Date.now() + 3 * 60 * 60 * 1000);
-
-        if (scheduledDateTime < minAllowed) {
-            showFormError("Scheduled time must be at least 3 hours from now.");
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Submit Maintenance Request";
-            return;
-        }
-    }
-
-    const photoFile = photoInput.files[0];
-
-    if (!photoFile) {
-        showFormError("Please upload a photo before submitting.");
-        return;
-    }
-
-    try {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Resolving location...";
-
-        const zoneNumber = document.getElementById("zone-number").value.trim();
-        const streetNumber = document.getElementById("street-number").value.trim();
-        const buildingNumber = document.getElementById("building-number").value.trim();
-        const descriptionText = document.getElementById("description-note").value.trim();
-
-        // Convert Zone/Street/Building text string via Places Text Search
-        let coords = await geocodeQatarAddress(zoneNumber, streetNumber, buildingNumber);
-
-        if (!coords.lat || !coords.lng) {
-            showFormError("Could not locate the specified Zone/Street/Building address. Please verify your Blue Plate details.");
+        const customerName = document.getElementById("customer-name")?.value.trim() || "";
+        if (customerName.split(' ').filter(n => n).length < 2) {
+            showFormError("Please enter your full name. Must match the names on your Uploaded QID.");
             submitBtn.disabled = false;
             submitBtn.textContent = "Submit Maintenance Request";
             return;
         }
 
-        // Show banner on submit if not already visible
-        showAddressConfirmation(coords.formatted_address || `Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}, Qatar`);
+        const phoneNumber = document.getElementById("phone-number")?.value.trim() || "";
+        if (!/^\d{8}$/.test(phoneNumber)) {
+            showFormError("Phone number must be exactly 8 digits.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Maintenance Request";
+            return;
+        }
 
-        submitBtn.textContent = "Uploading photo...";
+        const termsAgreed = document.getElementById("callout-agree")?.checked;
 
-        // Step 1: Upload photo to Supabase, get back public URL
-        const photo_url = await uploadPhoto(photoFile);
+        if (!termsAgreed) {
+            showFormError("Please confirm that you agree to the QAR 50 Call-Out Fee and Pricing Terms before submitting.");
+            return;
+        }
 
-        submitBtn.textContent = "Submitting...";
+        const scheduledDateVal = document.getElementById("scheduled-date")?.value;
+        const scheduledTimeVal = document.getElementById("scheduled-time")?.value;
 
-        // Payload
-        const scheduledDateValue = document.getElementById("scheduled-date").value;
-        const scheduledTimeValue = document.getElementById("scheduled-time").value;
+        if (scheduledDateVal && scheduledTimeVal) {
+            const scheduledDateTime = new Date(`${scheduledDateVal}T${scheduledTimeVal}`);
+            const minAllowed = new Date(Date.now() + 3 * 60 * 60 * 1000);
 
-        const body = {
-            full_name:      document.getElementById("customer-name").value.trim(),
-            phone_number:   document.getElementById("phone-number").value.trim(),
-            email:          document.getElementById("customer-email").value.trim(),
-            category:       document.getElementById("problem-category").value,
-            zone_number:    zoneNumber,
-            street_number:  streetNumber,
-            building_number: buildingNumber,
-            description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
-            job_photo_url:  photo_url,
-            preferred_date: scheduledDateValue,
-            preferred_time: scheduledTimeValue,
-            client_lat:     coords.lat,  
-            client_lng:     coords.lng    
-        };
+            if (scheduledDateTime < minAllowed) {
+                showFormError("Scheduled time must be at least 3 hours from now.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Maintenance Request";
+                return;
+            }
+        }
 
-        const response = await fetch(`${BASE_URL}/jobs`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
-            body: JSON.stringify(body)
-        });
+        const photoFile = photoInput?.files?.[0];
 
-        const result = await response.json();
+        if (!photoFile) {
+            showFormError("Please upload a photo before submitting.");
+            return;
+        }
 
-        if (response.ok && result.success === true) {
-            const jobId = result.data?.[0]?.tracking_token || result.data?.[0]?.uuid || result.data?.[0]?.id;
-            const successNotice = result.popup_data?.client_notice || "Your request has been received and a technician has been assigned. You will be notified shortly!";
-            showSuccessModal(successNotice, jobId);
-        } else {
-            console.error("422 detail:", JSON.stringify(result));
-            
-            let errorMsg = "Request validation failed. Please review your address and contact inputs.";
-            const rawString = JSON.stringify(result);
+        try {
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Resolving location...";
 
-            if (rawString.includes("PGRST125") || rawString.includes("Invalid path specified")) {
-                errorMsg = "System Maintenance: The request submission gateway is currently being updated. Please try again in a few moments.";
-            } 
-            else if (result.detail && Array.isArray(result.detail)) {
-                const errorLocation = result.detail[0]?.loc?.[1] || "";
-                const backendMessage = result.detail[0]?.msg || "";
+            const zoneNumber = document.getElementById("zone-number")?.value.trim() || "";
+            const streetNumber = document.getElementById("street-number")?.value.trim() || "";
+            const buildingNumber = document.getElementById("building-number")?.value.trim() || "";
+            const descriptionText = document.getElementById("description-note")?.value.trim() || "";
 
-                if (errorLocation === "job_photo_url" || errorLocation === "photo") {
-                    errorMsg = "Please upload a clear, valid image highlighting the maintenance issue.";
-                } else if (errorLocation === "phone_number") {
-                    errorMsg = "Please enter a valid 8-digit Qatar mobile phone number.";
-                } else if (errorLocation === "email") {
-                    errorMsg = "Please enter a valid email address.";
-                } else if (errorLocation === "category") {
-                    errorMsg = "Please select a maintenance trade category from the options provided.";
-                } else if (errorLocation === "preferred_date" || errorLocation === "preferred_time") {
-                    errorMsg = "Please provide a valid preferred scheduling date and time window.";
-                } else {
-                    errorMsg = typeof backendMessage === "string" 
-                        ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
-                        : "Please ensure all address parameters and details are complete.";
+            // Convert Zone/Street/Building text string
+            let coords = await geocodeQatarAddress(zoneNumber, streetNumber, buildingNumber);
+
+            // Show banner with dynamic address string
+            showAddressConfirmation(`Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}, Qatar`);
+
+            submitBtn.textContent = "Uploading photo...";
+
+            // Step 1: Upload photo to Supabase, get back public URL
+            const photo_url = await uploadPhoto(photoFile);
+
+            submitBtn.textContent = "Submitting...";
+
+            const body = {
+                full_name:      customerName,
+                phone_number:   phoneNumber,
+                email:          document.getElementById("customer-email")?.value.trim() || "",
+                category:       document.getElementById("problem-category")?.value || "",
+                zone_number:    zoneNumber,
+                street_number:  streetNumber,
+                building_number: buildingNumber,
+                description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
+                job_photo_url:  photo_url,
+                preferred_date: scheduledDateVal,
+                preferred_time: scheduledTimeVal,
+                client_lat:     coords.lat,  
+                client_lng:     coords.lng    
+            };
+
+            const response = await fetch(`${BASE_URL}/jobs`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+                body: JSON.stringify(body)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success === true) {
+                const jobId = result.data?.[0]?.tracking_token || result.data?.[0]?.uuid || result.data?.[0]?.id;
+                const successNotice = result.popup_data?.client_notice || "Your request has been received! We are matching you with a local technician and will notify you shortly.";
+                showSuccessModal(successNotice, jobId);
+            } else {
+                console.error("422 detail:", JSON.stringify(result));
+                
+                let errorMsg = "Request validation failed. Please review your address and contact inputs.";
+                const rawString = JSON.stringify(result);
+
+                if (rawString.includes("PGRST125") || rawString.includes("Invalid path specified")) {
+                    errorMsg = "System Maintenance: The request submission gateway is currently being updated. Please try again in a few moments.";
+                } 
+                else if (result.detail && Array.isArray(result.detail)) {
+                    const errorLocation = result.detail[0]?.loc?.[1] || "";
+                    const backendMessage = result.detail[0]?.msg || "";
+
+                    if (errorLocation === "job_photo_url" || errorLocation === "photo") {
+                        errorMsg = "Please upload a clear, valid image highlighting the maintenance issue.";
+                    } else if (errorLocation === "phone_number") {
+                        errorMsg = "Please enter a valid 8-digit Qatar mobile phone number.";
+                    } else if (errorLocation === "email") {
+                        errorMsg = "Please enter a valid email address.";
+                    } else if (errorLocation === "category") {
+                        errorMsg = "Please select a maintenance trade category from the options provided.";
+                    } else if (errorLocation === "preferred_date" || errorLocation === "preferred_time") {
+                        errorMsg = "Please provide a valid preferred scheduling date and time window.";
+                    } else {
+                        errorMsg = typeof backendMessage === "string" 
+                            ? backendMessage.replace("Value error, ", "").replace("Field required", "This field is required")
+                            : "Please ensure all address parameters and details are complete.";
+                    }
+                } else if (typeof result.detail === "string") {
+                    errorMsg = result.detail;
+                } else if (result.message) {
+                    errorMsg = result.message;
                 }
-            } else if (typeof result.detail === "string") {
-                errorMsg = result.detail;
-            } else if (result.message) {
-                errorMsg = result.message;
+
+                showFormError(errorMsg);
             }
 
-            showFormError(errorMsg);
+        } catch (error) {
+            console.error(error);
+            showFormError("Something went wrong. Check your connection and try again.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Maintenance Request";
         }
-
-    } catch (error) {
-        console.error(error);
-        showFormError("Something went wrong. Check your connection and try again.");
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Maintenance Request";
-    }
-});
+    });
+}
