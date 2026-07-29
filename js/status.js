@@ -131,10 +131,11 @@ function buildJobCardHTML(job) {
            </a>`
         : "";
 
-    const completionBtn = (rawStatus === "paid" || rawStatus === "in_diagnostics" || rawStatus === "accepted") 
+    const canMarkComplete = rawStatus === "paid" || rawStatus === "pending_completion";
+    const completionBtn = canMarkComplete 
         ? `<button class="complete-btn" onclick="markAsCompleted('${tokenOrId}')">
                 <i class="ti ti-circle-check"></i> Mark as Completed
-           </button>`
+        </button>`
         : "";
 
     const jobCreatedAt = new Date(job.created_at);
