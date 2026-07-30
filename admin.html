@@ -141,6 +141,21 @@
             </a>
         </nav>
     </div>
+    <div class="job-panel-backdrop" id="job-panel-backdrop" onclick="closeJobPanel()"></div>
+    <div class="job-detail-panel" id="job-detail-panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-job-id" id="panel-job-id">#JOB-0000</div>
+                <div class="panel-job-time" id="panel-job-time">Created: —</div>
+            </div>
+            <button class="panel-close-btn" onclick="closeJobPanel()" aria-label="Close panel">
+                <i class="ti ti-x"></i>
+            </button>
+        </div>
+        <div class="panel-body" id="panel-body-content">
+            <!-- Dynamic Content Injected via admin.js -->
+        </div>
+    </div>
 
     <script>
         const currentPage = window.location.pathname.split("/").pop();

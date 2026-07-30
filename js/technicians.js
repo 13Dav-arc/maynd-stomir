@@ -19,12 +19,11 @@ const totalTechEl       = document.getElementById("total-technicians");
 const assignedCountEl   = document.getElementById("assigned-technicians");
 const jobsDoneEl        = document.getElementById("total-jobs-done");
 
-// Store all technicians globally for search/filter
+// Store all technicians globally for search/filter/slide-panel
 let allTechnicians = [];
-
+let currentFilteredTechs = [];
 
 // FETCH ALL TECHNICIANS — GET /workers
-
 async function fetchTechnicians() {
     try {
         showTableLoading();
@@ -38,8 +37,8 @@ async function fetchTechnicians() {
 
         const result = await response.json();
         const technicians = result.data || result;
-        console.log (technicians);
         allTechnicians = technicians;
+        currentFilteredTechs = technicians;
 
         updateStatCards(technicians);
         renderTable(technicians);
@@ -48,24 +47,20 @@ async function fetchTechnicians() {
         console.error(error);
         techTbody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted)">
+                <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted)">
                     Failed to load technicians. Check your connection.
                 </td>
             </tr>`;
     }
 }
 
-
-// UPDATE STAT CARDS
 // UPDATE STAT CARDS
 function updateStatCards(technicians) {
     totalTechEl.textContent = technicians.length;
     
     assignedCountEl.textContent = technicians.filter(t => {
         const rawStatus = (t.status || "").trim().toLowerCase();
-        
         const inCooldown = t.cooldown_until && new Date(t.cooldown_until) > new Date();
-        
         return rawStatus === "assigned" || rawStatus === "busy" || inCooldown;
     }).length;
     
@@ -74,7 +69,6 @@ function updateStatCards(technicians) {
         return sum + (isNaN(completedCount) ? 0 : completedCount);
     }, 0);
 }
-
 
 function getDisplayStatus(tech) {
     const rawStatus = (tech.status || "awaiting_approval").trim().toLowerCase();
@@ -110,17 +104,13 @@ function getInitials(name) {
         .slice(0, 2);
 }
 
-
 // BUILD TECHNICIAN ROW HTML
 function buildTechRowHTML(tech, index) {
     const status   = getDisplayStatus(tech);
     const initials = getInitials(tech.full_name);
-    const isFreshApplicant = tech.is_approved === false && (tech.status || "").trim().toUpperCase() !== "REJECTED";
-    const technicianID = tech.uuid || tech.id || tech._id || tech.tech_id;
-    const qidPhotoURL = tech.id_photo_url || tech.id_url;
 
     return `
-        <tr class="tech-row" id="tech-row-${index}" onclick="toggleExpand(${index})">
+        <tr class="tech-row" onclick="openTechPanelByIndex(${index})">
             <td>
                 <div class="tech-name-cell">
                     <div class="tech-avatar">${initials}</div>
@@ -136,54 +126,118 @@ function buildTechRowHTML(tech, index) {
                 : (tech.trade_skill ? tech.trade_skill.toUpperCase() : "—")}</td>
             <td><span class="status-badge ${status.cls}">${status.label}</span></td>
             <td>${tech.completed_jobs_count || 0}</td>
-            <td><i class="ti ti-chevron-down tech-chevron" id="chevron-${index}" aria-hidden="true"></i></td>
-        </tr>
-        <tr class="tech-expand-row" id="tech-expand-${index}" style="display:none;">
-            <td colspan="7" style="padding:0">
-                <div class="tech-expand-body">
-                    <div class="tech-expand-field">
-                        <span class="track-list">QID Number</span>
-                        <span class="track-info">${tech.qid_number || "—"}</span>
-                    </div>
-                    <div class="tech-expand-field">
-                        <span class="track-list">QID Photo</span>
-                        <span class="track-info">
-                            ${qidPhotoURL
-                                ? `<a href="${qidPhotoURL}" target="_blank" style="color:var(--blue-accent); text-decoration:underline; font-size:0.8rem;">View QID →</a>`
-                                : "Not uploaded"}
-                        </span>
-                    </div>
-                    <div class="tech-expand-field">
-                        <span class="track-list">Kahramaa ID Photo</span>
-                        <span class="track-info">
-                            ${tech.kahramaa_id_url
-                                ? `<a href="${tech.kahramaa_id_url}" target="_blank" style="color:var(--blue-accent); text-decoration:underline; font-size:0.8rem;">View Photo →</a>`
-                                : "Not uploaded"}
-                        </span>
-                    </div>
-                    <div class="tech-expand-field">
-                        <span class="track-list">Assigned Jobs</span>
-                        <span class="track-info">${tech.assigned_jobs_count || 0}</span>
-                    </div>
-                    <div class="tech-expand-field">
-                        <span class="track-list">Completed Jobs</span>
-                        <span class="track-info">${tech.completed_jobs_count || 0}</span>
-                    </div>
-                    <!-- UPDATED GATEWAY: Only show buttons for fresh, unprocessed applicants -->
-                    ${isFreshApplicant ? `
-                    <div class="tech-approval-actions">
-                        <button onclick="event.stopPropagation(); processApproval('${technicianID}', true)" class="btn-action-approve">
-                            Approve & Activate
-                        </button>
-                        <button onclick="event.stopPropagation(); processApproval('${technicianID}', false)" class="btn-action-reject">
-                            Reject
-                        </button>
-                    </div>
-                    ` : ''}
-                </div>
-            </td>
         </tr>
     `;
+}
+
+// OPEN SLIDE-OVER PANEL FOR TECHNICIAN
+function openTechPanelByIndex(index) {
+    const tech = currentFilteredTechs[index] || allTechnicians[index];
+    if (!tech) return;
+
+    const backdrop = document.getElementById("tech-panel-backdrop");
+    const panel = document.getElementById("tech-detail-panel");
+    const bodyContent = document.getElementById("tech-panel-body");
+
+    document.getElementById("panel-tech-name").innerText = tech.full_name || "Technician Dossier";
+    
+    const joinedDate = (tech.created_at || tech.joined_at) 
+        ? new Date(tech.created_at || tech.joined_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+        : "—";
+    document.getElementById("panel-tech-joined").innerText = `Joined: ${joinedDate}`;
+
+    const status = getDisplayStatus(tech);
+    const qidPhotoURL = tech.id_photo_url || tech.id_url;
+    const isFreshApplicant = tech.is_approved === false && (tech.status || "").trim().toUpperCase() !== "REJECTED";
+    const technicianID = tech.uuid || tech.id || tech._id || tech.tech_id;
+
+    const tradesList = Array.isArray(tech.trade_skill) 
+        ? tech.trade_skill.join(", ").toUpperCase() 
+        : (tech.trade_skill ? tech.trade_skill.toUpperCase() : "General Maintenance");
+
+    bodyContent.innerHTML = `
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-user-check"></i> Profile & Status</div>
+            <div class="panel-grid">
+                <div class="panel-field">
+                    <label>Current Status</label>
+                    <div><span class="status-badge ${status.cls}">${status.label}</span></div>
+                </div>
+                <div class="panel-field">
+                    <label>Trade Skills</label>
+                    <div>${tradesList}</div>
+                </div>
+                <div class="panel-field">
+                    <label>Phone Number</label>
+                    <div><a href="tel:${tech.phone_number}">${tech.phone_number || "—"}</a></div>
+                </div>
+                <div class="panel-field">
+                    <label>Email Address</label>
+                    <div><a href="mailto:${tech.email_address}">${tech.email_address || "—"}</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-id-badge-2"></i> Qatar Compliance & Verification</div>
+            <div class="panel-grid">
+                <div class="panel-field" style="grid-column: span 2;">
+                    <label>QID Number</label>
+                    <div>${tech.qid_number || "—"}</div>
+                </div>
+                <div class="panel-field">
+                    <label>QID Document</label>
+                    <div>
+                        ${qidPhotoURL
+                            ? `<a href="${qidPhotoURL}" target="_blank" class="maps-btn" style="background:var(--blue-mid);">
+                                <i class="ti ti-file-certificate"></i> View QID Card
+                               </a>`
+                            : "<span style='font-size:0.8rem; color:var(--text-muted);'>Not uploaded</span>"}
+                    </div>
+                </div>
+                <div class="panel-field">
+                    <label>Kahramaa License</label>
+                    <div>
+                        ${tech.kahramaa_id_url
+                            ? `<a href="${tech.kahramaa_id_url}" target="_blank" class="maps-btn" style="background:var(--blue-mid);">
+                                <i class="ti ti-certificate"></i> View Kahramaa ID
+                               </a>`
+                            : "<span style='font-size:0.8rem; color:var(--text-muted);'>Not uploaded</span>"}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-history"></i> Performance Metrics</div>
+            <div class="panel-financial-card">
+                <div class="financial-row"><span>Jobs Currently Assigned</span><strong>${tech.assigned_jobs_count || 0}</strong></div>
+                <div class="financial-row total"><span>Total Jobs Completed & Cleared</span><strong>${tech.completed_jobs_count || 0}</strong></div>
+            </div>
+        </div>
+
+        ${isFreshApplicant ? `
+            <div class="panel-section">
+                <div class="panel-section-title"><i class="ti ti-shield-check"></i> Application Review Actions</div>
+                <div class="tech-approval-actions" style="margin-top:0;">
+                    <button onclick="processApproval('${technicianID}', true)" class="btn-action-approve" style="flex:1;">
+                        <i class="ti ti-check"></i> Approve & Activate
+                    </button>
+                    <button onclick="processApproval('${technicianID}', false)" class="btn-action-reject" style="flex:1;">
+                        <i class="ti ti-x"></i> Reject
+                    </button>
+                </div>
+            </div>
+        ` : ''}
+    `;
+
+    backdrop.classList.add("active");
+    panel.classList.add("active");
+}
+
+function closeTechPanel() {
+    document.getElementById("tech-detail-panel").classList.remove("active");
+    document.getElementById("tech-panel-backdrop").classList.remove("active");
 }
 
 async function processApproval(techId, isApproved) {
@@ -205,8 +259,7 @@ async function processApproval(techId, isApproved) {
         if (!response.ok) throw new Error("Failed to process approval status change.");
 
         alert(isApproved ? "Technician approved and activated!" : "Application rejected.");
-        
-        // Re-fetch clean data arrays to dynamically update table views
+        closeTechPanel();
         fetchTechnicians();
     } catch (error) {
         console.error(error);
@@ -219,7 +272,7 @@ function renderTable(technicians) {
     if (technicians.length === 0) {
         techTbody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted)">
+                <td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted)">
                     No technicians found.
                 </td>
             </tr>`;
@@ -229,52 +282,19 @@ function renderTable(technicians) {
     techTbody.innerHTML = technicians.map((tech, index) => buildTechRowHTML(tech, index)).join("");
 }
 
+// SEARCH & FILTERS
+searchInput.addEventListener("input", applyFilters);
+statusFilter.addEventListener("change", applyFilters);
+tradeFilter.addEventListener("change", applyFilters);
+sortFilter.addEventListener("change", applyFilters);
 
-// TOGGLE EXPAND ROW
-function toggleExpand(index) {
-    const expandRow = document.getElementById(`tech-expand-${index}`);
-    const chevron   = document.getElementById(`chevron-${index}`);
-    const isOpen    = expandRow.style.display === "table-row";
-
-    // Close all open rows
-    document.querySelectorAll(".tech-expand-row").forEach(r => r.style.display = "none");
-    document.querySelectorAll(".tech-chevron").forEach(c => c.style.transform = "rotate(0deg)");
-    document.querySelectorAll(".tech-row").forEach(r => r.classList.remove("expanded"));
-
-    // Open clicked row if it was closed
-    if (!isOpen) {
-        expandRow.style.display = "table-row";
-        chevron.style.transform = "rotate(180deg)";
-        document.getElementById(`tech-row-${index}`).classList.add("expanded");
-    }
-}
-
-// SEARCH
-searchInput.addEventListener("input", () => {
-    applyFilters();
-});
-
-// FILTER BY STATUS
-statusFilter.addEventListener("change", () => {
-    applyFilters();
-});
-
-// FILTER BY TRADE
-tradeFilter.addEventListener("change", () => {
-    applyFilters();
-});
-sortFilter.addEventListener("change", () => {
-    applyFilters();
-});
-
-// APPLY ALL FILTERS TOGETHER (WITH VALUE MAPPING)
+// APPLY ALL FILTERS TOGETHER
 function applyFilters() {
     const query     = searchInput.value.toLowerCase().trim();
     const statusVal = statusFilter.value.toLowerCase().trim();
     const tradeVal  = tradeFilter.value.toLowerCase().trim(); 
     const sortVal   = sortFilter.value;
 
-    // Direct mapping from HTML option values to exact backend database strings
     const tradeMap = {
         "hvac": "hvac",
         "plumbing": "plumbing",
@@ -299,7 +319,6 @@ function applyFilters() {
         const statusKey = statusObj.key;
         const rawBackendStatus = (tech.status || "").toLowerCase();
 
-        // 1. SKILLS EXTRACTION & NORMALIZATION
         let techSkills = [];
         if (Array.isArray(tech.trade_skill)) {
             techSkills = tech.trade_skill.map(t => String(t).trim().toLowerCase());
@@ -308,14 +327,12 @@ function applyFilters() {
         }
         const tradeString = techSkills.join(" ");
 
-        // 2. SEARCH MATCHING (Name, Phone, Email, Trade)
         const matchesSearch = !query ||
             (tech.full_name || "").toLowerCase().includes(query) ||
             (tech.phone_number || "").includes(query) ||
             (tech.email_address || "").toLowerCase().includes(query) ||
             tradeString.includes(query);
 
-        // 3. STATUS MATCHING
         let matchesStatus = !statusVal;
         if (statusVal) {
             matchesStatus = 
@@ -326,7 +343,6 @@ function applyFilters() {
                 (statusVal === "assigned" && (rawBackendStatus === "busy" || rawBackendStatus === "assigned"));
         }
 
-        // 4. TRADE MATCHING (Checks exact backend strings OR flexible substring matches)
         let matchesTrade = !tradeVal;
         if (tradeVal) {
             matchesTrade = techSkills.some(skill => {
@@ -339,11 +355,10 @@ function applyFilters() {
         return matchesSearch && matchesStatus && matchesTrade;
     });
 
-    // 5. SORTING LOGIC
     if (sortVal) {
         filtered.sort((a, b) => {
             if (sortVal === "name-asc") return (a.full_name || "").localeCompare(b.full_name || "");
-            if (sortVal === "name-desc") return (a.full_name || "").localeCompare(b.full_name || "");
+            if (sortVal === "name-desc") return (b.full_name || "").localeCompare(a.full_name || "");
             if (sortVal === "jobs-desc") return (b.completed_jobs_count || 0) - (a.completed_jobs_count || 0);
             if (sortVal === "date-desc") {
                 return new Date(b.created_at || b.joined_at || 0) - new Date(a.created_at || a.joined_at || 0);
@@ -355,9 +370,9 @@ function applyFilters() {
         });
     }
 
+    currentFilteredTechs = filtered;
     renderTable(filtered);
 }
-
 
 function showTableLoading() {
     techTbody.innerHTML = `
@@ -368,19 +383,8 @@ function showTableLoading() {
             <td><div class="skeleton-line"></div></td>
             <td><div class="skeleton-line"></div></td>
             <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
         </tr>
         <tr class="skeleton-row">
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-            <td><div class="skeleton-line"></div></td>
-        </tr>
-        <tr class="skeleton-row">
-            <td><div class="skeleton-line"></div></td>
             <td><div class="skeleton-line"></div></td>
             <td><div class="skeleton-line"></div></td>
             <td><div class="skeleton-line"></div></td>

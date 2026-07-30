@@ -67,7 +67,7 @@ function renderTable(jobs) {
         return;
     }
 
-    tbody.innerHTML = jobs.map(job => {
+    tbody.innerHTML = jobs.map((job, index) => {
         const location = job.description || "—";
         const dateObj = job.customer_availability ? new Date(job.customer_availability) : null;
 
@@ -104,7 +104,7 @@ function renderTable(jobs) {
                 <div class="tech-info-cell">
                     <span class="small tech-name" style="color: ${techColor};">${technicianName}</span>
                     ${technicianPhone ? `
-                        <a href="tel:${technicianPhone}" class="small tech-phone">
+                        <a href="tel:${technicianPhone}" class="small tech-phone" onclick="event.stopPropagation()">
                             <i class="ti ti-phone"></i> ${technicianPhone}
                         </a>` : ''}
                 </div>
@@ -120,7 +120,7 @@ function renderTable(jobs) {
         }
 
         return `
-            <tr>
+            <tr onclick="openJobPanelByIndex(${index})">
                 <td>#${String(job.id).padStart(4, "0")}</td>
                 <td class="customer">
                     <span class="name">${job.customer_name || job.full_name || "—"}</span>
@@ -134,6 +134,136 @@ function renderTable(jobs) {
             </tr>
         `;
     }).join("");
+}
+
+// OPEN SLIDE-OVER PANEL
+let currentFilteredJobs = [];
+
+function openJobPanelByIndex(index) {
+    const job = currentFilteredJobs[index] || allJobs[index];
+    if (!job) return;
+
+    const panel = document.getElementById("job-detail-panel");
+    const backdrop = document.getElementById("job-panel-backdrop");
+    const bodyContent = document.getElementById("panel-body-content");
+
+    const displayId = String(job.id).padStart(4, "0");
+    document.getElementById("panel-job-id").innerText = `#JOB-${displayId}`;
+
+    const createdDate = job.created_at ? new Date(job.created_at).toLocaleString("en-GB", {
+        day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+    }) : "—";
+    document.getElementById("panel-job-time").innerText = `Logged: ${createdDate}`;
+
+    // Itemized Pricing Calculation
+    const partsCost = parseFloat(job.parts_cost || job.quote?.parts_cost) || 0;
+    const sourcingFee = parseFloat(job.sourcing_fee || job.quote?.sourcing_fee) || 0;
+    const laborCost = parseFloat(job.labor_cost || job.quote?.labor_cost) || 0;
+    const calloutFee = 50;
+    const totalAmount = calloutFee + partsCost + sourcingFee + laborCost;
+
+    const assignedTech = job.assigned_technician;
+    const hasTech = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
+
+    bodyContent.innerHTML = `
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-info-circle"></i> Status & Schedule</div>
+            <div class="panel-grid">
+                <div class="panel-field">
+                    <label>Current Status</label>
+                    <div><span class="status-badge ${job.status}">${(job.status || "Pending").toUpperCase()}</span></div>
+                </div>
+                <div class="panel-field">
+                    <label>Category</label>
+                    <div>${job.category || "General Maintenance"}</div>
+                </div>
+                <div class="panel-field">
+                    <label>Preferred Date</label>
+                    <div>${job.preferred_date || job.customer_availability || "—"}</div>
+                </div>
+                <div class="panel-field">
+                    <label>Preferred Time</label>
+                    <div>${job.preferred_time || "—"}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-user"></i> Customer & Location</div>
+            <div class="panel-grid">
+                <div class="panel-field">
+                    <label>Full Name</label>
+                    <div>${job.customer_name || job.full_name || "Valued Client"}</div>
+                </div>
+                <div class="panel-field">
+                    <label>Phone Number</label>
+                    <div><a href="tel:${job.phone_number}">${job.phone_number || "—"}</a></div>
+                </div>
+                <div class="panel-field" style="grid-column: span 2;">
+                    <label>Email Address</label>
+                    <div><a href="mailto:${job.email}">${job.email || "—"}</a></div>
+                </div>
+                <div class="panel-field" style="grid-column: span 2;">
+                    <label>Qatar Blue Plate Location</label>
+                    <div>Zone ${job.zone_number || "—"}, Street ${job.street_number || "—"}, Building ${job.building_number || "—"}</div>
+                    ${job.client_lat && job.client_lng ? `
+                        <a href="https://www.google.com/maps?q=${job.client_lat},${job.client_lng}" target="_blank" class="maps-btn">
+                            <i class="ti ti-map-pin"></i> Open in Google Maps
+                        </a>
+                    ` : ""}
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-tool"></i> Technician Details</div>
+            <div class="panel-grid">
+                <div class="panel-field">
+                    <label>Assigned Technician</label>
+                    <div>${hasTech ? assignedTech.name : "Unassigned"}</div>
+                </div>
+                <div class="panel-field">
+                    <label>Technician Contact</label>
+                    <div>${hasTech && assignedTech.phone ? `<a href="tel:${assignedTech.phone}">${assignedTech.phone}</a>` : "—"}</div>
+                </div>
+                ${job.accepted_at ? `
+                    <div class="panel-field" style="grid-column: span 2;">
+                        <label>Accepted Timestamp</label>
+                        <div>${new Date(job.accepted_at).toLocaleString()}</div>
+                    </div>
+                ` : ""}
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-receipt"></i> Financials & Diagnostic Breakdown</div>
+            <div class="panel-financial-card">
+                <div class="financial-row"><span>Baseline Call-Out & Diagnostic Fee</span><strong>50 QAR</strong></div>
+                <div class="financial-row"><span>Replacement Parts Cost</span><strong>${partsCost} QAR</strong></div>
+                <div class="financial-row"><span>Material Sourcing Fee</span><strong>${sourcingFee} QAR</strong></div>
+                <div class="financial-row"><span>Extended Labor Cost</span><strong>${laborCost} QAR</strong></div>
+                <div class="financial-row total"><span>Total Job Invoice</span><strong>${totalAmount} QAR</strong></div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-section-title"><i class="ti ti-camera"></i> Diagnostic Photo & Description</div>
+            <p style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.5rem;">${job.description || "No description provided."}</p>
+            ${job.job_photo_url ? `
+                <a href="${job.job_photo_url}" target="_blank">
+                    <img src="${job.job_photo_url}" alt="Job Issue Photo" class="panel-photo-preview" />
+                </a>
+            ` : '<p class="small" style="color:var(--text-muted)">No issue photo uploaded.</p>'}
+        </div>
+    `;
+
+    backdrop.classList.add("active");
+    panel.classList.add("active");
+}
+
+function closeJobPanel() {
+    document.getElementById("job-detail-panel").classList.remove("active");
+    document.getElementById("job-panel-backdrop").classList.remove("active");
 }
 
 // APPLY FILTERS & SEARCH
@@ -179,11 +309,12 @@ function applyFilters() {
             if (sortVal === "name-asc") return (a.customer_name || a.full_name || "").localeCompare(b.customer_name || b.full_name || "");
             if (sortVal === "name-desc") return (b.customer_name || b.full_name || "").localeCompare(a.customer_name || a.full_name || "");
             if (sortVal === "date-desc") return new Date(b.customer_availability || 0) - new Date(a.customer_availability || 0);
-            if (sortVal === "date-asc") return new Date(a.customer_availability || 0) - new Date(b.customer_availability || 0);
+            if (sortVal === "date-asc") return new Date(a.customer_availability || 0) - new Date(a.customer_availability || 0);
             return 0;
         });
     }
 
+    currentFilteredJobs = filtered;
     renderTable(filtered);
 }
 

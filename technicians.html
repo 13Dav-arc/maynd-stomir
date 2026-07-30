@@ -144,6 +144,23 @@
 
         </div>
     </div>
+
+    <div class="job-panel-backdrop" id="tech-panel-backdrop" onclick="closeTechPanel()"></div>
+    <div class="job-detail-panel" id="tech-detail-panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-job-id" id="panel-tech-name">Technician Dossier</div>
+                <div class="panel-job-time" id="panel-tech-joined">Joined: —</div>
+            </div>
+            <button class="panel-close-btn" onclick="closeTechPanel()" aria-label="Close panel">
+                <i class="ti ti-x"></i>
+            </button>
+        </div>
+        <div class="panel-body" id="tech-panel-body">
+            <!-- Dynamic Content Injected via js/technicians.js -->
+        </div>
+    </div>
+    
     <script>
         const currentPage = window.location.pathname.split("/").pop();
 
