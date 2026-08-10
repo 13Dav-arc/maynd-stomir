@@ -178,6 +178,24 @@ function openJobPanelByIndex(index) {
     const rawStatus = (job.status || "").trim().toLowerCase();
     const isManualPending = rawStatus === "awaiting_verification" || rawStatus === "pending_verification";
 
+    // Normalize Status Badge Styling & Labels for Drawer
+    let statusClass = "pending";
+    let statusLabel = "PENDING";
+
+    if (isManualPending) {
+        statusClass = "pending";
+        statusLabel = "MANUAL PAY REVIEW";
+    } else if (rawStatus === "dispatched" || rawStatus === "assigned" || rawStatus === "in_diagnostics" || rawStatus === "accepted" || rawStatus === "paid") {
+        statusClass = "assigned";
+        statusLabel = rawStatus === "in_diagnostics" ? "ON-SITE DIAGNOSTICS" : rawStatus.replace("_", " ").toUpperCase();
+    } else if (rawStatus === "completed") {
+        statusClass = "completed";
+        statusLabel = "COMPLETED";
+    } else if (rawStatus === "cancelled") {
+        statusClass = "cancelled";
+        statusLabel = "CANCELLED";
+    }
+
     bodyContent.innerHTML = `
         <!-- MANUAL PAYMENT VERIFICATION BANNER IF SUBMITTED -->
         ${isManualPending ? `
@@ -199,7 +217,7 @@ function openJobPanelByIndex(index) {
             <div class="panel-grid">
                 <div class="panel-field">
                     <label>Current Status</label>
-                    <div><span class="status-badge ${job.status}">${(job.status || "Pending").toUpperCase()}</span></div>
+                    <div><span class="status-badge ${statusClass}">${statusLabel}</span></div>
                 </div>
                 <div class="panel-field">
                     <label>Category</label>
