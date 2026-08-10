@@ -42,12 +42,12 @@ async function fetchJobs() {
     }
 }
 
-// UPDATE STAT CARDS FOR 6-STATE SYSTEM
+// UPDATE STAT CARDS FOR 6-STATE SYSTEM + MANUAL FALLBACK
 function updateStatCards(jobs) {
-    // 1. Queued / Pending Dispatch
+    // 1. Queued / Pending Dispatch / Awaiting Manual Verification
     pendingCount.textContent = jobs.filter(j => {
         const s = (j.status || "").trim().toLowerCase();
-        return s === "pending" || s === "pending_dispatch" || s === "unassigned_queued";
+        return s === "pending" || s === "pending_dispatch" || s === "unassigned_queued" || s === "awaiting_verification";
     }).length;
 
     // 2. Active In-Progress Jobs
@@ -86,13 +86,23 @@ function renderTable(jobs) {
         const rawStatus = (job.status || "").trim().toLowerCase();
         
         let displayBadge = `<span class="status-badge pending">Queued</span>`;
-        if (rawStatus === "dispatched") displayBadge = `<span class="status-badge assigned">Dispatched</span>`;
-        else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") displayBadge = `<span class="status-badge assigned">On-Site</span>`;
-        else if (rawStatus === "awaiting_payment") displayBadge = `<span class="status-badge pending">Awaiting Payment</span>`;
-        else if (rawStatus === "paid") displayBadge = `<span class="status-badge assigned">Paid / In Repair</span>`;
-        else if (rawStatus === "pending_completion") displayBadge = `<span class="status-badge pending">Awaiting Verification</span>`;
-        else if (rawStatus === "completed") displayBadge = `<span class="status-badge completed">Completed</span>`;
-        else if (rawStatus === "cancelled") displayBadge = `<span class="status-badge cancelled">Cancelled</span>`;
+        if (rawStatus === "awaiting_verification" || rawStatus === "pending_verification") {
+            displayBadge = `<span class="status-badge pending" style="background: rgba(180, 83, 9, 0.15); color: #B45309; border: 1px solid rgba(180, 83, 9, 0.3);"><i class="ti ti-clock"></i> Manual Pay Review</span>`;
+        } else if (rawStatus === "dispatched") {
+            displayBadge = `<span class="status-badge assigned">Dispatched</span>`;
+        } else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") {
+            displayBadge = `<span class="status-badge assigned">On-Site</span>`;
+        } else if (rawStatus === "awaiting_payment") {
+            displayBadge = `<span class="status-badge pending">Awaiting Payment</span>`;
+        } else if (rawStatus === "paid") {
+            displayBadge = `<span class="status-badge assigned">Paid / In Repair</span>`;
+        } else if (rawStatus === "pending_completion") {
+            displayBadge = `<span class="status-badge pending">Awaiting Verification</span>`;
+        } else if (rawStatus === "completed") {
+            displayBadge = `<span class="status-badge completed">Completed</span>`;
+        } else if (rawStatus === "cancelled") {
+            displayBadge = `<span class="status-badge cancelled">Cancelled</span>`;
+        }
 
         let assignCell = "";
         if (hasTechnician) {
@@ -165,7 +175,25 @@ function openJobPanelByIndex(index) {
     const assignedTech = job.assigned_technician;
     const hasTech = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
 
+    const rawStatus = (job.status || "").trim().toLowerCase();
+    const isManualPending = rawStatus === "awaiting_verification" || rawStatus === "pending_verification";
+
     bodyContent.innerHTML = `
+        <!-- MANUAL PAYMENT VERIFICATION BANNER IF SUBMITTED -->
+        ${isManualPending ? `
+            <div style="background: rgba(180, 83, 9, 0.08); border: 1px solid rgba(180, 83, 9, 0.2); border-radius: 4px; padding: 1.2rem; margin-bottom: 1.5rem;">
+                <div style="font-weight: 800; font-size: 0.9rem; color: var(--pending); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="ti ti-building-bank"></i> Manual Bank Transfer Verification Required
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-primary); margin-bottom: 0.8rem;">
+                    <strong>Customer Reference / Txn ID:</strong> <span style="background: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-family: monospace;">${job.payment_reference || "No Ref Provided"}</span>
+                </div>
+                <button onclick="verifyManualPayment('${job.tracking_token || job.id}')" id="approve-pay-btn" style="width: 100%; background: var(--assigned); color: white; border: none; padding: 0.75rem; border-radius: 4px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                    <i class="ti ti-circle-check"></i> Verify & Confirm Call-Out Payment (50 QAR)
+                </button>
+            </div>
+        ` : ""}
+
         <div class="panel-section">
             <div class="panel-section-title"><i class="ti ti-info-circle"></i> Status & Schedule</div>
             <div class="panel-grid">
@@ -261,6 +289,43 @@ function openJobPanelByIndex(index) {
     panel.classList.add("active");
 }
 
+// ACTION: VERIFY & CONFIRM MANUAL PAYMENT
+async function verifyManualPayment(jobId) {
+    const btn = document.getElementById("approve-pay-btn");
+    if (!confirm("Confirm receipt of manual bank transfer (50 QAR) for this job?")) return;
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ti ti-loader"></i> Updating Status...`;
+        }
+
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}/verify-payment`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-Key": API_KEY
+            },
+            body: JSON.stringify({
+                status: "dispatched",
+                callout_paid: true
+            })
+        });
+
+        if (!response.ok) throw new Error("Failed to verify payment");
+
+        closeJobPanel();
+        await fetchJobs();
+    } catch (err) {
+        console.error(err);
+        alert("Unable to verify payment. Ensure backend endpoint /verify-payment is configured.");
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="ti ti-circle-check"></i> Verify & Confirm Call-Out Payment (50 QAR)`;
+        }
+    }
+}
+
 function closeJobPanel() {
     document.getElementById("job-detail-panel").classList.remove("active");
     document.getElementById("job-panel-backdrop").classList.remove("active");
@@ -289,6 +354,8 @@ function applyFilters() {
 
         if (filterVal === "pending") {
             matchesStatus = rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued";
+        } else if (filterVal === "awaiting_verification") {
+            matchesStatus = rawStatus === "awaiting_verification" || rawStatus === "pending_verification";
         } else if (filterVal === "assigned") {
             matchesStatus = rawStatus === "assigned" || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted" || rawStatus === "pending_completion";
         } else if (filterVal === "awaiting_payment") {
