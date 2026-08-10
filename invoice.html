@@ -200,10 +200,156 @@
             margin-top: 1.5rem;
             border: none;
             cursor: pointer;
+            transition: background 0.2s ease;
         }
 
         .pay-btn:hover {
             background: var(--blue-light);
+        }
+
+        /* MANUAL PAYMENT & NOTIFICATION STYLES */
+        .fallback-trigger-wrap {
+            margin-top: 1.25rem;
+            text-align: center;
+        }
+
+        .fallback-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+
+        .fallback-toggle-btn:hover {
+            color: var(--blue-dark);
+            background: var(--off-white);
+        }
+
+        .manual-pay-card {
+            display: none;
+            margin-top: 1rem;
+            background: var(--off-white);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1.25rem;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .manual-pay-card h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--blue-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .bank-info-grid {
+            display: grid;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            background: var(--white);
+            padding: 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .bank-info-grid span {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-primary);
+            background: var(--white);
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--blue-accent);
+        }
+
+        .submit-manual-btn {
+            width: 100%;
+            background: var(--blue-dark);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 0.75rem;
+            transition: background 0.2s ease;
+        }
+
+        .submit-manual-btn:hover {
+            background: var(--blue-mid);
+        }
+
+        .ui-feedback-banner {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .ui-feedback-banner.info {
+            background: rgba(3, 105, 161, 0.08);
+            border: 1px solid rgba(3, 105, 161, 0.2);
+            color: var(--completed);
+        }
+
+        .ui-feedback-banner.success {
+            background: rgba(21, 128, 61, 0.08);
+            border: 1px solid rgba(21, 128, 61, 0.2);
+            color: var(--assigned);
+        }
+
+        .ui-feedback-banner.error {
+            background: rgba(180, 83, 9, 0.08);
+            border: 1px solid rgba(180, 83, 9, 0.2);
+            color: var(--pending);
         }
 
         .escrow-notice {
@@ -222,12 +368,17 @@
             font-size: 1.1rem;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media print {
             body {
                 background: white !important;
                 padding: 0 !important;
             }
-            .pay-btn, .escrow-notice, #inv-download-btn {
+            .pay-btn, .escrow-notice, #inv-download-btn, .fallback-trigger-wrap, .manual-pay-card, .ui-feedback-banner {
                 display: none !important;
             }
             .invoice-card {
@@ -283,7 +434,6 @@
                     </td>
                     <td class="amount">50 QAR</td>
                 </tr>
-                <!-- Dynamic Paid Credit Row -->
                 <tr id="inv-callout-credit-row" style="display: none; background: rgba(21, 128, 61, 0.05);">
                     <td>
                         <strong style="color: var(--assigned);"><i class="ti ti-check"></i> Call-Out Fee Paid (Credit)</strong>
@@ -320,9 +470,41 @@
             <div class="total-amount" id="inv-total-amount">50 QAR</div>
         </div>
 
+        <!-- Inline Status Feedback Banner -->
+        <div id="ui-feedback-banner" class="ui-feedback-banner"></div>
+
+        <!-- Primary Payment Action Button -->
         <a href="#" id="inv-pay-btn" class="pay-btn">
             <i class="ti ti-lock"></i> Pay QAR 50 Call-Out Fee
         </a>
+
+        <!-- Fallback Transfer Trigger -->
+        <div class="fallback-trigger-wrap" id="fallback-trigger-wrap">
+            <button id="toggle-manual-btn" type="button" class="fallback-toggle-btn">
+                <i class="ti ti-building-bank"></i> Alternative: Pay via Direct Bank Transfer (IBAN)
+            </button>
+        </div>
+
+        <!-- Hidden Manual Payment Form Card -->
+        <div id="manual-pay-card" class="manual-pay-card">
+            <h4><i class="ti ti-building-bank"></i> Direct Bank Transfer Details</h4>
+            
+            <div class="bank-info-grid">
+                <div><span>Bank:</span> Qatar National Bank (QNB)</div>
+                <div><span>Account Name:</span> Maynd Stomir Maintenance W.L.L.</div>
+                <div><span>IBAN:</span> QA98 QNBA 0000 0000 1234 5678 9012 3</div>
+                <div><span>Reference Note:</span> <strong id="bank-ref-token" style="color: var(--blue-accent);">#MS-0000</strong></div>
+            </div>
+
+            <div class="form-group">
+                <label for="manual-ref-input" class="form-label">Transaction Reference / Receipt ID</label>
+                <input type="text" id="manual-ref-input" class="form-input" placeholder="e.g. QNB-TXN-984210" autocomplete="off">
+            </div>
+
+            <button id="submit-manual-pay-btn" type="button" class="submit-manual-btn">
+                <i class="ti ti-send"></i> Submit Payment Reference
+            </button>
+        </div>
 
         <button id="inv-download-btn" onclick="window.print()" class="pay-btn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); margin-top: 0.75rem;">
             <i class="ti ti-printer"></i> Print / Download PDF

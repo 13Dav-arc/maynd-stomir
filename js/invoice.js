@@ -1,4 +1,4 @@
-// MAYND STOMIR — Dynamic Invoice Rendering Logic
+// MAYND STOMIR — Dynamic Invoice & Manual Payment Logic
 
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
@@ -8,7 +8,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const jobId = params.get("id");
 
     if (!jobId) {
-        alert("Missing invoice reference ID.");
+        showFeedback("Missing or invalid invoice reference ID.", "error");
         return;
     }
 
@@ -17,21 +17,26 @@ window.addEventListener("DOMContentLoaded", async () => {
             headers: { "X-API-Key": API_KEY }
         });
 
-        if (!response.ok) throw new Error("Invoice not found.");
+        if (!response.ok) throw new Error("Invoice record not found.");
 
         const result = await response.json();
         const job = result.data || result;
 
         renderInvoiceData(job);
+        setupManualPaymentHandlers(job);
     } catch (err) {
         console.error(err);
         document.getElementById("inv-customer-name").innerText = "Unable to load invoice details.";
+        showFeedback("Failed to load live invoice records from server.", "error");
     }
 });
 
 function renderInvoiceData(job) {
-    const displayId = job.id ? String(job.id).padStart(4, "0") : String(job.tracking_token || job.uuid).slice(0, 8);
+    const displayId = job.id ? String(job.id).padStart(4, "0") : String(job.tracking_token || job.uuid || "").slice(0, 8);
     document.getElementById("inv-id").innerText = `#MS-${displayId}`;
+    
+    const bankRefToken = document.getElementById("bank-ref-token");
+    if (bankRefToken) bankRefToken.innerText = `#MS-${displayId}`;
 
     const dateStr = job.created_at 
         ? new Date(job.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
@@ -46,7 +51,6 @@ function renderInvoiceData(job) {
     const partsCost = parseFloat(job.parts_cost || job.quote?.parts_cost) || 0;
     const sourcingFee = parseFloat(job.sourcing_fee || job.quote?.sourcing_fee) || 0;
     const laborCost = parseFloat(job.labor_cost || job.quote?.labor_cost) || 0;
-    const calloutFee = 50; // Fixed baseline call-out fee
 
     const diagnosticQuoteTotal = partsCost + sourcingFee + laborCost;
 
@@ -63,12 +67,29 @@ function renderInvoiceData(job) {
     const calloutCreditRow = document.getElementById("inv-callout-credit-row");
     const totalLabel = document.getElementById("inv-total-label");
     const totalAmount = document.getElementById("inv-total-amount");
+    const fallbackWrap = document.getElementById("fallback-trigger-wrap");
 
     const rawStatus = (job.status || "").toLowerCase();
     const isCalloutPaid = job.callout_paid === true || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted" || rawStatus === "awaiting_payment" || rawStatus === "paid" || rawStatus === "completed";
 
+    // SCENARIO 0: MANUAL PAYMENT SUBMITTED — AWAITING VERIFICATION
+    if (rawStatus === "awaiting_verification" || rawStatus === "pending_verification") {
+        statusBadge.innerText = "Verification Pending";
+        statusBadge.style.color = "var(--pending)";
+        
+        totalLabel.innerText = "Submitted Status";
+        totalAmount.innerText = "In Review";
+
+        payBtn.style.background = "var(--blue-mid)";
+        payBtn.innerHTML = `<i class="ti ti-clock"></i> Payment Reference Submitted — Awaiting Verification`;
+        payBtn.removeAttribute("href");
+        payBtn.style.cursor = "default";
+
+        if (fallbackWrap) fallbackWrap.style.display = "none";
+        showFeedback("Your manual payment reference has been received and is currently under administrative review.", "info");
+    }
     // SCENARIO 1: ALL FULLY PAID AND COMPLETED
-    if (rawStatus === "paid" || rawStatus === "completed") {
+    else if (rawStatus === "paid" || rawStatus === "completed") {
         if (calloutCreditRow) calloutCreditRow.style.display = "table-row";
         
         statusBadge.innerText = "Fully Paid";
@@ -82,6 +103,8 @@ function renderInvoiceData(job) {
         payBtn.innerHTML = `<i class="ti ti-circle-check"></i> Invoice Fully Paid & Settled`;
         payBtn.removeAttribute("href");
         payBtn.style.cursor = "default";
+
+        if (fallbackWrap) fallbackWrap.style.display = "none";
     } 
     // SCENARIO 2: CALL-OUT PAID, DIAGNOSTIC QUOTE ADDED (PAY REMAINING BALANCE)
     else if (isCalloutPaid && diagnosticQuoteTotal > 0) {
@@ -110,6 +133,8 @@ function renderInvoiceData(job) {
         payBtn.innerHTML = `<i class="ti ti-clock"></i> Call-Out Paid — Awaiting Technician Inspection`;
         payBtn.removeAttribute("href");
         payBtn.style.cursor = "default";
+
+        if (fallbackWrap) fallbackWrap.style.display = "none";
     } 
     // SCENARIO 4: INITIAL STEP — UNPAID CALL-OUT FEE
     else {
@@ -133,9 +158,87 @@ function attachGatewayLink(btnElem, job, buttonLabel) {
         btnElem.innerHTML = `<i class="ti ti-lock"></i> ${buttonLabel}`;
     } else {
         btnElem.innerHTML = `<i class="ti ti-lock"></i> ${buttonLabel}`;
+        btnElem.removeAttribute("href");
+        btnElem.style.cursor = "pointer";
         btnElem.addEventListener("click", (e) => {
             e.preventDefault();
-            alert("Payment checkout link is being generated. Please try again in a few moments.");
+            const manualCard = document.getElementById("manual-pay-card");
+            if (manualCard) {
+                manualCard.style.display = "block";
+                manualCard.scrollIntoView({ behavior: "smooth" });
+            }
+            showFeedback("Online gateway checkout session is initializing. You may also pay directly via IBAN below.", "info");
         });
     }
+}
+
+function setupManualPaymentHandlers(job) {
+    const toggleBtn = document.getElementById("toggle-manual-btn");
+    const manualCard = document.getElementById("manual-pay-card");
+    const submitBtn = document.getElementById("submit-manual-pay-btn");
+    const refInput = document.getElementById("manual-ref-input");
+
+    if (toggleBtn && manualCard) {
+        toggleBtn.addEventListener("click", () => {
+            const isHidden = getComputedStyle(manualCard).display === "none";
+            manualCard.style.display = isHidden ? "block" : "none";
+            if (isHidden) {
+                manualCard.scrollIntoView({ behavior: "smooth" });
+            }
+        });
+    }
+
+    if (submitBtn && refInput) {
+        submitBtn.addEventListener("click", async () => {
+            const refVal = refInput.value.trim();
+
+            if (!refVal) {
+                showFeedback("Please enter your transaction reference number or transaction ID.", "error");
+                refInput.focus();
+                return;
+            }
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="ti ti-loader"></i> Submitting Reference...`;
+
+                const targetToken = job.tracking_token || job.id || job.uuid;
+                const response = await fetch(`${BASE_URL}/jobs/${targetToken}/manual-payment`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-Key": API_KEY
+                    },
+                    body: JSON.stringify({
+                        payment_reference: refVal,
+                        status: "awaiting_verification"
+                    })
+                });
+
+                if (!response.ok) throw new Error("Failed to post manual reference.");
+
+                showFeedback("Payment reference submitted successfully! Verification in progress.", "success");
+                setTimeout(() => window.location.reload(), 1800);
+            } catch (err) {
+                console.error(err);
+                showFeedback("Unable to submit transaction reference. Please verify network connectivity.", "error");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="ti ti-send"></i> Submit Payment Reference`;
+            }
+        });
+    }
+}
+
+function showFeedback(msg, type = "info") {
+    const banner = document.getElementById("ui-feedback-banner");
+    if (!banner) return;
+
+    banner.className = `ui-feedback-banner ${type}`;
+    
+    let iconClass = "ti-info-circle";
+    if (type === "success") iconClass = "ti-circle-check";
+    if (type === "error") iconClass = "ti-alert-triangle";
+
+    banner.innerHTML = `<i class="ti ${iconClass}"></i> ${msg}`;
+    banner.style.display = "flex";
 }
