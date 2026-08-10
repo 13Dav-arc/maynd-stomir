@@ -264,7 +264,7 @@
                 <div class="meta-label">Category</div>
                 <div class="meta-value" id="inv-category">—</div>
                 <div class="meta-label" style="margin-top: 0.5rem;">Status</div>
-                <span class="status-badge" id="inv-status">Pending Payment</span>
+                <span class="status-badge" id="inv-status">Pending Call-Out Fee</span>
             </div>
         </div>
 
@@ -283,10 +283,18 @@
                     </td>
                     <td class="amount">50 QAR</td>
                 </tr>
+                <!-- Dynamic Paid Credit Row -->
+                <tr id="inv-callout-credit-row" style="display: none; background: rgba(21, 128, 61, 0.05);">
+                    <td>
+                        <strong style="color: var(--assigned);"><i class="ti ti-check"></i> Call-Out Fee Paid (Credit)</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Upfront fee applied toward job</div>
+                    </td>
+                    <td class="amount" style="color: var(--assigned);">-50 QAR</td>
+                </tr>
                 <tr>
                     <td>
                         <strong>Replacement Parts</strong>
-                        <div style="font-size: 0.78rem; color: var(--text-muted);" id="inv-parts-note">As quoted on site</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);" id="inv-parts-note">Pending on-site diagnostic</div>
                     </td>
                     <td class="amount" id="inv-parts-cost">0 QAR</td>
                 </tr>
@@ -308,12 +316,12 @@
         </table>
 
         <div class="invoice-total">
-            <div class="total-label">Total Due</div>
+            <div class="total-label" id="inv-total-label">Total Due</div>
             <div class="total-amount" id="inv-total-amount">50 QAR</div>
         </div>
 
         <a href="#" id="inv-pay-btn" class="pay-btn">
-            <i class="ti ti-lock"></i> Pay Securely via Digital Gateway
+            <i class="ti ti-lock"></i> Pay QAR 50 Call-Out Fee
         </a>
 
         <button id="inv-download-btn" onclick="window.print()" class="pay-btn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); margin-top: 0.75rem;">

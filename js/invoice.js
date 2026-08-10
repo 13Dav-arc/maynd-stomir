@@ -35,7 +35,7 @@ function renderInvoiceData(job) {
 
     const dateStr = job.created_at 
         ? new Date(job.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
-        : "July 2026";
+        : "August 2026";
     document.getElementById("inv-date").innerText = `Date: ${dateStr}`;
 
     document.getElementById("inv-customer-name").innerText = job.full_name || job.customer_name || "Valued Client";
@@ -48,42 +48,94 @@ function renderInvoiceData(job) {
     const laborCost = parseFloat(job.labor_cost || job.quote?.labor_cost) || 0;
     const calloutFee = 50; // Fixed baseline call-out fee
 
-    const total = calloutFee + partsCost + sourcingFee + laborCost;
+    const diagnosticQuoteTotal = partsCost + sourcingFee + laborCost;
 
     document.getElementById("inv-parts-cost").innerText = `${partsCost} QAR`;
     document.getElementById("inv-sourcing-fee").innerText = `${sourcingFee} QAR`;
     document.getElementById("inv-labor-cost").innerText = `${laborCost} QAR`;
-    document.getElementById("inv-total-amount").innerText = `${total} QAR`;
 
     if (job.quote_notes || job.notes) {
         document.getElementById("inv-parts-note").innerText = job.quote_notes || job.notes;
     }
 
-    // Attach Gateway Payment Redirect Link
     const payBtn = document.getElementById("inv-pay-btn");
     const statusBadge = document.getElementById("inv-status");
+    const calloutCreditRow = document.getElementById("inv-callout-credit-row");
+    const totalLabel = document.getElementById("inv-total-label");
+    const totalAmount = document.getElementById("inv-total-amount");
 
     const rawStatus = (job.status || "").toLowerCase();
+    const isCalloutPaid = job.callout_paid === true || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted" || rawStatus === "awaiting_payment" || rawStatus === "paid" || rawStatus === "completed";
 
-    if (rawStatus === "paid") {
-        statusBadge.innerText = "Paid";
+    // SCENARIO 1: ALL FULLY PAID AND COMPLETED
+    if (rawStatus === "paid" || rawStatus === "completed") {
+        if (calloutCreditRow) calloutCreditRow.style.display = "table-row";
+        
+        statusBadge.innerText = "Fully Paid";
         statusBadge.style.color = "var(--assigned)";
         statusBadge.style.background = "rgba(21, 128, 61, 0.1)";
+
+        totalLabel.innerText = "Balance Due";
+        totalAmount.innerText = "0 QAR";
+
         payBtn.style.background = "var(--assigned)";
-        payBtn.innerHTML = `<i class="ti ti-circle-check"></i> Invoice Paid & Cleared`;
+        payBtn.innerHTML = `<i class="ti ti-circle-check"></i> Invoice Fully Paid & Settled`;
         payBtn.removeAttribute("href");
         payBtn.style.cursor = "default";
-    } else {
-        const hasLiveGateway = job.payment_url && !job.payment_url.includes("pay-placeholder");
+    } 
+    // SCENARIO 2: CALL-OUT PAID, DIAGNOSTIC QUOTE ADDED (PAY REMAINING BALANCE)
+    else if (isCalloutPaid && diagnosticQuoteTotal > 0) {
+        if (calloutCreditRow) calloutCreditRow.style.display = "table-row";
 
-        if (hasLiveGateway) {
-            payBtn.href = job.payment_url;
-        } else {
-            // Placeholder / Staging alert until live payment link is provided by backend
-            payBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                alert("Payment checkout link is being generated. If testing on staging, request Ini to update payment_url.");
-            });
-        }
+        statusBadge.innerText = "Pending Balance Payment";
+        statusBadge.style.color = "var(--pending)";
+
+        totalLabel.innerText = "Remaining Balance";
+        totalAmount.innerText = `${diagnosticQuoteTotal} QAR`;
+
+        attachGatewayLink(payBtn, job, `Pay Remaining Balance (${diagnosticQuoteTotal} QAR)`);
+    } 
+    // SCENARIO 3: CALL-OUT PAID, TECHNICIAN ON-SITE INSPECTING (NO QUOTE YET)
+    else if (isCalloutPaid && diagnosticQuoteTotal === 0) {
+        if (calloutCreditRow) calloutCreditRow.style.display = "table-row";
+
+        statusBadge.innerText = "Call-Out Paid (On-Site)";
+        statusBadge.style.color = "var(--assigned)";
+        statusBadge.style.background = "rgba(21, 128, 61, 0.1)";
+
+        totalLabel.innerText = "Remaining Balance";
+        totalAmount.innerText = "0 QAR";
+
+        payBtn.style.background = "var(--blue-mid)";
+        payBtn.innerHTML = `<i class="ti ti-clock"></i> Call-Out Paid — Awaiting Technician Inspection`;
+        payBtn.removeAttribute("href");
+        payBtn.style.cursor = "default";
+    } 
+    // SCENARIO 4: INITIAL STEP — UNPAID CALL-OUT FEE
+    else {
+        if (calloutCreditRow) calloutCreditRow.style.display = "none";
+
+        statusBadge.innerText = "Pending Call-Out Fee";
+        statusBadge.style.color = "var(--pending)";
+
+        totalLabel.innerText = "Total Due Now";
+        totalAmount.innerText = "50 QAR";
+
+        attachGatewayLink(payBtn, job, "Pay QAR 50 Call-Out Fee");
+    }
+}
+
+function attachGatewayLink(btnElem, job, buttonLabel) {
+    const hasLiveGateway = job.payment_url && !job.payment_url.includes("pay-placeholder");
+
+    if (hasLiveGateway) {
+        btnElem.href = job.payment_url;
+        btnElem.innerHTML = `<i class="ti ti-lock"></i> ${buttonLabel}`;
+    } else {
+        btnElem.innerHTML = `<i class="ti ti-lock"></i> ${buttonLabel}`;
+        btnElem.addEventListener("click", (e) => {
+            e.preventDefault();
+            alert("Payment checkout link is being generated. Please try again in a few moments.");
+        });
     }
 }
