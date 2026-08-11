@@ -1,6 +1,6 @@
 // MAYND STOMIR — Service Worker
 
-const CACHE_NAME = "maynd-stomir-v97";
+const CACHE_NAME = "maynd-stomir-v98";
 
 // Files to cache for offline access
 const ASSETS = [

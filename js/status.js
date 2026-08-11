@@ -1,4 +1,4 @@
-// MAYND STOMIR — Status Page Logic with Live Auto-Polling
+// MAYND STOMIR — Status Page Logic with Live Auto-Polling & Payment Action Banner
 
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
@@ -86,7 +86,13 @@ searchForm.addEventListener("submit", async (e) => {
 
 function buildJobCardHTML(job) {
     const rawStatus = (job.status || "").trim().toLowerCase();
-    
+    const tokenOrId = job.tracking_token || job.uuid || job.id;
+
+    // Determine Payment Conditions
+    const isCalloutUnpaid = !job.callout_paid && (rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued");
+    const isDiagnosticUnpaid = rawStatus === "awaiting_payment";
+    const needsPayment = isCalloutUnpaid || isDiagnosticUnpaid;
+
     // States where technician details are unlocked
     const isAccepted = ["dispatched", "in_diagnostics", "accepted", "awaiting_payment", "paid", "pending_completion", "completed"].includes(rawStatus);
 
@@ -97,7 +103,7 @@ function buildJobCardHTML(job) {
     if (rawStatus === "awaiting_verification" || rawStatus === "pending_verification") {
         displayStatus = "Payment Verification";
         statusClass = "pending";
-        statusDescription = "Your bank transfer reference has been submitted and is undergoing admin verification.";
+        statusDescription = "Your payment reference has been submitted and is undergoing admin verification.";
     } else if (rawStatus === "dispatched") {
         displayStatus = "Technician Dispatched";
         statusClass = "assigned";
@@ -127,12 +133,11 @@ function buildJobCardHTML(job) {
     if (job.tech_completed && !job.client_completed) {
         statusDescription = "Technician has finished repair! Please inspect the work and confirm completion below.";
     }
-    
+
     const assignedTech = job.assigned_technician;
     const hasTechnician = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
     const technicianName = hasTechnician ? assignedTech.name : null;
     const technicianPhone = hasTechnician ? assignedTech.phone : null;
-    const tokenOrId = job.tracking_token || job.uuid || job.id;
 
     const technician = (isAccepted && hasTechnician) ? ` 
         <div class="tech-info-cell">
@@ -143,12 +148,42 @@ function buildJobCardHTML(job) {
     const displayId = job.id ? String(job.id).padStart(4, "0") : (tokenOrId ? String(tokenOrId).slice(0, 8) : "0000");
     const jobId = `#JOB-${displayId}`;
 
+    // Dynamic Payment Notice Banner (DISAPPEARS AUTOMATICALLY ONCE PAID/VERIFIED)
+    let paymentBanner = "";
+    if (isCalloutUnpaid) {
+        paymentBanner = `
+            <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 6px; padding: 1rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                <div style="font-weight: 800; color: #1E40AF; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="ti ti-alert-circle" style="font-size: 1.2rem; color: #2563EB;"></i> Action Required: Pay Call-Out Fee
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-primary); margin: 0; line-height: 1.4;">
+                    To dispatch a technician to your location, please pay the <strong>50 QAR Call-Out & Diagnostic Fee</strong>.
+                </p>
+                <a href="/invoice.html?id=${tokenOrId}" style="background: #2563EB; color: white; text-align: center; text-decoration: none; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.2rem;">
+                    <i class="ti ti-credit-card"></i> Pay Call-Out Fee (50 QAR) →
+                </a>
+            </div>`;
+    } else if (isDiagnosticUnpaid) {
+        paymentBanner = `
+            <div style="background: rgba(180, 83, 9, 0.08); border: 1px solid rgba(180, 83, 9, 0.3); border-radius: 6px; padding: 1rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                <div style="font-weight: 800; color: #B45309; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="ti ti-receipt" style="font-size: 1.2rem;"></i> Diagnostic Quote Ready
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-primary); margin: 0; line-height: 1.4;">
+                    The technician has submitted the inspection quote. Please review and pay the remaining balance to authorize physical repairs.
+                </p>
+                <a href="/invoice.html?id=${tokenOrId}" style="background: #B45309; color: white; text-align: center; text-decoration: none; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.2rem;">
+                    <i class="ti ti-file-text"></i> View & Settle Invoice →
+                </a>
+            </div>`;
+    }
+
     // Action Buttons
-    const payInvoiceBtn = (rawStatus === "awaiting_payment" || rawStatus === "pending")
-    ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF; display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700;">
-        <i class="ti ti-receipt"></i> View & Pay Invoice
-       </a>`
-    : "";
+    const payInvoiceBtn = needsPayment
+        ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF; display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700;">
+            <i class="ti ti-receipt"></i> Pay Invoice
+           </a>`
+        : "";
 
     const canMarkComplete = rawStatus === "paid" || rawStatus === "pending_completion";
     const completionBtn = canMarkComplete 
@@ -168,6 +203,9 @@ function buildJobCardHTML(job) {
 
     return `
         <div class="track-results-card">
+            <!-- PAYMENT ACTION BANNER -->
+            ${paymentBanner}
+
             <div class="track-results-header">
                 <div class="track-left">
                     <div class="track-title">${jobId}</div>
