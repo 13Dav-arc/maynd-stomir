@@ -305,18 +305,26 @@ function openJobPanelByIndex(index) {
 
     backdrop.classList.add("active");
     panel.classList.add("active");
+    document.body.classList.add("no-scroll");
 }
 
 // ACTION: VERIFY & CONFIRM MANUAL PAYMENT
-async function verifyManualPayment(jobId) {
+async function verifyManualPayment(jobId, currentCalloutPaid) {
     const btn = document.getElementById("approve-pay-btn");
-    if (!confirm("Confirm receipt of manual bank transfer (50 QAR) for this job?")) return;
+    const isFinalBalance = currentCalloutPaid === true;
+    const confirmMessage = isFinalBalance 
+        ? "Confirm receipt of manual bank transfer for the remaining diagnostic balance?" 
+        : "Confirm receipt of manual bank transfer (50 QAR) for the call-out fee?";
+
+    if (!confirm(confirmMessage)) return;
 
     try {
         if (btn) {
             btn.disabled = true;
             btn.innerHTML = `<i class="ti ti-loader"></i> Updating Status...`;
         }
+
+        const targetStatus = isFinalBalance ? "paid" : "dispatched";
 
         const response = await fetch(`${BASE_URL}/jobs/${jobId}/verify-payment`, {
             method: "PATCH",
@@ -325,7 +333,7 @@ async function verifyManualPayment(jobId) {
                 "X-API-Key": API_KEY
             },
             body: JSON.stringify({
-                status: "dispatched",
+                status: targetStatus,
                 callout_paid: true
             })
         });
@@ -336,10 +344,10 @@ async function verifyManualPayment(jobId) {
         await fetchJobs();
     } catch (err) {
         console.error(err);
-        alert("Unable to verify payment. Ensure backend endpoint /verify-payment is configured.");
+        alert("Unable to verify payment. Please try again.");
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = `<i class="ti ti-circle-check"></i> Verify & Confirm Call-Out Payment (50 QAR)`;
+            btn.innerHTML = `<i class="ti ti-circle-check"></i> Verify & Confirm Payment`;
         }
     }
 }
@@ -347,6 +355,7 @@ async function verifyManualPayment(jobId) {
 function closeJobPanel() {
     document.getElementById("job-detail-panel").classList.remove("active");
     document.getElementById("job-panel-backdrop").classList.remove("active");
+    document.body.classList.remove("no-scroll");
 }
 
 // APPLY FILTERS & SEARCH

@@ -1,4 +1,4 @@
-// MAYND STOMIR — Status Page Logic
+// MAYND STOMIR — Status Page Logic with Live Auto-Polling
 
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
@@ -7,30 +7,44 @@ const searchForm = document.querySelector(".form-search");
 const phoneInput = document.getElementById("phone-number");
 const resultsContainer = document.getElementById("track-results-container");
 
+let activeTrackToken = null;
+let pollTimer = null;
+
 window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
 
     if (jobId) {
         if (/^\d+$/.test(jobId)) {
-            showError("Invalid or outdated tracking link. Please search using your phone number below.");
+            showError("Invalid tracking reference. Please search using your phone number below.");
             return;
         }
+        activeTrackToken = jobId;
         fetchJobById(jobId);
+        startPolling();
     }
 });
 
-async function fetchJobById(jobId) {
+function startPolling() {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(() => {
+        if (activeTrackToken) {
+            fetchJobById(activeTrackToken, true);
+        }
+    }, 10000); // Auto-refresh every 10 seconds
+}
+
+async function fetchJobById(jobId, isSilent = false) {
     try {
-        showLoading();
-        const response = await fetch(`${BASE_URL}/jobs/${jobId}`, {headers: { "X-API-Key": API_KEY}});
+        if (!isSilent) showLoading();
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}`, { headers: { "X-API-Key": API_KEY } });
         if (!response.ok) throw new Error("Job not found");
         const result = await response.json();
         const job = result.data || result;
         renderJobCards([job]);
     } catch (error) {
         console.error(error);
-        showError("We could not find a job with that ID. Please check and try again.");
+        if (!isSilent) showError("We could not find a job with that ID. Please check and try again.");
     }
 }
 
@@ -45,7 +59,7 @@ searchForm.addEventListener("submit", async (e) => {
 
     try {
         showLoading();
-        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`, {headers: { "X-API-Key": API_KEY}});
+        const response = await fetch(`${BASE_URL}/jobs/lookup/${encodeURIComponent(phone)}`, { headers: { "X-API-Key": API_KEY } });
         if (!response.ok) throw new Error("No jobs found");
         const result = await response.json();
         const jobs = result.data ? (Array.isArray(result.data) ? result.data : [result.data]) : (Array.isArray(result) ? result : [result]);
@@ -58,7 +72,9 @@ searchForm.addEventListener("submit", async (e) => {
         const firstJob = jobs[0];
         const secureToken = firstJob.tracking_token || firstJob.uuid;
         if (secureToken) {
+            activeTrackToken = secureToken;
             window.history.replaceState(null, "", `${window.location.pathname}?id=${secureToken}`);
+            startPolling();
         }
 
         renderJobCards(jobs);
@@ -71,33 +87,37 @@ searchForm.addEventListener("submit", async (e) => {
 function buildJobCardHTML(job) {
     const rawStatus = (job.status || "").trim().toLowerCase();
     
-    // States where the technician has ACTUALLY accepted the job
-    const isAccepted = ["in_diagnostics", "accepted", "awaiting_payment", "paid", "pending_completion", "completed"].includes(rawStatus);
+    // States where technician details are unlocked
+    const isAccepted = ["dispatched", "in_diagnostics", "accepted", "awaiting_payment", "paid", "pending_completion", "completed"].includes(rawStatus);
 
     let displayStatus = "Pending Dispatch";
     let statusClass = "pending";
     let statusDescription = "Matching you with the nearest available technician.";
 
-    if (rawStatus === "dispatched" || rawStatus === "pending_dispatch") {
-        displayStatus = "Pending Dispatch";
+    if (rawStatus === "awaiting_verification" || rawStatus === "pending_verification") {
+        displayStatus = "Payment Verification";
         statusClass = "pending";
-        statusDescription = "Matching you with the nearest available technician.";
-    } else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") {
-        displayStatus = "Technician Assigned";
+        statusDescription = "Your bank transfer reference has been submitted and is undergoing admin verification.";
+    } else if (rawStatus === "dispatched") {
+        displayStatus = "Technician Dispatched";
         statusClass = "assigned";
-        statusDescription = "Technician has accepted your request and is en route / inspecting equipment.";
+        statusDescription = "Call-out fee verified. Technician has been assigned and is en route.";
+    } else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") {
+        displayStatus = "On-Site Diagnostic";
+        statusClass = "assigned";
+        statusDescription = "Technician is on-site inspecting equipment and preparing your diagnostic quote.";
     } else if (rawStatus === "awaiting_payment") {
         displayStatus = "Invoice Ready";
         statusClass = "pending";
-        statusDescription = "Diagnostic quote submitted. Please pay invoice to proceed.";
+        statusDescription = "Diagnostic quote submitted. Please pay remaining balance to authorize repair.";
     } else if (rawStatus === "paid") {
-        displayStatus = "Payment Cleared";
+        displayStatus = "In Repair";
         statusClass = "assigned";
-        statusDescription = "Payment verified. Technician executing repair.";
+        statusDescription = "Payment verified. Technician actively carrying out repair work.";
     } else if (rawStatus === "completed") {
         displayStatus = "Completed";
         statusClass = "completed";
-        statusDescription = "Service request finalized.";
+        statusDescription = "Service request finalized and verified.";
     } else if (rawStatus === "cancelled") {
         displayStatus = "Cancelled";
         statusClass = "cancelled";
@@ -105,7 +125,7 @@ function buildJobCardHTML(job) {
     }
 
     if (job.tech_completed && !job.client_completed) {
-        statusDescription = "Technician has finished repair! Please verify the work and confirm completion below.";
+        statusDescription = "Technician has finished repair! Please inspect the work and confirm completion below.";
     }
     
     const assignedTech = job.assigned_technician;
@@ -114,19 +134,18 @@ function buildJobCardHTML(job) {
     const technicianPhone = hasTechnician ? assignedTech.phone : null;
     const tokenOrId = job.tracking_token || job.uuid || job.id;
 
-    // ONLY SHOW TECHNICIAN DETAILS ONCE OFFICIALLY ACCEPTED
     const technician = (isAccepted && hasTechnician) ? ` 
         <div class="tech-info-cell">
             <span class="tech-name" style="color: var(--assigned); font-weight: 600;">${technicianName}</span>
             ${technicianPhone ? `<a href="tel:${technicianPhone}" class="tech-phone" style="margin-left: 0.5rem;"><i class="ti ti-phone"></i> ${technicianPhone}</a>` : ''}
-        </div>` : '<span class="small" style="color:var(--text-muted)">Finding nearest technician...</span>';
+        </div>` : '<span class="small" style="color:var(--text-muted)">Matching nearest technician...</span>';
 
     const displayId = job.id ? String(job.id).padStart(4, "0") : (tokenOrId ? String(tokenOrId).slice(0, 8) : "0000");
     const jobId = `#JOB-${displayId}`;
 
     // Action Buttons
-    const payInvoiceBtn = (rawStatus === "awaiting_payment")
-    ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF;">
+    const payInvoiceBtn = (rawStatus === "awaiting_payment" || rawStatus === "pending")
+    ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF; display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700;">
         <i class="ti ti-receipt"></i> View & Pay Invoice
        </a>`
     : "";
@@ -171,16 +190,16 @@ function buildJobCardHTML(job) {
                     <div class="track-list">Technician</div>
                     <div class="track-info">${technician}</div>
                 </div>
-                <div class="track-results-footer">
-                    <button class="copy-btn" id="copy-link-btn-${tokenOrId}" onclick="copyJobLink('${tokenOrId}')">
-                        <i class="ti ti-copy"></i> Copy tracking link
-                    </button>
-                </div>
             </div>
-            <div class="track-results-footer">
-                ${payInvoiceBtn}
-                ${completionBtn}
-                ${modificationMarkup}     
+            <div class="track-results-footer" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-top:1rem;">
+                <button class="copy-btn" id="copy-link-btn-${tokenOrId}" onclick="copyJobLink('${tokenOrId}')">
+                    <i class="ti ti-copy"></i> Copy tracking link
+                </button>
+                <div style="display:flex; gap:0.5rem; align-items:center;">
+                    ${payInvoiceBtn}
+                    ${completionBtn}
+                    ${modificationMarkup}
+                </div>     
             </div>
         </div>
     `;
@@ -189,8 +208,10 @@ function buildJobCardHTML(job) {
 function showFormError(message) {
     const errorDiv = document.getElementById("form-error");
     const errorText = document.getElementById("form-error-text");
-    errorText.textContent = message;
-    errorDiv.style.display = "flex";
+    if (errorDiv && errorText) {
+        errorText.textContent = message;
+        errorDiv.style.display = "flex";
+    }
 }
 
 function showSuccessModal(message) {
@@ -270,11 +291,13 @@ function copyJobLink(jobId) {
     const url = `${window.location.origin}${window.location.pathname}?id=${jobId}`;
     navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById(`copy-link-btn-${jobId}`);
-        btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
-        setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy"></i> Copy tracking link'; }, 2000);
+        if (btn) {
+            btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+            setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy"></i> Copy tracking link'; }, 2000);
+        }
     });
 }
 
 function renderJobCards(jobs) { resultsContainer.innerHTML = jobs.map(buildJobCardHTML).join(""); }
-function showLoading() { resultsContainer.innerHTML = `<div class="track-results-card"><div class="track-results-main"><div class="track-fields"><div class="track-info">Loading...</div></div></div></div>`; }
+function showLoading() { resultsContainer.innerHTML = `<div class="track-results-card"><div class="track-results-main"><div class="track-fields"><div class="track-info">Loading status details...</div></div></div></div>`; }
 function showError(message) { resultsContainer.innerHTML = `<div class="empty-state"><i class="ti ti-search-off"></i><div class="empty-state-title">No Jobs Found</div><div class="small">${message}</div></div>`; }
