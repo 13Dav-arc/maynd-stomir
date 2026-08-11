@@ -373,7 +373,7 @@ if (submitBtn) {
 
             if (response.ok && result.success === true) {
                 const jobId = result.data?.[0]?.tracking_token || result.data?.[0]?.uuid || result.data?.[0]?.id;
-                const successNotice = result.popup_data?.client_notice || "Your request has been received! We are matching you with a local technician and will notify you shortly.";
+                const successNotice = result.popup_data?.client_notice || "Request Received! Complete the QAR 50 call-out payment below to confirm your technician's dispatch.";
                 showSuccessModal(successNotice, jobId);
             } else {
                 console.error("422 detail:", JSON.stringify(result));
