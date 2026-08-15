@@ -3,6 +3,36 @@
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
 
+// Qatar Zone to Municipality / Neighborhood Name Registry
+const QATAR_ZONE_NAMES = {
+    "1": "Al Jasrah, Doha", "2": "Al Bidda, Doha", "3": "Mohamed Bin Jasim, Doha",
+    "4": "Mushayrib, Doha", "5": "Al Najada, Doha", "6": "Old Al Ghanim, Doha",
+    "7": "Al Souq, Doha", "13": "Old Al Hitmi, Doha", "14": "Fereej Abdel Aziz, Doha",
+    "15": "Al Doha Al Jadeeda, Doha", "16": "Old Al Ghanim South, Doha", "17": "Rawdat Al Khail, Doha",
+    "18": "Al Mansoura, Doha", "19": "Najma, Doha", "20": "Al Hilal, Doha",
+    "21": "Nuaija, Doha", "22": "Fereej Al Asiri, Doha", "23": "Fereej Al Murqqab, Doha",
+    "24": "Rawdat Al Khail, Doha", "25": "Al Mansoura, Doha", "26": "Najma, Doha",
+    "27": "Umm Ghuwailina, Doha", "28": "Al Khulaifat, Doha", "30": "Duhail South, Doha",
+    "31": "Umm Lekhba, Doha", "32": "Madinat Khalifa North, Doha", "33": "Al Messila, Doha",
+    "34": "Madinat Khalifa South, Doha", "35": "Fereej Kulaib, Doha", "36": "Al Messila South, Doha",
+    "37": "Fereej Bin Omran, Doha", "38": "Al Sadd, Doha", "39": "Al Nasr / Al Mirqab, Doha",
+    "40": "New Salata (Al Asiri), Doha", "41": "Nuaija West, Doha", "42": "Al Hilal West, Doha",
+    "43": "Al Mamoura, Doha", "44": "Nuaija South, Doha", "45": "Old Airport (Al Matar Al Qadeem), Doha",
+    "46": "Al Thumama, Doha", "47": "Al Thumama South, Doha", "48": "Doha International Airport, Doha",
+    "49": "Ras Abu Aboud, Doha", "51": "Al Gharrafa, Al Rayyan", "52": "Al Luqta, Al Rayyan",
+    "53": "Old Al Rayyan, Al Rayyan", "54": "New Al Rayyan, Al Rayyan", "55": "Aziziya / Al Waab, Al Rayyan",
+    "56": "Abu Hamour / Ain Khaled, Al Rayyan", "57": "Industrial Area, Doha", "60": "Al Dafna, Doha",
+    "61": "Al Dafna / Diplomatic Area, Doha", "63": "Onaiza South, Doha", "64": "Lejbailat, Doha",
+    "65": "Onaiza North, Doha", "66": "West Bay / Legtaifiya / Pearl-Qatar", "67": "Hazm Al Markhiya, Doha",
+    "68": "Al Jelaiah, Doha", "69": "Lusail City / Jabal Thuaileb", "70": "Lusail / Wadi Al Banat",
+    "71": "Al Kharaitiyat, Umm Salal"
+};
+
+function getZoneAreaName(zoneNum) {
+    const cleanZone = String(zoneNum || "").trim();
+    return QATAR_ZONE_NAMES[cleanZone] || "Doha, Qatar";
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
@@ -44,7 +74,9 @@ function renderInvoiceData(job) {
     document.getElementById("inv-date").innerText = `Date: ${dateStr}`;
 
     document.getElementById("inv-customer-name").innerText = job.full_name || job.customer_name || "Valued Client";
-    document.getElementById("inv-customer-address").innerText = `Zone ${job.zone_number || '—'}, Street ${job.street_number || '—'}, Bldg ${job.building_number || '—'}`;
+
+    const areaName = getZoneAreaName(job.zone_number);
+    document.getElementById("inv-customer-address").innerText = `Building ${job.building_number || '—'}, Street ${job.street_number || '—'}, Zone ${job.zone_number || '—'} (${areaName})`;
     document.getElementById("inv-category").innerText = job.category || "General Maintenance";
 
     // Itemized Costs Breakdown
@@ -70,7 +102,7 @@ function renderInvoiceData(job) {
     const fallbackWrap = document.getElementById("fallback-trigger-wrap");
 
     const rawStatus = (job.status || "").toLowerCase();
-    const isCalloutPaid = job.callout_paid === true || rawStatus === "dispatched" || rawStatus === "in_diagnostics" || rawStatus === "accepted" || rawStatus === "awaiting_payment" || rawStatus === "paid" || rawStatus === "completed";
+    const isCalloutPaid = Boolean(job.paid_at || job.callout_paid) || ["dispatched", "in_diagnostics", "accepted", "awaiting_payment", "paid", "completed"].includes(rawStatus);
 
     // SCENARIO 0: MANUAL PAYMENT SUBMITTED — AWAITING VERIFICATION
     if (rawStatus === "awaiting_verification" || rawStatus === "pending_verification") {

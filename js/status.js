@@ -1,4 +1,4 @@
-// MAYND STOMIR — Status Page Logic with Live Auto-Polling & Payment Action Banner
+// MAYND STOMIR — Status Page Logic with Live Auto-Polling & Dynamic State Banners
 
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
@@ -88,26 +88,32 @@ function buildJobCardHTML(job) {
     const rawStatus = (job.status || "").trim().toLowerCase();
     const tokenOrId = job.tracking_token || job.uuid || job.id;
 
-    // Determine Payment Conditions
-    const isCalloutUnpaid = !job.callout_paid && (rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued");
+    // 1. Payment Verification Check
+    const isCalloutPaid = Boolean(job.paid_at || job.callout_paid);
+    const hasSubmittedRef = Boolean(job.payment_reference);
+    const isCalloutUnpaid = !isCalloutPaid && !hasSubmittedRef && (rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "unassigned_queued");
     const isDiagnosticUnpaid = rawStatus === "awaiting_payment";
     const needsPayment = isCalloutUnpaid || isDiagnosticUnpaid;
 
-    // States where technician details are unlocked
-    const isAccepted = ["dispatched", "in_diagnostics", "accepted", "awaiting_payment", "paid", "pending_completion", "completed"].includes(rawStatus);
+    // 2. Technician Acceptance Check
+    const isTechnicianAccepted = Boolean(job.accepted_at) || ["accepted", "in_diagnostics", "awaiting_payment", "paid", "pending_completion", "completed"].includes(rawStatus);
 
-    let displayStatus = "Pending Dispatch";
+    let displayStatus = "Pending Payment";
     let statusClass = "pending";
-    let statusDescription = "Matching you with the nearest available technician.";
+    let statusDescription = "Request received! Please settle the QAR 50 call-out fee below to dispatch your technician.";
 
-    if (rawStatus === "awaiting_verification" || rawStatus === "pending_verification") {
+    if (hasSubmittedRef && !isCalloutPaid) {
         displayStatus = "Payment Verification";
         statusClass = "pending";
         statusDescription = "Your payment reference has been submitted and is undergoing admin verification.";
-    } else if (rawStatus === "dispatched") {
-        displayStatus = "Technician Dispatched";
+    } else if (rawStatus === "dispatched" && !isTechnicianAccepted) {
+        displayStatus = "Finding Technician";
+        statusClass = "pending";
+        statusDescription = "Payment confirmed. Matching and dispatching your request to the nearest technician.";
+    } else if (rawStatus === "dispatched" && isTechnicianAccepted) {
+        displayStatus = "Technician En Route";
         statusClass = "assigned";
-        statusDescription = "Call-out fee verified. Technician has been assigned and is en route.";
+        statusDescription = "Technician has accepted your booking and is on the way.";
     } else if (rawStatus === "in_diagnostics" || rawStatus === "accepted") {
         displayStatus = "On-Site Diagnostic";
         statusClass = "assigned";
@@ -139,7 +145,8 @@ function buildJobCardHTML(job) {
     const technicianName = hasTechnician ? assignedTech.name : null;
     const technicianPhone = hasTechnician ? assignedTech.phone : null;
 
-    const technician = (isAccepted && hasTechnician) ? ` 
+    // Contact info remains masked until the technician accepts the job
+    const technician = (isTechnicianAccepted && hasTechnician) ? ` 
         <div class="tech-info-cell">
             <span class="tech-name" style="color: var(--assigned); font-weight: 600;">${technicianName}</span>
             ${technicianPhone ? `<a href="tel:${technicianPhone}" class="tech-phone" style="margin-left: 0.5rem;"><i class="ti ti-phone"></i> ${technicianPhone}</a>` : ''}
@@ -148,7 +155,7 @@ function buildJobCardHTML(job) {
     const displayId = job.id ? String(job.id).padStart(4, "0") : (tokenOrId ? String(tokenOrId).slice(0, 8) : "0000");
     const jobId = `#JOB-${displayId}`;
 
-    // Dynamic Payment Notice Banner (DISAPPEARS AUTOMATICALLY ONCE PAID/VERIFIED)
+    // Dynamic Payment Notice Banner
     let paymentBanner = "";
     if (isCalloutUnpaid) {
         paymentBanner = `
@@ -178,7 +185,6 @@ function buildJobCardHTML(job) {
             </div>`;
     }
 
-    // Action Buttons
     const payInvoiceBtn = needsPayment
         ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF; display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700;">
             <i class="ti ti-receipt"></i> Pay Invoice
@@ -203,7 +209,6 @@ function buildJobCardHTML(job) {
 
     return `
         <div class="track-results-card">
-            <!-- PAYMENT ACTION BANNER -->
             ${paymentBanner}
 
             <div class="track-results-header">

@@ -14,10 +14,79 @@ const uploadText = document.querySelector(".upload-text");
 const scheduledDate = document.getElementById("scheduled-date");
 const scheduledTime = document.getElementById("scheduled-time");
 
+// Qatar Zone to Municipality / Neighborhood Name Registry
+const QATAR_ZONE_NAMES = {
+    "1": "Al Jasrah, Doha",
+    "2": "Al Bidda, Doha",
+    "3": "Mohamed Bin Jasim, Doha",
+    "4": "Mushayrib, Doha",
+    "5": "Al Najada, Doha",
+    "6": "Old Al Ghanim, Doha",
+    "7": "Al Souq, Doha",
+    "13": "Old Al Hitmi, Doha",
+    "14": "Fereej Abdel Aziz, Doha",
+    "15": "Al Doha Al Jadeeda, Doha",
+    "16": "Old Al Ghanim South, Doha",
+    "17": "Rawdat Al Khail, Doha",
+    "18": "Al Mansoura, Doha",
+    "19": "Najma, Doha",
+    "20": "Al Hilal, Doha",
+    "21": "Nuaija, Doha",
+    "22": "Fereej Al Asiri, Doha",
+    "23": "Fereej Al Murqqab, Doha",
+    "24": "Rawdat Al Khail, Doha",
+    "25": "Al Mansoura, Doha",
+    "26": "Najma, Doha",
+    "27": "Umm Ghuwailina, Doha",
+    "28": "Al Khulaifat, Doha",
+    "30": "Duhail South, Doha",
+    "31": "Umm Lekhba, Doha",
+    "32": "Madinat Khalifa North, Doha",
+    "33": "Al Messila, Doha",
+    "34": "Madinat Khalifa South, Doha",
+    "35": "Fereej Kulaib, Doha",
+    "36": "Al Messila South, Doha",
+    "37": "Fereej Bin Omran, Doha",
+    "38": "Al Sadd, Doha",
+    "39": "Al Nasr / Al Mirqab, Doha",
+    "40": "New Salata (Al Asiri), Doha",
+    "41": "Nuaija West, Doha",
+    "42": "Al Hilal West, Doha",
+    "43": "Al Mamoura, Doha",
+    "44": "Nuaija South, Doha",
+    "45": "Old Airport (Al Matar Al Qadeem), Doha",
+    "46": "Al Thumama, Doha",
+    "47": "Al Thumama South, Doha",
+    "48": "Doha International Airport, Doha",
+    "49": "Ras Abu Aboud, Doha",
+    "51": "Al Gharrafa, Al Rayyan",
+    "52": "Al Luqta, Al Rayyan",
+    "53": "Old Al Rayyan, Al Rayyan",
+    "54": "New Al Rayyan, Al Rayyan",
+    "55": "Aziziya / Al Waab, Al Rayyan",
+    "56": "Abu Hamour / Ain Khaled, Al Rayyan",
+    "57": "Industrial Area, Doha",
+    "60": "Al Dafna, Doha",
+    "61": "Al Dafna / Diplomatic Area, Doha",
+    "63": "Onaiza South, Doha",
+    "64": "Lejbailat, Doha",
+    "65": "Onaiza North, Doha",
+    "66": "West Bay / Legtaifiya / Pearl-Qatar",
+    "67": "Hazm Al Markhiya, Doha",
+    "68": "Al Jelaiah, Doha",
+    "69": "Lusail City / Jabal Thuaileb",
+    "70": "Lusail / Wadi Al Banat",
+    "71": "Al Kharaitiyat, Umm Salal"
+};
+
+function getZoneAreaName(zoneNum) {
+    const cleanZone = String(zoneNum).trim();
+    return QATAR_ZONE_NAMES[cleanZone] || "Doha, Qatar";
+}
+
 // Initialize scheduling controls & restrict past dates
 window.addEventListener("DOMContentLoaded", () => {
     if (scheduledDate) {
-        // Prevent selecting past dates in the calendar picker
         const todayStr = new Date().toISOString().split("T")[0];
         scheduledDate.setAttribute("min", todayStr);
     }
@@ -111,12 +180,14 @@ function getCoordinates() {
     });
 }
 
-// Google Places Text Search Lookup for Qatar Blue Plate
+// Enhanced Geocoder with District & Area Names
 async function geocodeQatarAddress(zone, street, building) {
-    const queryText = `Zone ${zone}, Street ${street}, Building ${building}, Doha, Qatar`;
+    const areaName = getZoneAreaName(zone);
+    const friendlyAddress = `Building ${building}, Street ${street}, Zone ${zone} (${areaName})`;
 
-    // Attempt 1: Query Places Text Search proxy endpoint
+    // Attempt 1: Places Text Search proxy endpoint
     try {
+        const queryText = `Building ${building}, Street ${street}, Zone ${zone}, ${areaName}, Qatar`;
         const res = await fetch(`${BASE_URL}/geocode/places-textsearch`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
@@ -129,16 +200,17 @@ async function geocodeQatarAddress(zone, street, building) {
             return {
                 lat: place.geometry.location.lat,
                 lng: place.geometry.location.lng,
-                formatted_address: place.formatted_address || `Zone ${zone}, Street ${street}, Building ${building}, Qatar`
+                formatted_address: place.formatted_address || friendlyAddress,
+                area_name: areaName
             };
         }
     } catch (e) {
         console.warn("Places Text Search query skipped:", e);
     }
 
-    // Attempt 2: Structured OpenStreetMap search fallback
+    // Attempt 2: Structured OpenStreetMap search
     try {
-        const query = encodeURIComponent(`Building ${building}, Street ${street}, Zone ${zone}, Qatar`);
+        const query = encodeURIComponent(`Zone ${zone}, ${areaName}, Qatar`);
         const res2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=qa&limit=1`);
         const data2 = await res2.json();
 
@@ -146,7 +218,8 @@ async function geocodeQatarAddress(zone, street, building) {
             return {
                 lat: parseFloat(data2[0].lat),
                 lng: parseFloat(data2[0].lon),
-                formatted_address: `Zone ${zone}, Street ${street}, Building ${building}, Qatar`
+                formatted_address: friendlyAddress,
+                area_name: areaName
             };
         }
     } catch (e) {
@@ -160,18 +233,20 @@ async function geocodeQatarAddress(zone, street, building) {
             return {
                 lat: deviceCoords.lat,
                 lng: deviceCoords.lng,
-                formatted_address: `Zone ${zone}, Street ${street}, Building ${building}, Qatar`
+                formatted_address: friendlyAddress,
+                area_name: areaName
             };
         }
     } catch (err) {
         console.warn("Device geolocation unavailable:", err.message);
     }
 
-    // Attempt 4: DEFAULT FALLBACK (Doha Center Coords) — Ensures form submit is NEVER blocked
+    // Attempt 4: Default Doha Center
     return { 
         lat: 25.2854, 
         lng: 51.5310, 
-        formatted_address: `Zone ${zone}, Street ${street}, Building ${building}, Qatar` 
+        formatted_address: friendlyAddress,
+        area_name: areaName
     };
 }
 
@@ -196,8 +271,9 @@ function showAddressConfirmation(formattedAddress) {
             const b = document.getElementById("building-number")?.value.trim();
 
             if (z && s && b) {
-                // Dynamically display the typed address immediately!
-                showAddressConfirmation(`Zone ${z}, Street ${s}, Building ${b}, Qatar`);
+                const area = getZoneAreaName(z);
+                const addressPreview = `Building ${b}, Street ${s}, Zone ${z} (${area})`;
+                showAddressConfirmation(addressPreview);
                 await geocodeQatarAddress(z, s, b);
             }
         });
@@ -252,7 +328,7 @@ if (submitBtn) {
 
         const customerName = document.getElementById("customer-name")?.value.trim() || "";
         if (customerName.split(' ').filter(n => n).length < 2) {
-            showFormError("Please enter your full name. Must match the names on your Uploaded QID.");
+            showFormError("Please enter your full name.");
             submitBtn.disabled = false;
             submitBtn.textContent = "Submit Maintenance Request";
             return;
@@ -276,7 +352,7 @@ if (submitBtn) {
         const scheduledDateVal = document.getElementById("scheduled-date")?.value;
         const scheduledTimeVal = document.getElementById("scheduled-time")?.value;
 
-        // 1. DATE VALIDATION: Prevent selecting past days
+        // 1. DATE VALIDATION: Prevent past dates
         if (scheduledDateVal) {
             const selectedDate = new Date(scheduledDateVal);
             const today = new Date();
@@ -290,7 +366,7 @@ if (submitBtn) {
             }
         }
 
-        // 2. TIME VALIDATION: Strictly restrict hours between 8:00 AM (08:00) and 5:00 PM (17:00)
+        // 2. TIME VALIDATION: Restrict between 8:00 AM (08:00) and 5:00 PM (17:00)
         if (scheduledTimeVal) {
             const [hours, minutes] = scheduledTimeVal.split(":").map(Number);
             const timeInMinutes = hours * 60 + minutes;
@@ -334,15 +410,15 @@ if (submitBtn) {
             const buildingNumber = document.getElementById("building-number")?.value.trim() || "";
             const descriptionText = document.getElementById("description-note")?.value.trim() || "";
 
-            // Convert Zone/Street/Building text string
+            // Convert Zone/Street/Building and retrieve readable district name
             let coords = await geocodeQatarAddress(zoneNumber, streetNumber, buildingNumber);
+            const resolvedArea = coords.area_name || getZoneAreaName(zoneNumber);
 
-            // Show banner with dynamic address string
-            showAddressConfirmation(`Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}, Qatar`);
+            showAddressConfirmation(`Building ${buildingNumber}, Street ${streetNumber}, Zone ${zoneNumber} (${resolvedArea})`);
 
             submitBtn.textContent = "Uploading photo...";
 
-            // Step 1: Upload photo to Supabase, get back public URL
+            // Step 1: Upload photo to Supabase
             const photo_url = await uploadPhoto(photoFile);
 
             submitBtn.textContent = "Submitting...";
@@ -355,7 +431,7 @@ if (submitBtn) {
                 zone_number:    zoneNumber,
                 street_number:  streetNumber,
                 building_number: buildingNumber,
-                description:    `${descriptionText} | Location: Zone ${zoneNumber}, Street ${streetNumber}, Building ${buildingNumber}`,
+                description:    `${descriptionText} | Location: Zone ${zoneNumber} (${resolvedArea}), Street ${streetNumber}, Building ${buildingNumber}`,
                 job_photo_url:  photo_url,
                 preferred_date: scheduledDateVal,
                 preferred_time: scheduledTimeVal,
@@ -372,9 +448,14 @@ if (submitBtn) {
             const result = await response.json();
 
             if (response.ok && result.success === true) {
-                const jobId = result.data?.[0]?.tracking_token || result.data?.[0]?.uuid || result.data?.[0]?.id;
-                const successNotice = result.popup_data?.client_notice || "Request Received! Complete the QAR 50 call-out payment below to confirm your technician's dispatch.";
-                showSuccessModal(successNotice, jobId);
+                const jobPayload = Array.isArray(result.data) ? result.data[0] : (result.data || result);
+                const trackingToken = jobPayload?.tracking_token || jobPayload?.uuid || jobPayload?.id;
+
+                if (trackingToken) {
+                    window.location.href = `/status?id=${trackingToken}`;
+                } else {
+                    window.location.href = "/status";
+                }
             } else {
                 console.error("422 detail:", JSON.stringify(result));
                 
