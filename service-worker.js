@@ -1,17 +1,16 @@
 // MAYND STOMIR — Service Worker
 
-const CACHE_NAME = "maynd-stomir-v1.0.1";
+const CACHE_NAME = "maynd-stomir-v1.0.2";
 
-// Files to cache for offline access
+// Files to cache for offline access (includes clean URLs and base assets)
 const ASSETS = [
-    "/request.html",
-    "/status.html",
-    "/partners.html",
-    "/privacy.html",
+    "/",
+    "/request",
+    "/status",
+    "/partners",
     "/css/styles.css",
     "/css/admin.css",
     "/css/privacy.css",
-    "/verify-onboard.html",
     "/css/responsive.css",
     "/js/main.js",
     "/js/status.js",
@@ -22,15 +21,14 @@ const ASSETS = [
     "/manifest.json"
 ];
 
-// ── INSTALL — cache all assets ──
+// ── INSTALL — cache all assets safely ──
 self.addEventListener("install", (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log("Maynd Stomir: caching assets");
             return cache.addAll(ASSETS);
-        })
+        }).catch((err) => console.warn("Caching non-critical asset warning:", err))
     );
-    // Activate immediately without waiting for old SW to finish
     self.skipWaiting();
 });
 
@@ -48,18 +46,16 @@ self.addEventListener("activate", (event) => {
             );
         })
     );
-    // Take control of all open pages immediately
     self.clients.claim();
 });
 
 // ── FETCH — serve from cache, fall back to network ──
 self.addEventListener("fetch", (event) => {
-    // Skip non-GET requests (POST, PATCH etc go straight to network)
+    // Skip non-GET requests
     if (event.request.method !== "GET") return;
-
     if (!event.request.url.startsWith("http")) return;
 
-    // Skip Supabase and API requests — always go to network for live data
+    // Skip external APIs & CDN assets
     const url = new URL(event.request.url);
     if (
         url.hostname.includes("supabase.co") ||
@@ -73,22 +69,30 @@ self.addEventListener("fetch", (event) => {
 
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            // Return cached version if available
             if (cachedResponse) {
                 return cachedResponse;
             }
-            // Otherwise fetch from network and cache the response
+
             return fetch(event.request).then((networkResponse) => {
-                return caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, networkResponse.clone());
+                // If response is invalid or redirected, return directly without putting into cache
+                if (!networkResponse || networkResponse.status !== 200 || networkResponse.type === "opaque" || networkResponse.redirected) {
                     return networkResponse;
+                }
+
+                // Cache valid response safely
+                const responseToCache = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseToCache);
                 });
+
+                return networkResponse;
             });
         }).catch(() => {
-            // If both cache and network fail, show offline page
-            if (event.request.destination === "document") {
-                return caches.match("/request.html");
+            // Safe fallback ensuring a valid Response is ALWAYS returned
+            if (event.request.destination === "document" || event.request.mode === "navigate") {
+                return caches.match("/request").then(res => res || caches.match("/") || new Response("Offline", { status: 503 }));
             }
+            return new Response("", { status: 408 });
         })
     );
 });
