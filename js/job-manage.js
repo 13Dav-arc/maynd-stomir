@@ -225,24 +225,35 @@ function startAcceptanceTimer(job) {
     countdownInterval = setInterval(updateDisplay, 1000);
 }
 
-// --- PHASE 0: ACCEPT / REJECT HANDLERS ---
+// --- PHASE 0: ACCEPT / REJECT HANDLERS (WITH TECHNICIAN IDENTITY CHECK) ---
 document.getElementById("accept-job-btn")?.addEventListener("click", async () => {
     hideFormError();
     const btn = document.getElementById("accept-job-btn");
     btn.disabled = true;
     btn.innerHTML = `<i class="ti ti-loader-2 ti-spin"></i> Accepting...`;
 
+    // Extract assigned technician ID from payload or URL parameters
+    const techId = activeJob?.assigned_technician_id 
+        || activeJob?.assigned_technician?.id 
+        || new URLSearchParams(window.location.search).get("tech_id");
+
     try {
         const res = await fetch(`${BASE_URL}/jobs/${activeJobIdOrToken}/accept`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "X-API-Key": API_KEY }
+            headers: { 
+                "Content-Type": "application/json", 
+                "X-API-Key": API_KEY 
+            },
+            body: JSON.stringify({ technician_id: techId })
         });
+
         if (res.ok) {
             if (countdownInterval) clearInterval(countdownInterval);
             window.location.reload();
         } else {
             const errData = await res.json().catch(() => ({}));
-            showFormError(errData.message || "Unable to accept job. The response window may have expired.");
+            const message = errData.message || errData.detail || "Unable to accept job. The response window may have expired.";
+            showFormError(message);
             btn.disabled = false;
             btn.innerHTML = `<i class="ti ti-check"></i> Accept Job`;
         }
