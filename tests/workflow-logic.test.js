@@ -72,5 +72,7 @@ describe('Automated Workflow & Logic Test Suite', () => {
         assert.ok(adminJs.includes('adminCancelJob'), 'admin.js must define adminCancelJob');
         assert.ok(adminJs.includes('/jobs/${jobId}/cancel') || adminJs.includes('/cancel'), 'admin.js must hit the cancel endpoint');
         assert.ok(adminJs.includes('"role": "admin"') || adminJs.includes('role: "admin"'), 'admin.js must pass admin role payload');
+        assert.ok(adminJs.includes('override_window: true') || adminJs.includes('"override_window": true'), 'admin.js must pass override_window flag');
+        assert.ok(adminJs.includes('bypass_window: true') || adminJs.includes('"bypass_window": true'), 'admin.js must pass bypass_window flag');
     });
 });

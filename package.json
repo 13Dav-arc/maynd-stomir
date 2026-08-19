@@ -20,5 +20,8 @@
   "homepage": "https://github.com/13Dav-arc/maynd-stomir#readme",
   "devDependencies": {
     "jsdom": "^30.0.1"
+  },
+  "overrides": {
+    "undici": "^6.20.0"
   }
 }

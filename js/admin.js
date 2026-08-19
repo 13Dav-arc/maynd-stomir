@@ -414,17 +414,22 @@ async function adminCancelJob(jobId) {
             },
             body: JSON.stringify({
                 role: "admin",
+                override_window: true,
+                bypass_window: true,
                 reason: "Cancelled by Admin Console"
             })
         });
 
-        if (!response.ok) throw new Error("Failed to cancel job");
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.detail || errData.message || "Failed to cancel job");
+        }
 
         closeJobPanel();
         await fetchJobs();
     } catch (err) {
         console.error(err);
-        alert("Unable to cancel job. Please check connection and try again.");
+        alert(err.message || "Unable to cancel job. Please check connection and try again.");
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = `<i class="ti ti-ban"></i> Cancel This Job (Admin Override)`;
