@@ -201,18 +201,28 @@ function openJobPanelByIndex(index) {
     }) : "—";
     document.getElementById("panel-job-time").innerText = `Logged: ${createdDate}`;
 
+    // Parse Availability Date & Time
+    const availDate = job.customer_availability ? new Date(job.customer_availability) : null;
+    const isValidAvail = availDate && !isNaN(availDate.getTime());
+    const displayPrefDate = isValidAvail ? availDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : (job.preferred_date || "—");
+    const displayPrefTime = isValidAvail ? availDate.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : (job.preferred_time || "—");
+
     // Itemized Pricing Calculation
     const partsCost = parseFloat(job.parts_cost || job.quote?.parts_cost) || 0;
     const sourcingFee = parseFloat(job.sourcing_fee || job.quote?.sourcing_fee) || 0;
     const laborCost = parseFloat(job.labor_cost || job.quote?.labor_cost) || 0;
     const calloutFee = 50;
-    const totalAmount = calloutFee + partsCost + sourcingFee + laborCost;
+    const diagnosticBalance = partsCost + sourcingFee + laborCost;
+    const totalAmount = calloutFee + diagnosticBalance;
 
     const assignedTech = job.assigned_technician;
     const hasTech = assignedTech && typeof assignedTech === 'object' && assignedTech.name;
 
     const rawStatus = (job.status || "").trim().toLowerCase();
     const isManualPending = rawStatus === "awaiting_verification" || rawStatus === "pending_verification";
+    const calloutSettled = Boolean(job.dispatched_at || job.accepted_at || job.callout_paid === true || String(job.callout_paid).toLowerCase() === "true");
+    const isFinalBalanceReview = isManualPending && (calloutSettled || diagnosticBalance > 0);
+    const pendingVerifyAmount = isFinalBalanceReview ? diagnosticBalance : calloutFee;
     const areaName = getZoneAreaName(job.zone_number);
 
     let statusClass = "pending";
@@ -236,13 +246,13 @@ function openJobPanelByIndex(index) {
         ${isManualPending ? `
             <div style="background: rgba(180, 83, 9, 0.08); border: 1px solid rgba(180, 83, 9, 0.2); border-radius: 4px; padding: 1.2rem; margin-bottom: 1.5rem;">
                 <div style="font-weight: 800; font-size: 0.9rem; color: var(--pending); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
-                    <i class="ti ti-building-bank"></i> Manual Bank Transfer Verification Required
+                    <i class="ti ti-building-bank"></i> Manual Bank Transfer Verification Required (${isFinalBalanceReview ? 'Repair Balance' : 'Call-Out Fee'})
                 </div>
                 <div style="font-size: 0.82rem; color: var(--text-primary); margin-bottom: 0.8rem;">
                     <strong>Customer Reference / Txn ID:</strong> <span style="background: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-family: monospace;">${job.payment_reference || "No Ref Provided"}</span>
                 </div>
-                <button onclick="verifyManualPayment('${job.tracking_token || job.id}')" id="approve-pay-btn" style="width: 100%; background: var(--assigned); color: white; border: none; padding: 0.75rem; border-radius: 4px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                    <i class="ti ti-circle-check"></i> Verify & Confirm Call-Out Payment (50 QAR)
+                <button onclick="verifyManualPayment('${job.tracking_token || job.id}', ${isFinalBalanceReview})" id="approve-pay-btn" style="width: 100%; background: var(--assigned); color: white; border: none; padding: 0.75rem; border-radius: 4px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                    <i class="ti ti-circle-check"></i> Verify & Confirm ${isFinalBalanceReview ? 'Repair Balance' : 'Call-Out'} Payment (${pendingVerifyAmount} QAR)
                 </button>
             </div>
         ` : ""}
@@ -260,11 +270,11 @@ function openJobPanelByIndex(index) {
                 </div>
                 <div class="panel-field">
                     <label>Preferred Date</label>
-                    <div>${job.preferred_date || job.customer_availability || "—"}</div>
+                    <div>${displayPrefDate}</div>
                 </div>
                 <div class="panel-field">
                     <label>Preferred Time</label>
-                    <div>${job.preferred_time || "—"}</div>
+                    <div>${displayPrefTime}</div>
                 </div>
             </div>
         </div>
@@ -317,7 +327,7 @@ function openJobPanelByIndex(index) {
         <div class="panel-section">
             <div class="panel-section-title"><i class="ti ti-receipt"></i> Financials & Diagnostic Breakdown</div>
             <div class="panel-financial-card">
-                <div class="financial-row"><span>Baseline Call-Out & Diagnostic Fee</span><strong>50 QAR</strong></div>
+                <div class="financial-row"><span>Baseline Call-Out Fee</span><strong>${calloutSettled ? '50 QAR (Paid)' : '50 QAR'}</strong></div>
                 <div class="financial-row"><span>Replacement Parts Cost</span><strong>${partsCost} QAR</strong></div>
                 <div class="financial-row"><span>Material Sourcing Fee</span><strong>${sourcingFee} QAR</strong></div>
                 <div class="financial-row"><span>Extended Labor Cost</span><strong>${laborCost} QAR</strong></div>
