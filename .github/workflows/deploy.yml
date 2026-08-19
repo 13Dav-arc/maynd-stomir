@@ -18,4 +18,5 @@ jobs:
           script: |
             cd /var/www/mayndstomir
             git pull origin main
+            sed -i "s/const CACHE_NAME = .*/const CACHE_NAME = 'maynd-stomir-${{ github.sha }}';/g" service-worker.js
             sudo chown -R www-data:www-data /var/www/mayndstomir

@@ -197,12 +197,13 @@ function buildJobCardHTML(job) {
     const rawStatus = (job.status || "").trim().toLowerCase();
     const tokenOrId = job.tracking_token || job.uuid || job.id;
 
-    // 1. Payment Verification Flags (Normalized type evaluation)
+    // 1. Payment Verification Flags (Normalized type evaluation + implicit active status coverage)
     const isCalloutPaid = Boolean(job.paid_at) || 
                           job.callout_paid === true || 
                           job.callout_paid === 1 || 
                           String(job.callout_paid).toLowerCase() === "true" ||
-                          String(job.callout_paid) === "1";
+                          String(job.callout_paid) === "1" ||
+                          ["dispatched", "assigned", "accepted", "en_route", "arrived", "in_diagnostics", "in_progress", "paid", "work_completed", "completed"].includes(rawStatus);
     const hasSubmittedRef = Boolean(job.payment_reference && String(job.payment_reference).trim() !== "");
     const isTerminalOrComplete = ["completed", "cancelled", "cancelled_by_client", "cancelled_by_technician", "expired"].includes(rawStatus);
     const isDiagnosticUnpaid = rawStatus === "awaiting_payment" || rawStatus === "awaiting_parts_or_approval";
@@ -226,7 +227,7 @@ function buildJobCardHTML(job) {
         displayStatus = "Draft Request";
         statusClass = "pending";
         statusDescription = "Draft request created. Awaiting submission.";
-    } else if (hasSubmittedRef && !isCalloutPaid) {
+    } else if (hasSubmittedRef && !isCalloutPaid && (rawStatus === "pending" || rawStatus === "pending_verification" || rawStatus === "awaiting_verification" || rawStatus === "unassigned_queued")) {
         displayStatus = "Payment Verification";
         statusClass = "pending";
         statusDescription = "Your payment reference has been submitted and is undergoing verification.";
