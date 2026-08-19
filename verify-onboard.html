@@ -140,32 +140,37 @@
             font-size: 0.7rem;
             color: var(--muted);
             text-align: center;
+            margin-top: 2rem;
         }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <div>
-            <div class="brand-logo">Maynd<span>Stomir</span></div>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <main class="wrap" id="main-content" role="region" aria-label="Technician Onboarding Verification">
+        <div class="brand">
+            <a href="/" style="text-decoration: none;" aria-label="Maynd Stomir Home">
+                <div class="brand-logo">Maynd<span>Stomir</span></div>
+            </a>
             <div class="brand-divider"></div>
         </div>
 
-        <div class="card" id="main-card">
+        <div class="card" id="card" role="status" aria-live="polite">
             <div class="card-header">
-                <h2>Technician Onboarding</h2>
-                <p>Verifying your invitation link...</p>
+                <h2>Verifying Your Invitation</h2>
+                <p>Please wait a moment...</p>
             </div>
             <div class="card-body">
-                <div class="loading-msg">Please wait while we verify your link.</div>
+                <div class="loading-msg">We are validating your one-time onboarding link with our system.</div>
             </div>
         </div>
+    </main>
 
-        <div class="footer">Maynd Stomir &copy; 2026 &nbsp;|&nbsp; Internal use only</div>
-    </div>
+    <div class="footer">Maynd Stomir &copy; 2026 &nbsp;|&nbsp; Internal use only</div>
 
     <script>
         const BASE_URL = "https://msa-backend-drwt.onrender.com";
-        const card = document.getElementById("main-card");
+        const card = document.getElementById("card");
 
         function showSuccess(whatsappUrl) {
             card.innerHTML = `

@@ -271,6 +271,26 @@ function showFeedback(msg, type = "info") {
     if (type === "success") iconClass = "ti-circle-check";
     if (type === "error") iconClass = "ti-alert-triangle";
 
-    banner.innerHTML = `<i class="ti ${iconClass}"></i> ${msg}`;
+    banner.innerHTML = `<i class="ti ${iconClass}" aria-hidden="true"></i> ${msg}`;
     banner.style.display = "flex";
+}
+
+// Network Status Handling
+window.addEventListener("online", () => showNetworkToast("Back online. Connected to payment server.", true));
+window.addEventListener("offline", () => showNetworkToast("You are offline. Payment submission may fail.", false));
+
+function showNetworkToast(msg, isOnline) {
+    const toast = document.getElementById("network-toast");
+    const msgElem = document.getElementById("network-toast-msg");
+    const iconElem = document.getElementById("network-toast-icon");
+    if (!toast || !msgElem) return;
+
+    msgElem.textContent = msg;
+    toast.className = `network-toast show ${isOnline ? 'online' : ''}`;
+    if (iconElem) {
+        iconElem.className = isOnline ? "ti ti-wifi" : "ti ti-wifi-off";
+    }
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 4000);
 }

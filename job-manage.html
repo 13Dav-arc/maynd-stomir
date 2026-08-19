@@ -14,38 +14,66 @@
     <meta name="theme-color" content="#1E293B">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <div class="track-layout" id="track-layout">
-        <header>
-            <a href="/" style="text-decoration: none; color: white;">
+        <header role="banner">
+            <a href="/" style="text-decoration: none; color: white;" aria-label="Maynd Stomir Home">
                 <div class="logo">Maynd<span class="logo">Stomir</span></div>
             </a>
-            <div class="brand-subtitle" style="color: #94A3B8; font-size: 0.8rem; font-weight: 600;">
+            <div class="brand-subtitle" style="color: #94A3B8; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;">
                 TECHNICIAN PORTAL
             </div>
         </header>
 
-        <div class="page-layout" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+        <main class="page-layout" id="main-content" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
             <div class="result-content" style="padding-top: 2rem;">
                 
-                <!-- Loading State -->
-                <div id="portal-loading" class="track-results-card">
-                    <div class="track-results-main" style="text-align: center; padding: 3rem;">
-                        <i class="ti ti-loader-2 ti-spin" style="font-size: 2rem; color: var(--blue-accent);"></i>
-                        <p style="margin-top: 0.5rem; font-weight: 600; color: var(--text-muted);">Fetching Job Request...</p>
+                <!-- Skeleton Shimmer Loading State -->
+                <div id="portal-loading" class="skeleton-card" role="status" aria-label="Loading technician job details">
+                    <div class="skeleton-header">
+                        <div>
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-subtitle"></div>
+                        </div>
+                        <div class="skeleton skeleton-badge"></div>
                     </div>
+                    <div class="skeleton-grid">
+                        <div class="skeleton-field">
+                            <div class="skeleton skeleton-label"></div>
+                            <div class="skeleton skeleton-val"></div>
+                        </div>
+                        <div class="skeleton-field">
+                            <div class="skeleton skeleton-label"></div>
+                            <div class="skeleton skeleton-val"></div>
+                        </div>
+                        <div class="skeleton-field">
+                            <div class="skeleton skeleton-label"></div>
+                            <div class="skeleton skeleton-val"></div>
+                        </div>
+                        <div class="skeleton-field">
+                            <div class="skeleton skeleton-label"></div>
+                            <div class="skeleton skeleton-val"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-footer">
+                        <div class="skeleton skeleton-btn" style="width: 48%;"></div>
+                        <div class="skeleton skeleton-btn" style="width: 48%;"></div>
+                    </div>
+                    <span class="sr-only">Fetching job request details...</span>
                 </div>
 
                 <!-- Main Reusable Job Card -->
-                <div id="portal-content" class="track-results-card" style="display: none;">
+                <article id="portal-content" class="track-results-card" style="display: none;" aria-label="Job management details">
                     
                     <!-- Header Bar -->
                     <div class="track-results-header">
                         <div class="track-left">
-                            <div class="track-title" id="job-id-display">#JOB-0000</div>
+                            <h2 class="track-title" id="job-id-display" style="margin: 0; font-size: 1.3rem;">#JOB-0000</h2>
                             <div class="track-timestap small" id="job-submitted-time">Submitted —</div>
                         </div>
                         <div class="track-right">
-                            <div class="status-badge assigned" id="job-status-badge">ASSIGNED</div>
+                            <span class="status-badge assigned" id="job-status-badge">ASSIGNED</span>
                         </div>
                     </div>
 
@@ -53,9 +81,9 @@
                     <div class="track-results-main">
                         
                         <!-- Phase Banner -->
-                        <div id="callout-banner" class="callout-notice" style="margin-bottom: 1rem;">
+                        <div id="callout-banner" class="callout-notice" style="margin-bottom: 1rem;" role="region" aria-label="Current workflow status notice">
                             <div class="callout-notice-header">
-                                <i id="state-icon" class="ti ti-alert-circle"></i>
+                                <i id="state-icon" class="ti ti-alert-circle" aria-hidden="true"></i>
                                 <span id="state-title">Phase 0: Action Required</span>
                             </div>
                             <div class="callout-notice-body">
@@ -88,19 +116,19 @@
                         <!-- Issue Photo View -->
                         <div id="photo-container" class="track-fields" style="display: none; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
                             <div class="track-list">Uploaded Photo</div>
-                            <a id="photo-link" href="#" target="_blank" style="width: 100%;">
-                                <img id="job-photo" src="" alt="Issue Photo" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);">
+                            <a id="photo-link" href="#" target="_blank" rel="noopener noreferrer" style="width: 100%;" aria-label="Open uploaded issue photo in high resolution">
+                                <img id="job-photo" src="" alt="Customer uploaded issue photo" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);">
                             </a>
                         </div>
 
                         <!-- PHASE 0: ACCEPT / DECLINE ACTIONS -->
                         <div id="accept-reject-section" style="margin-top: 1rem;">
-                            <div style="display: flex; gap: 0.8rem;">
-                                <button id="accept-job-btn" class="primary" style="flex: 1; background: var(--assigned) !important;">
-                                    <i class="ti ti-check"></i> Accept Job
+                            <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                                <button id="accept-job-btn" class="primary" style="flex: 1; min-width: 140px; background: var(--assigned) !important;" aria-label="Accept this dispatch assignment">
+                                    <i class="ti ti-check" aria-hidden="true"></i> Accept Job
                                 </button>
-                                <button id="reject-job-btn" class="cancel-btn" style="flex: 1; justify-content: center; height: auto;">
-                                    <i class="ti ti-x"></i> Decline Job
+                                <button id="reject-job-btn" class="cancel-btn" style="flex: 1; min-width: 140px; justify-content: center; height: auto;" aria-label="Decline this dispatch assignment">
+                                    <i class="ti ti-x" aria-hidden="true"></i> Decline Job
                                 </button>
                             </div>
                         </div>
@@ -108,63 +136,69 @@
                         <!-- PHASE A: DIAGNOSTIC QUOTE FORM -->
                         <div id="quote-section" style="display: none; margin-top: 1rem;">
                             <div class="info-header" style="margin-bottom: 1rem;">
-                                <h3 style="font-size: 1.1rem;">Diagnostic Quote Entry</h3>
-                                <div class="small">Input total costs to auto-generate the customer invoice link.</div>
+                                <h3 style="font-size: 1.1rem; margin: 0;">Diagnostic Quote Entry</h3>
+                                <div class="small" style="color: var(--text-muted);">Input total costs to auto-generate the customer invoice link.</div>
                             </div>
 
                             <form id="quote-form" class="form-search" style="margin-bottom: 0;">
                                 <div class="personal">
                                     <div class="form-upload">
                                         <label for="parts-cost">Parts Cost (QAR)</label>
-                                        <input type="number" id="parts-cost" min="0" placeholder="0" required>
+                                        <input type="number" id="parts-cost" min="0" placeholder="0" required aria-required="true">
                                     </div>
                                     <div class="form-upload">
                                         <label for="sourcing-fee">Sourcing Fee (QAR)</label>
-                                        <input type="number" id="sourcing-fee" min="0" placeholder="0" value="0" required>
+                                        <input type="number" id="sourcing-fee" min="0" placeholder="0" value="0" required aria-required="true">
                                     </div>
                                 </div>
                                 <div class="form-upload">
                                     <label for="labor-cost">Labor Cost (QAR)</label>
-                                    <input type="number" id="labor-cost" min="0" placeholder="0" required>
+                                    <input type="number" id="labor-cost" min="0" placeholder="0" required aria-required="true">
                                 </div>
                                 <div class="form-upload">
                                     <label for="quote-notes">Diagnosis Notes</label>
-                                    <textarea id="quote-notes" placeholder="e.g., Replaced burnt circuit breaker and verified wiring load." required></textarea>
+                                    <textarea id="quote-notes" placeholder="e.g., Replaced burnt circuit breaker and verified wiring load." required aria-required="true"></textarea>
                                 </div>
 
-                                <button type="submit" id="submit-quote-btn" class="primary" style="width: 100%; margin-top: 0.5rem;">
-                                    <i class="ti ti-file-text"></i> Generate & Send Invoice
+                                <button type="submit" id="submit-quote-btn" class="primary" style="width: 100%; margin-top: 0.5rem;" aria-label="Generate and send invoice to client">
+                                    <i class="ti ti-file-text" aria-hidden="true"></i> Generate & Send Invoice
                                 </button>
                             </form>
                         </div>
 
                         <!-- PHASE C/D: EXECUTION & FINAL COMPLETION -->
                         <div id="completion-section" style="display: none; margin-top: 1rem;">
-                            <button id="complete-job-btn" class="complete-btn" style="width: 100%; justify-content: center; padding: 0.8rem; font-size: 0.9rem;">
-                                <i class="ti ti-circle-check"></i> Confirm Work Completed & Release Partner
+                            <button id="complete-job-btn" class="complete-btn" style="width: 100%; justify-content: center; padding: 0.8rem; font-size: 0.9rem;" aria-label="Confirm work completed and release technician">
+                                <i class="ti ti-circle-check" aria-hidden="true"></i> Confirm Work Completed & Release Partner
                             </button>
                         </div>
 
                     </div>
-                </div>
+                </article>
 
                 <!-- Error Container -->
-                <div class="form-error" id="form-error" style="display:none; margin-top: 1rem;">
-                    <i class="ti ti-alert-circle"></i>
+                <div class="form-error" id="form-error" style="display:none; margin-top: 1rem;" role="alert" aria-live="assertive">
+                    <i class="ti ti-alert-circle" aria-hidden="true"></i>
                     <span id="form-error-text"></span>
                 </div>
 
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Reusable Success Modal -->
-    <div class="success-modal" id="success-modal" style="display:none;">
+    <div class="success-modal" id="success-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="success-modal-text">
         <div class="success-modal-card">
-            <i class="ti ti-circle-check"></i>
+            <i class="ti ti-circle-check" aria-hidden="true" style="font-size: 2.5rem; color: var(--assigned);"></i>
             <h3 id="success-modal-text">Action Processed</h3>
-            <button class="primary" onclick="window.location.reload()">OK</button>
+            <button class="primary" id="success-modal-ok-btn" onclick="window.location.reload()">OK</button>
         </div>
+    </div>
+
+    <!-- Offline Network Toast -->
+    <div id="network-toast" class="network-toast" role="status" aria-live="polite">
+        <i class="ti ti-wifi-off" id="network-toast-icon"></i>
+        <span id="network-toast-msg">You are currently offline. Changes will sync when reconnected.</span>
     </div>
 
     <script src="js/job-manage.js"></script>

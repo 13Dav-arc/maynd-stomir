@@ -1,0 +1,24 @@
+{
+  "name": "maynd-stomir",
+  "version": "1.0.0",
+  "description": "",
+  "main": "service-worker.js",
+  "scripts": {
+    "test": "node --test tests/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/13Dav-arc/maynd-stomir.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/13Dav-arc/maynd-stomir/issues"
+  },
+  "homepage": "https://github.com/13Dav-arc/maynd-stomir#readme",
+  "devDependencies": {
+    "jsdom": "^30.0.1"
+  }
+}

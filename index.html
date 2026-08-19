@@ -18,32 +18,58 @@
     <meta name="description" content="Qatar's premier on-demand facility maintenance platform. Connecting residents to verified technicians within hours.">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- NAV -->
-    <header class="landing-nav">
-        <a href="/" style="text-decoration: none; color: white;">
+    <header class="landing-nav" role="banner">
+        <a href="/" style="text-decoration: none; color: white;" aria-label="Maynd Stomir Home">
             <div class="logo">Maynd<span class="logo">Stomir</span></div>
         </a>
-        <nav>
+        <nav aria-label="Main Navigation">
             <a href="#hero">Home</a>
             <a href="#about">About</a>
             <a href="#services">Services</a>
-            <!-- <a href="#how-it-works">How it works</a> -->
             <a href="#careers">Careers</a>
-            <!-- <a href="#contact">Contact</a> -->
+            <a href="/status">Track Job</a>
         </nav>
         <div class="header-request">
-            <a href="tel:+97466904001" class="primary" style="text-decoration:none; padding:0.5rem 1rem; font-size:0.72rem;">
-                    <i class="ti ti-phone-call"></i> Emergency Call
-                </a>
-                <a href="https://wa.me/97466904001" target="_blank" class="primary" style="text-decoration:none; padding:0.5rem 1rem; font-size:0.72rem;">
-                    <i class="ti ti-brand-whatsapp"></i> WhatsApp Support
-                </a>
+            <a href="tel:+97466904001" class="primary" style="text-decoration:none; padding:0.5rem 1rem; font-size:0.72rem;" aria-label="Emergency Call +974 6690 4001">
+                <i class="ti ti-phone-call" aria-hidden="true"></i> Emergency Call
+            </a>
+            <a href="https://wa.me/97466904001" target="_blank" rel="noopener noreferrer" class="primary" style="text-decoration:none; padding:0.5rem 1rem; font-size:0.72rem;" aria-label="WhatsApp Support">
+                <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp Support
+            </a>
+            <button class="hamburger" id="hamburger" aria-label="Open mobile menu" aria-expanded="false" aria-controls="drawer">
+                <i class="ti ti-menu-2" aria-hidden="true"></i>
+            </button>
         </div>
     </header>
 
-    <!-- HERO -->
-    <section class="hero" id="hero">
+    <!-- Drawer -->
+    <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+    <div class="drawer" id="drawer" role="dialog" aria-label="Mobile Navigation" aria-modal="true" aria-hidden="true">
+        <div class="drawer-header">
+            <span class="logo" style="color: var(--white); font-size: 1.1rem;">Maynd<span>Stomir</span></span>
+            <button class="drawer-close" id="drawer-close" aria-label="Close mobile menu">
+                <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
+        </div>
+        <nav class="drawer-nav" aria-label="Mobile drawer navigation">
+            <a href="#hero"><i class="ti ti-home" aria-hidden="true"></i> Home</a>
+            <a href="/request"><i class="ti ti-plus" aria-hidden="true"></i> Request Maintenance</a>
+            <a href="/status"><i class="ti ti-search" aria-hidden="true"></i> Track Job</a>
+            <a href="/partners"><i class="ti ti-tool" aria-hidden="true"></i> Join as Technician</a>
+            <a href="#careers"><i class="ti ti-briefcase" aria-hidden="true"></i> Careers</a>
+        </nav>
+        <div class="drawer-footer">
+            <a href="tel:+97466904001" class="primary" aria-label="Emergency Call">Emergency Call</a>
+            <a href="https://wa.me/97466904001" target="_blank" rel="noopener noreferrer" class="primary" aria-label="WhatsApp Support"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp Support</a>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <!-- HERO -->
+        <section class="hero" id="hero">
         <div class="hero-left">
             <div class="hero-eyebrow">Qatar's Premier Maintenance Network</div>
             <h1>Fast. Verified.<br><span>On-Demand</span><br>Maintenance.</h1>
@@ -333,20 +359,23 @@
                 </a>
         </div>
     </section>
+    </main>
 
     <!-- FOOTER -->
-    <footer class="landing-footer">
-        <a href="/" style="text-decoration: none;">
+    <footer class="landing-footer" role="contentinfo">
+        <a href="/" style="text-decoration: none;" aria-label="Maynd Stomir Home">
             <div class="logo">Maynd<span class="logo">Stomir</span></div>
         </a>
         <div class="footer-links">
             <a href="#careers">Careers</a>
-            <!-- <a href="/request">Request Maintenance</a> -->
+            <a href="/request">Request Maintenance</a>
             <a href="/partners">Join as Technician</a>
+            <a href="/pricing-terms.html">Pricing Terms</a>
             <a href="/privacy" style="color:var(--text-muted);">Privacy Policy</a>
         </div>
         <div class="footer-copy">© 2026 Maynd Stomir LLC, Qatar. All rights reserved.</div>
     </footer>
 
+    <script src="js/nav.js"></script>
 </body>
 </html>

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join As a Technician</title>
+    <title>Join as a Technician — MAYND STOMIR</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="icons/favicon.png">
     <meta name="theme-color" content="#1E293B">
@@ -18,99 +18,105 @@
     <meta name="apple-mobile-web-app-title" content="Maynd">
 </head>
 <body>
-    <div class=" log-layout" id="log-layout">
-        <header>
-            <a href="/" style="text-decoration: none; color: white;">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="log-layout" id="log-layout">
+        <header role="banner">
+            <a href="/" style="text-decoration: none; color: white;" aria-label="Maynd Stomir Home">
                 <div class="logo">Maynd<span class="logo">Stomir</span></div>
             </a>
-            <nav>
-                <!-- <a href="request.html">Request Maintenance</a> -->
-                <a href="/partners">Join as Technician</a>
+            <nav aria-label="Desktop navigation">
+                <a href="/request">Request Maintenance</a>
+                <a href="/partners" class="active">Join as Technician</a>
             </nav>
             <div class="emergency-contact">
-                <a href="tel:+97466904001" class="primary">Emergency Call</a>
-                <a href="https://wa.me/97466904001" target="_blank" class="primary" aria-label="Chat on WhatsApp">
-                    <i class="ti ti-brand-whatsapp"></i>
+                <a href="tel:+97466904001" class="primary" aria-label="Emergency Call +974 6690 4001">Emergency Call</a>
+                <a href="https://wa.me/97466904001" target="_blank" rel="noopener noreferrer" class="primary" aria-label="Chat on WhatsApp">
+                    <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
                 </a>
-                <button class="hamburger" id="hamburger" aria-label="Open menu">
-                    <i class="ti ti-menu-2"></i>
+                <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+                    <i class="ti ti-menu-2" aria-hidden="true"></i>
                 </button>
             </div>
         </header>
+
         <!-- Drawer -->
-        <div class="drawer-overlay" id="drawer-overlay"></div>
-        <div class="drawer" id="drawer">
+        <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+        <div class="drawer" id="drawer" role="dialog" aria-label="Mobile navigation menu" aria-modal="true" aria-hidden="true">
             <div class="drawer-header">
-                
+                <span class="logo" style="color: var(--white); font-size: 1.1rem;">Maynd<span>Stomir</span></span>
                 <button class="drawer-close" id="drawer-close" aria-label="Close menu">
-                    <i class="ti ti-x"></i>
+                    <i class="ti ti-x" aria-hidden="true"></i>
                 </button>
             </div>
-            <nav class="drawer-nav">
-                <a href="/partners"><i class="ti ti-tool"></i>Join as Technician</a>
+            <nav class="drawer-nav" aria-label="Drawer navigation">
+                <a href="/request"><i class="ti ti-plus" aria-hidden="true"></i> Request Maintenance</a>
+                <a href="/partners" class="active"><i class="ti ti-tool" aria-hidden="true"></i> Join as Technician</a>
             </nav>
             <div class="drawer-footer">
-                <a href="tel:+97466904001" class="primary">Emergency Call</a>
-                <a href="https://wa.me/97466904001" target="_blank" class="primary"><i class="ti ti-brand-whatsapp"></i> WhatsApp Us</a>
+                <a href="tel:+97466904001" class="primary" aria-label="Emergency Call">Emergency Call</a>
+                <a href="https://wa.me/97466904001" target="_blank" rel="noopener noreferrer" class="primary" aria-label="WhatsApp Us"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
             </div>
         </div>
-        <div class="page-layout">
+
+        <main class="page-layout" id="main-content">
             <div class="info">
                 <div class="info-header">
                     <div class="divider"></div>
                     <h2>Fast. Reliable.<br>On-Demand<br>Maintenance</h2>
-                    <div class="small">We connect You to Jobs across Qatar. Register and get assigned one now</div>
+                    <div class="small">We connect you to jobs across Qatar. Register and start receiving dispatches today.</div>
                 </div>
                 <div class="info-main">
-                    <div class="small" style="text-transform: uppercase; margin-bottom: 1.5rem;">how it works</div>
+                    <div class="small" style="text-transform: uppercase; margin-bottom: 1.5rem; font-weight: 700; letter-spacing: 0.05em;">How it works</div>
                     <div class="info-list">
                         <div class="info-field">
-                            <div class="info-num">1</div>
-                            <div class="info-desc">Fill in your requests details and submit the form</div>
+                            <div class="info-num" aria-hidden="true">1</div>
+                            <div class="info-desc">Fill in your professional details and trade skills.</div>
                         </div>
                         <div class="info-field">
-                            <div class="info-num">2</div>
-                            <div class="info-desc">We review and verify your details</div>
+                            <div class="info-num" aria-hidden="true">2</div>
+                            <div class="info-desc">Our team reviews and verifies your QID and credentials.</div>
                         </div>
                         <div class="info-field">
-                            <div class="info-num">3</div>
-                            <div class="info-desc">We would contact you via Email for available Jobs</div>
+                            <div class="info-num" aria-hidden="true">3</div>
+                            <div class="info-desc">Receive matched jobs in your zone directly via WhatsApp & Email.</div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="main-content">
                 <div class="main-header">
-                    <h3>Register to be a part</h3>
-                    <div class="small">Fill in all fields below. We'll confirm your details within minutes</div>
+                    <h1 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Register as a Service Technician</h1>
+                    <div class="small">Fill in all fields below. We will review your application within 24 hours.</div>
                 </div>
-                <div class>
-                    <form class="form-grid">
+                <div>
+                    <form class="form-grid" id="partner-registration-form">
                         <div class="form-upload">
                             <label for="technician-name">Your Full Name</label>
-                            <input type="text" name="name" id="technician-name" placeholder="Enter Your Name" required>
+                            <input type="text" name="name" id="technician-name" placeholder="e.g. Tariq Mansoor" autocomplete="name" required aria-required="true">
                         </div>
                         <div class="form-upload">
                             <label for="email">Email Address</label>
-                            <input type="email" name="email" id="email" placeholder="Enter Your Email" required>
+                            <input type="email" name="email" id="email" placeholder="e.g. tariq@example.com" autocomplete="email" required aria-required="true">
                         </div>
                         <div class="personal"> 
                             <div class="form-upload">
                                 <label for="phone-number">Phone Number</label>
-                                <input type="tel" name="phone_number" id="phone-number" placeholder="Enter Your Phone Number" required>
+                                <input type="tel" name="phone_number" id="phone-number" placeholder="e.g. 55123456" autocomplete="tel" required aria-required="true">
                             </div>
                             <div class="form-upload">
                                 <label for="qid-number">QID Number</label>
-                                <input type="text" name="qid_number" id="qid-number" placeholder="11-digit Qatar ID" required>
+                                <input type="text" name="qid_number" id="qid-number" placeholder="11-digit Qatar ID" required aria-required="true">
                             </div>
                         </div>
                         <div class="form-upload">
                             <label for="experience-years">Years of Experience</label>
-                            <input type="number" name="experience_years" id="experience-years" placeholder="e.g 3" min="0" required>
+                            <input type="number" name="experience_years" id="experience-years" placeholder="e.g. 5" min="0" required aria-required="true">
                         </div>
                         <div class="form-upload">
-                            <label>Trade / Skill Categories</label>
-                            <div class="trade-checkbox-grid">
+                            <label id="trades-label">Trade / Skill Categories</label>
+                            <div class="trade-checkbox-grid" role="group" aria-labelledby="trades-label">
                                 <label class="trade-check">
                                     <input type="checkbox" name="trade" value="hvac"> HVAC (AC & Ventilation)
                                 </label>
@@ -126,96 +132,106 @@
                                 <label class="trade-check">
                                     <input type="checkbox" name="trade" value="carpentry"> Carpentry
                                 </label>
-                                 <label class="trade-check">
+                                <label class="trade-check">
                                     <input type="checkbox" name="trade" value="flooring"> Flooring
                                 </label>
                                 <label class="trade-check">
                                     <input type="checkbox" name="trade" value="appliance_repair"> Appliance Repair
                                 </label>
                                 <label class="trade-check">
-                                    <input type="checkbox" name="trade" value="cleaning"> Cleaning
+                                    <input type="checkbox" name="trade" value="cleaning"> Deep Cleaning
                                 </label>
-                                 <label class="trade-check">
+                                <label class="trade-check">
                                     <input type="checkbox" name="trade" value="pest_control"> Pest Control
                                 </label>
                                 <label class="trade-check">
                                     <input type="checkbox" name="trade" value="masonry"> Masonry & Tiling
                                 </label>
-                                 <label class="trade-check">
+                                <label class="trade-check">
                                     <input type="checkbox" name="trade" value="glass_windows"> Glass & Windows
                                 </label>
                                 <label class="trade-check">
                                     <input type="checkbox" name="trade" value="locks_security"> Locks & Security
                                 </label>
                                 <label class="trade-check">
-                                    <input type="checkbox" name="trade" value="other"> Other
+                                    <input type="checkbox" name="trade" value="other"> Other Trades
                                 </label>
                             </div>
                         </div>
+
                         <div class="form-upload" id="kahramaa-field" style="display:none;">
-                            <label>Kahramaa Card Photo <span style="color:var(--pending)">*Required for your trade</span></label>
+                            <label id="kahramaa-label">Kahramaa Card Photo <span style="color:var(--pending)">*Required for your trade</span></label>
                             <div class="upload-photo" id="kahramaa-upload-box">
-                                <i class="ti ti-camera"></i>
-                                <span class="upload-text" id="kahramaa-upload-text">Snap your Kahramaa card</span>
-                                <input type="file" accept="image/*" capture="environment" id="kahramaa-photo" name="kahramaa_photo">
+                                <i class="ti ti-camera" aria-hidden="true"></i>
+                                <span class="upload-text" id="kahramaa-upload-text">Upload your Kahramaa card</span>
+                                <input type="file" accept="image/*" capture="environment" id="kahramaa-photo" name="kahramaa_photo" aria-labelledby="kahramaa-label">
                             </div>
                         </div>
+
                         <div class="form-upload">
-                            <label for="description-note">Description of What you do</label>
-                            <textarea id="description-note" name="description" 
-                                        rows="5"
-                                        cols="10"
-                                        placeholder="Describe what you do here"></textarea>
+                            <label for="description-note">Description of Expertise</label>
+                            <textarea id="description-note" name="description" rows="4" cols="10" placeholder="Describe your experience, certifications, and primary services..."></textarea>
                         </div>
+
                         <div class="form-upload">
-                            <label for="photo-upload">Upload your id</label>
+                            <label for="photo-upload">Upload QID / Government Photo ID</label>
                             <div class="upload-photo">
-                                <i class="ti ti-camera"></i>
-                                <span class="upload-text" id="id-upload-text">Click to upload from your device here (PNG, JPG, JPEG - Max 5mb)</span>
-                                <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required>
+                                <i class="ti ti-camera" aria-hidden="true"></i>
+                                <span class="upload-text" id="id-upload-text">Click to upload from device (PNG, JPG, JPEG - Max 5MB)</span>
+                                <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" required aria-required="true" aria-label="Upload Qatar ID">
                             </div>
                         </div>
-                        <div class="form-error" id="form-error" style="display:none;">
-                            <i class="ti ti-alert-circle"></i>
+
+                        <div class="form-error" id="form-error" style="display:none;" role="alert" aria-live="assertive">
+                            <i class="ti ti-alert-circle" aria-hidden="true"></i>
                             <span id="form-error-text"></span>
                         </div>
-                        <button type="submit" class="primary">Register →</button>
+
+                        <button type="submit" class="primary" id="partner-submit-btn" style="min-height: 48px;">
+                            Register Application →
+                        </button>
                     </form>
+
                     <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:1.5rem;">
-                        By registering, you agree to our <a href="/privacy" target="_blank" style="text-decoration:underline;">Privacy Policy</a> regarding secure document verification handling.
+                        By registering, you agree to our <a href="/privacy" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;">Privacy Policy</a> regarding secure document verification.
                     </p>
+
                     <div class="corporate-partner-note">
                         <p class="corporate-title">
-                            <i class="ti ti-briefcase"></i> Applying as a Corporate Partner / Maintenance Company?
+                            <i class="ti ti-briefcase" aria-hidden="true"></i> Applying as a Corporate Partner / Maintenance Company?
                         </p>
                         <p class="corporate-desc">
-                            Please do not use this form. Contact our corporate onboarding desk directly at 
+                            Please do not use this individual form. Contact our corporate onboarding desk directly at 
                             <a href="mailto:maintenance@mayndstomir.com" class="corporate-email">maintenance@mayndstomir.com</a>.
                         </p>
                     </div>
-
                 </div>
             </div>
-        </div>
-         <nav class="bottom-nav">
-            <!-- <a href="/request">
-                <i class="ti ti-plus"></i>
+        </main>
+
+        <nav class="bottom-nav" aria-label="Mobile navigation">
+            <a href="/request">
+                <i class="ti ti-plus nav-icon" aria-hidden="true"></i>
                 <span>Request</span>
-            </a> -->
+            </a>
+            <a href="/status">
+                <i class="ti ti-search nav-icon" aria-hidden="true"></i>
+                <span>Track</span>
+            </a>
             <a href="/partners" class="active">
-                <i class="ti ti-tool"></i>
+                <i class="ti ti-tool nav-icon" aria-hidden="true"></i>
                 <span>Technician</span>
             </a>
         </nav>
     </div>
 
-    <!-- Success Modal (Initially Hidden) -->
-    <div class="success-modal" id="success-modal" style="display:none;">
+    <!-- Success Modal -->
+    <div class="success-modal" id="success-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="success-modal-text">
         <div class="success-modal-card">
-            <i class="ti ti-circle-check"></i>
+            <i class="ti ti-circle-check" aria-hidden="true" style="font-size: 2.5rem; color: var(--assigned);"></i>
             <h3 id="success-modal-text">Application Submitted!</h3>
             <p id="success-modal-subtext" class="success-modal-subtext">
-                Dear <span id="applicant-name" class="applicant-name">[Name]</span>, Application submitted successfully! We would contact you via Email.
+                Dear <span id="applicant-name" class="applicant-name">[Name]</span>, your application was submitted successfully! Our dispatch team will review your credentials and contact you shortly.
             </p>
             <button class="primary" onclick="resetFormAndCloseModal()">
                 OK
@@ -223,9 +239,10 @@
         </div>
     </div>
 
-    <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
+    <!-- PWA Installation Banner -->
+    <div id="pwa-install-banner" class="pwa-banner" style="display: none;" role="region" aria-label="App installation">
         <div class="pwa-content">
-            <i class="ti ti-download"></i>
+            <i class="ti ti-download" aria-hidden="true"></i>
             <div class="pwa-text">
                 <strong>Install Maynd Stomir</strong>
                 <p>Receive job updates & track statuses instantly</p>
@@ -233,21 +250,25 @@
         </div>
         <div class="pwa-actions">
             <button id="pwa-btn-install" class="pwa-btn-primary">Install</button>
-            <button id="pwa-btn-close" class="pwa-btn-close">×</button>
+            <button id="pwa-btn-close" class="pwa-btn-close" aria-label="Dismiss banner">×</button>
         </div>
     </div>
+
+    <!-- Offline Network Toast -->
+    <div id="network-toast" class="network-toast" role="status" aria-live="polite">
+        <i class="ti ti-wifi-off" id="network-toast-icon"></i>
+        <span id="network-toast-msg">You are currently offline. Changes will sync when reconnected.</span>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const currentPage = window.location.pathname.split("/").pop();
-
         document.querySelectorAll("nav a").forEach(link => {
             const linkPage = link.getAttribute("href").split("/").pop();
             if (linkPage === currentPage) {
                 link.classList.add("active");
             }
         });
-
-
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js')

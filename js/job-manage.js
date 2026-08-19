@@ -1,4 +1,4 @@
-// MAYND STOMIR — Technician Portal Logic with Live Acceptance Timer & District Resolver
+// MAYND STOMIR — Technician Portal Logic with Shimmer Skeletons, Network Resilience & WCAG AA Accessibility
 
 const BASE_URL = "https://msa-backend-drwt.onrender.com";
 const API_KEY = "4WPiy9UYpUDVzQFfwQRxTROxVbVGDD0XGo-IsXjWBMw";
@@ -38,6 +38,36 @@ let activeJobIdOrToken = null;
 let countdownInterval = null;
 const ACCEPTANCE_WINDOW_MINUTES = 7;
 
+// Network Status Handling
+window.addEventListener("online", () => showNetworkToast("Back online. Syncing portal...", true));
+window.addEventListener("offline", () => showNetworkToast("You are offline. Portal actions paused.", false));
+
+function showNetworkToast(msg, isOnline) {
+    const toast = document.getElementById("network-toast");
+    const msgElem = document.getElementById("network-toast-msg");
+    const iconElem = document.getElementById("network-toast-icon");
+    if (!toast || !msgElem) return;
+
+    msgElem.textContent = msg;
+    toast.className = `network-toast show ${isOnline ? 'online' : ''}`;
+    if (iconElem) {
+        iconElem.className = isOnline ? "ti ti-wifi" : "ti ti-wifi-off";
+    }
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 4000);
+}
+
+// Global Keyboard Accessibility (Close Modals on ESC)
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+        const successModal = document.getElementById("success-modal");
+        if (successModal && successModal.style.display !== "none") {
+            successModal.style.display = "none";
+        }
+    }
+});
+
 window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
@@ -47,7 +77,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (!activeJobIdOrToken) {
         showFormError("Missing job reference ID or tracking token in URL.");
-        document.getElementById("portal-loading").style.display = "none";
+        const loading = document.getElementById("portal-loading");
+        if (loading) loading.style.display = "none";
         return;
     }
 
@@ -68,62 +99,73 @@ async function fetchJobDetails(identifier) {
         renderPortalUI(activeJob);
     } catch (err) {
         console.error(err);
-        document.getElementById("portal-loading").style.display = "none";
-        showFormError("Unable to fetch job details. Please verify your management link.");
+        const loading = document.getElementById("portal-loading");
+        if (loading) loading.style.display = "none";
+        showFormError("Unable to fetch job details. Please verify your management link or network connection.");
     }
 }
 
 function renderPortalUI(job) {
-    document.getElementById("portal-loading").style.display = "none";
-    document.getElementById("portal-content").style.display = "block";
+    const loading = document.getElementById("portal-loading");
+    if (loading) loading.style.display = "none";
+
+    const content = document.getElementById("portal-content");
+    if (content) content.style.display = "block";
 
     // Header ID & Timestamp
     const tokenOrId = job.tracking_token || job.uuid || job.id;
     const displayId = job.id ? String(job.id).padStart(4, "0") : String(tokenOrId).slice(0, 8);
-    document.getElementById("job-id-display").innerText = `#JOB-${displayId}`;
+    const idElem = document.getElementById("job-id-display");
+    if (idElem) idElem.innerText = `#JOB-${displayId}`;
 
     const submitted = job.created_at
         ? new Date(job.created_at).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
         : "—";
-    document.getElementById("job-submitted-time").innerText = `Submitted ${submitted}`;
+    const timeElem = document.getElementById("job-submitted-time");
+    if (timeElem) timeElem.innerText = `Submitted ${submitted}`;
 
     // Customer & Details Mapping
-    document.getElementById("cust-name").innerText = job.full_name || job.customer_name || "—";
+    const nameElem = document.getElementById("cust-name");
+    if (nameElem) nameElem.innerText = job.full_name || job.customer_name || "—";
 
     const phoneElem = document.getElementById("cust-phone");
     const rawPhone = job.phone_number || job.phone;
-    if (rawPhone) {
-        phoneElem.innerHTML = `<a href="tel:${rawPhone}" class="tech-phone" style="color: var(--blue-accent); font-weight:700;"><i class="ti ti-phone"></i> ${rawPhone}</a>`;
-    } else {
-        phoneElem.innerText = "—";
-    }
-
-    document.getElementById("job-category").innerText = job.category || "General Maintenance";
-    
-    const areaName = getZoneAreaName(job.zone_number);
-    document.getElementById("job-location").innerText = `Building ${job.building_number || '—'}, Street ${job.street_number || '—'}, Zone ${job.zone_number || '—'} (${areaName})`;
-    document.getElementById("job-description").innerText = job.description || "No specific details provided.";
-
-    if (job.tech_completed && !job.client_completed) {
-        const completeBtn = document.getElementById("complete-job-btn");
-        if (completeBtn) {
-            completeBtn.disabled = true;
-            completeBtn.style.opacity = "0.7";
-            completeBtn.innerHTML = `<i class="ti ti-clock"></i> Marked Complete — Awaiting Client Confirmation`;
+    if (phoneElem) {
+        if (rawPhone) {
+            phoneElem.innerHTML = `<a href="tel:${rawPhone}" class="tech-phone" style="color: var(--blue-accent); font-weight:700;" aria-label="Call customer ${rawPhone}"><i class="ti ti-phone" aria-hidden="true"></i> ${rawPhone}</a>`;
+        } else {
+            phoneElem.innerText = "—";
         }
     }
+
+    const catElem = document.getElementById("job-category");
+    if (catElem) catElem.innerText = job.category || "General Maintenance";
     
+    const areaName = getZoneAreaName(job.zone_number);
+    const locElem = document.getElementById("job-location");
+    if (locElem) locElem.innerText = `Building ${job.building_number || '—'}, Street ${job.street_number || '—'}, Zone ${job.zone_number || '—'} (${areaName})`;
+    
+    const descElem = document.getElementById("job-description");
+    if (descElem) descElem.innerText = job.description || "No specific details provided.";
+
     // Photo Preview
     if (job.job_photo_url || job.photo_url) {
-        document.getElementById("photo-container").style.display = "flex";
+        const photoContainer = document.getElementById("photo-container");
+        if (photoContainer) photoContainer.style.display = "flex";
         const photo = job.job_photo_url || job.photo_url;
-        document.getElementById("job-photo").src = photo;
-        document.getElementById("photo-link").href = photo;
+        const photoImg = document.getElementById("job-photo");
+        const photoLink = document.getElementById("photo-link");
+        if (photoImg) photoImg.src = photo;
+        if (photoLink) photoLink.href = photo;
     }
 
     // Status UI Mapping
     const status = (job.status || "").toLowerCase();
-    const isAccepted = Boolean(job.accepted_at) || ["accepted", "in_diagnostics", "awaiting_payment", "paid", "pending_completion", "completed"].includes(status);
+    const isAccepted = Boolean(job.accepted_at) || [
+        "accepted", "en_route", "arrived", "in_diagnostics", "in_progress", 
+        "paused", "awaiting_payment", "awaiting_parts_or_approval", "paid", 
+        "work_completed", "pending_completion", "awaiting_client_confirmation", "completed"
+    ].includes(status);
 
     const bannerTitle = document.getElementById("state-title");
     const bannerDesc = document.getElementById("state-desc");
@@ -135,59 +177,72 @@ function renderPortalUI(job) {
     const completionSection = document.getElementById("completion-section");
 
     if (status === "completed") {
-        badge.innerText = "COMPLETED";
-        badge.className = "status-badge completed";
-        bannerTitle.innerText = "Phase D: Job Completed";
-        bannerDesc.innerText = "Work verified and finalized. Payout has been logged to your ledger.";
-        bannerIcon.className = "ti ti-circle-check";
+        if (badge) { badge.innerText = "COMPLETED"; badge.className = "status-badge completed"; }
+        if (bannerTitle) bannerTitle.innerText = "Phase D: Job Completed";
+        if (bannerDesc) bannerDesc.innerText = "Work verified and finalized. Payout has been logged to your ledger.";
+        if (bannerIcon) bannerIcon.className = "ti ti-circle-check";
         
-        acceptSection.style.display = "none";
-        quoteSection.style.display = "none";
-        completionSection.style.display = "none";
+        if (acceptSection) acceptSection.style.display = "none";
+        if (quoteSection) quoteSection.style.display = "none";
+        if (completionSection) completionSection.style.display = "none";
     } 
-    else if (status === "paid") {
-        badge.innerText = "PAID & APPROVED";
-        badge.className = "status-badge assigned";
-        bannerTitle.innerText = "Phase C: Payment Verified";
-        bannerDesc.innerText = "Funds secured via gateway. Proceed with physical repair work on-site.";
-        bannerIcon.className = "ti ti-shield-check";
+    else if (status === "work_completed" || status === "awaiting_client_confirmation" || (job.tech_completed && !job.client_completed)) {
+        if (badge) { badge.innerText = "AWAITING CONFIRMATION"; badge.className = "status-badge assigned"; }
+        if (bannerTitle) bannerTitle.innerText = "Phase D: Work Completed";
+        if (bannerDesc) bannerDesc.innerText = "You have confirmed repair completion. Awaiting final customer sign-off/release.";
+        if (bannerIcon) bannerIcon.className = "ti ti-clock";
 
-        acceptSection.style.display = "none";
-        quoteSection.style.display = "none";
-        completionSection.style.display = "block";
+        if (acceptSection) acceptSection.style.display = "none";
+        if (quoteSection) quoteSection.style.display = "none";
+        if (completionSection) {
+            completionSection.style.display = "block";
+            const completeBtn = document.getElementById("complete-job-btn");
+            if (completeBtn) {
+                completeBtn.disabled = true;
+                completeBtn.style.opacity = "0.7";
+                completeBtn.innerHTML = `<i class="ti ti-clock" aria-hidden="true"></i> Marked Complete — Awaiting Client Confirmation`;
+            }
+        }
+    }
+    else if (status === "paid" || status === "in_progress") {
+        if (badge) { badge.innerText = "PAID & APPROVED"; badge.className = "status-badge assigned"; }
+        if (bannerTitle) bannerTitle.innerText = "Phase C: Payment Verified";
+        if (bannerDesc) bannerDesc.innerText = "Funds secured via gateway. Proceed with physical repair work on-site.";
+        if (bannerIcon) bannerIcon.className = "ti ti-shield-check";
+
+        if (acceptSection) acceptSection.style.display = "none";
+        if (quoteSection) quoteSection.style.display = "none";
+        if (completionSection) completionSection.style.display = "block";
     } 
-    else if (status === "awaiting_payment") {
-        badge.innerText = "AWAITING PAYMENT";
-        badge.className = "status-badge pending";
-        bannerTitle.innerText = "Phase B: Quote Sent";
-        bannerDesc.innerText = "Diagnostic quote delivered to client. Awaiting payment clearing...";
-        bannerIcon.className = "ti ti-clock";
+    else if (status === "awaiting_payment" || status === "awaiting_parts_or_approval") {
+        if (badge) { badge.innerText = "AWAITING PAYMENT"; badge.className = "status-badge pending"; }
+        if (bannerTitle) bannerTitle.innerText = "Phase B: Quote Sent";
+        if (bannerDesc) bannerDesc.innerText = "Diagnostic quote delivered to client. Awaiting payment clearing...";
+        if (bannerIcon) bannerIcon.className = "ti ti-clock";
 
-        acceptSection.style.display = "none";
-        quoteSection.style.display = "none";
-        completionSection.style.display = "none";
+        if (acceptSection) acceptSection.style.display = "none";
+        if (quoteSection) quoteSection.style.display = "none";
+        if (completionSection) completionSection.style.display = "none";
     } 
     else if (isAccepted) {
-        badge.innerText = "IN DIAGNOSTICS";
-        badge.className = "status-badge assigned";
-        bannerTitle.innerText = "Phase A: On-Site Inspection";
-        bannerDesc.innerText = "Inspect equipment and submit total diagnostic costs below.";
-        bannerIcon.className = "ti ti-file-text";
+        if (badge) { badge.innerText = "IN DIAGNOSTICS"; badge.className = "status-badge assigned"; }
+        if (bannerTitle) bannerTitle.innerText = "Phase A: On-Site Inspection";
+        if (bannerDesc) bannerDesc.innerText = "Inspect equipment and submit total diagnostic costs below.";
+        if (bannerIcon) bannerIcon.className = "ti ti-file-text";
 
-        acceptSection.style.display = "none";
-        quoteSection.style.display = "block";
-        completionSection.style.display = "none";
+        if (acceptSection) acceptSection.style.display = "none";
+        if (quoteSection) quoteSection.style.display = "block";
+        if (completionSection) completionSection.style.display = "none";
     } 
     else {
         // Phase 0: Dispatched / Pending Acceptance with Countdown
-        badge.innerText = "ACTION REQUIRED";
-        badge.className = "status-badge pending";
-        bannerTitle.innerText = "Phase 0: Dispatch Invitation";
-        bannerIcon.className = "ti ti-alert-circle";
+        if (badge) { badge.innerText = "ACTION REQUIRED"; badge.className = "status-badge pending"; }
+        if (bannerTitle) bannerTitle.innerText = "Phase 0: Dispatch Invitation";
+        if (bannerIcon) bannerIcon.className = "ti ti-alert-circle";
 
-        acceptSection.style.display = "block";
-        quoteSection.style.display = "none";
-        completionSection.style.display = "none";
+        if (acceptSection) acceptSection.style.display = "block";
+        if (quoteSection) quoteSection.style.display = "none";
+        if (completionSection) completionSection.style.display = "none";
 
         startAcceptanceTimer(job);
     }
@@ -206,7 +261,9 @@ function startAcceptanceTimer(job) {
 
         if (remaining <= 0) {
             clearInterval(countdownInterval);
-            descElem.innerHTML = `<span style="color:#EF4444; font-weight:700;"><i class="ti ti-clock-off"></i> Acceptance window expired.</span> This job has been reassigned.`;
+            if (descElem) {
+                descElem.innerHTML = `<span style="color:#EF4444; font-weight:700;"><i class="ti ti-clock-off"></i> Acceptance window expired.</span> This job has been reassigned.`;
+            }
             const acceptBtn = document.getElementById("accept-job-btn");
             const rejectBtn = document.getElementById("reject-job-btn");
             if (acceptBtn) acceptBtn.disabled = true;
@@ -218,21 +275,23 @@ function startAcceptanceTimer(job) {
         const secs = Math.floor((remaining / 1000) % 60);
         const timeFormatted = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
-        descElem.innerHTML = `Please review job details below and accept dispatch. Time remaining: <strong style="color: #2563EB;">${timeFormatted}</strong> before auto-reassignment.`;
+        if (descElem) {
+            descElem.innerHTML = `Please review job details below and accept dispatch. Time remaining: <strong style="color: #2563EB;">${timeFormatted}</strong> before auto-reassignment.`;
+        }
     }
 
     updateDisplay();
     countdownInterval = setInterval(updateDisplay, 1000);
 }
 
-// --- PHASE 0: ACCEPT / REJECT HANDLERS (WITH TECHNICIAN IDENTITY CHECK) ---
+// --- PHASE 0: ACCEPT / REJECT HANDLERS ---
 document.getElementById("accept-job-btn")?.addEventListener("click", async () => {
     hideFormError();
     const btn = document.getElementById("accept-job-btn");
+    if (!btn) return;
     btn.disabled = true;
-    btn.innerHTML = `<i class="ti ti-loader-2 ti-spin"></i> Accepting...`;
+    btn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Accepting...`;
 
-    // Extract assigned technician ID from payload or URL parameters
     const techId = activeJob?.assigned_technician_id 
         || activeJob?.assigned_technician?.id 
         || new URLSearchParams(window.location.search).get("tech_id");
@@ -255,17 +314,23 @@ document.getElementById("accept-job-btn")?.addEventListener("click", async () =>
             const message = errData.message || errData.detail || "Unable to accept job. The response window may have expired.";
             showFormError(message);
             btn.disabled = false;
-            btn.innerHTML = `<i class="ti ti-check"></i> Accept Job`;
+            btn.innerHTML = `<i class="ti ti-check" aria-hidden="true"></i> Accept Job`;
         }
     } catch (e) {
         showFormError("Network error. Please check your connection and try again.");
         btn.disabled = false;
-        btn.innerHTML = `<i class="ti ti-check"></i> Accept Job`;
+        btn.innerHTML = `<i class="ti ti-check" aria-hidden="true"></i> Accept Job`;
     }
 });
 
 document.getElementById("reject-job-btn")?.addEventListener("click", async () => {
     hideFormError();
+    const btn = document.getElementById("reject-job-btn");
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Declining...`;
+    }
+
     try {
         const res = await fetch(`${BASE_URL}/jobs/${activeJobIdOrToken}/reject`, {
             method: "PATCH",
@@ -276,9 +341,11 @@ document.getElementById("reject-job-btn")?.addEventListener("click", async () =>
             showSuccessModal("Job declined. Request passed to the next available technician.");
         } else {
             showFormError("Unable to process request.");
+            if (btn) { btn.disabled = false; btn.innerHTML = `<i class="ti ti-x" aria-hidden="true"></i> Decline Job`; }
         }
     } catch (e) {
         showFormError("Network error. Please try again.");
+        if (btn) { btn.disabled = false; btn.innerHTML = `<i class="ti ti-x" aria-hidden="true"></i> Decline Job`; }
     }
 });
 
@@ -288,14 +355,16 @@ document.getElementById("quote-form")?.addEventListener("submit", async (e) => {
     hideFormError();
 
     const submitBtn = document.getElementById("submit-quote-btn");
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="ti ti-loader-2 ti-spin"></i> Submitting...`;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Submitting...`;
+    }
 
     const body = {
-        parts_cost: parseFloat(document.getElementById("parts-cost").value) || 0,
-        sourcing_fee: parseFloat(document.getElementById("sourcing-fee").value) || 0,
-        labor_cost: parseFloat(document.getElementById("labor-cost").value) || 0,
-        notes: document.getElementById("quote-notes").value.trim()
+        parts_cost: parseFloat(document.getElementById("parts-cost")?.value) || 0,
+        sourcing_fee: parseFloat(document.getElementById("sourcing-fee")?.value) || 0,
+        labor_cost: parseFloat(document.getElementById("labor-cost")?.value) || 0,
+        notes: document.getElementById("quote-notes")?.value?.trim() || ""
     };
 
     try {
@@ -310,13 +379,17 @@ document.getElementById("quote-form")?.addEventListener("submit", async (e) => {
         } else {
             const resData = await response.json().catch(() => ({}));
             showFormError(resData.message || resData.detail || "Failed to submit quote.");
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<i class="ti ti-file-text"></i> Generate & Send Invoice`;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="ti ti-file-text" aria-hidden="true"></i> Generate & Send Invoice`;
+            }
         }
     } catch (err) {
         showFormError("Connection error. Check network and try again.");
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="ti ti-file-text"></i> Generate & Send Invoice`;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="ti ti-file-text" aria-hidden="true"></i> Generate & Send Invoice`;
+        }
     }
 });
 
@@ -324,8 +397,10 @@ document.getElementById("quote-form")?.addEventListener("submit", async (e) => {
 document.getElementById("complete-job-btn")?.addEventListener("click", async () => {
     hideFormError();
     const btn = document.getElementById("complete-job-btn");
-    btn.disabled = true;
-    btn.innerHTML = `<i class="ti ti-loader-2 ti-spin"></i> Finalizing...`;
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Finalizing...`;
+    }
 
     try {
         const response = await fetch(`${BASE_URL}/jobs/${activeJobIdOrToken}/complete`, {
@@ -337,13 +412,17 @@ document.getElementById("complete-job-btn")?.addEventListener("click", async () 
             showSuccessModal("Job finalized and partner released!");
         } else {
             showFormError("Unable to mark job complete.");
-            btn.disabled = false;
-            btn.innerHTML = `<i class="ti ti-circle-check"></i> Confirm Work Completed & Release Partner`;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="ti ti-circle-check" aria-hidden="true"></i> Confirm Work Completed & Release Partner`;
+            }
         }
     } catch (err) {
         showFormError("Network error. Try again.");
-        btn.disabled = false;
-        btn.innerHTML = `<i class="ti ti-circle-check"></i> Confirm Work Completed & Release Partner`;
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="ti ti-circle-check" aria-hidden="true"></i> Confirm Work Completed & Release Partner`;
+        }
     }
 });
 
@@ -368,5 +447,7 @@ function showSuccessModal(message) {
     if (modal && text) {
         text.innerText = message;
         modal.style.display = "flex";
+        const okBtn = document.getElementById("success-modal-ok-btn");
+        if (okBtn) okBtn.focus();
     }
-}
+}

@@ -391,16 +391,19 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <div class="invoice-card">
+    <main class="invoice-card" id="main-content" role="region" aria-label="Invoice details">
         
         <div class="invoice-header">
             <div>
-                <div class="logo">MAYND <span>STOMIR</span></div>
+                <a href="/" style="text-decoration: none; color: inherit;" aria-label="Maynd Stomir Home">
+                    <div class="logo">MAYND <span>STOMIR</span></div>
+                </a>
                 <div class="brand-subtitle">Enterprise Maintenance Platform</div>
             </div>
             <div class="invoice-meta">
-                <div class="invoice-number" id="inv-id">#MS-0000</div>
+                <h1 class="invoice-number" id="inv-id" style="margin: 0;">#MS-0000</h1>
                 <div class="invoice-date" id="inv-date">Date: —</div>
             </div>
         </div>
@@ -419,11 +422,11 @@
             </div>
         </div>
 
-        <table class="invoice-table">
+        <table class="invoice-table" aria-label="Itemized charges breakdown">
             <thead>
                 <tr>
-                    <th>Description</th>
-                    <th style="text-align: right;">Amount</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" style="text-align: right;">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -436,7 +439,7 @@
                 </tr>
                 <tr id="inv-callout-credit-row" style="display: none; background: rgba(21, 128, 61, 0.05);">
                     <td>
-                        <strong style="color: var(--assigned);"><i class="ti ti-check"></i> Call-Out Fee Paid (Credit)</strong>
+                        <strong style="color: var(--assigned);"><i class="ti ti-check" aria-hidden="true"></i> Call-Out Fee Paid (Credit)</strong>
                         <div style="font-size: 0.78rem; color: var(--text-muted);">Upfront fee applied toward job</div>
                     </td>
                     <td class="amount" style="color: var(--assigned);">-50 QAR</td>
@@ -471,23 +474,23 @@
         </div>
 
         <!-- Inline Status Feedback Banner -->
-        <div id="ui-feedback-banner" class="ui-feedback-banner"></div>
+        <div id="ui-feedback-banner" class="ui-feedback-banner" role="alert" aria-live="polite"></div>
 
         <!-- Primary Payment Action Button -->
-        <a href="#" id="inv-pay-btn" class="pay-btn">
-            <i class="ti ti-lock"></i> Pay QAR 50 Call-Out Fee
+        <a href="#" id="inv-pay-btn" class="pay-btn" aria-label="Pay Call-Out Fee">
+            <i class="ti ti-lock" aria-hidden="true"></i> Pay QAR 50 Call-Out Fee
         </a>
 
         <!-- Fallback Transfer Trigger -->
         <div class="fallback-trigger-wrap" id="fallback-trigger-wrap">
-            <button id="toggle-manual-btn" type="button" class="fallback-toggle-btn">
-                <i class="ti ti-building-bank"></i> Alternative: Pay via Direct Bank Transfer (IBAN)
+            <button id="toggle-manual-btn" type="button" class="fallback-toggle-btn" aria-expanded="false" aria-controls="manual-pay-card">
+                <i class="ti ti-building-bank" aria-hidden="true"></i> Alternative: Pay via Direct Bank Transfer (IBAN)
             </button>
         </div>
 
         <!-- Hidden Manual Payment Form Card -->
-        <div id="manual-pay-card" class="manual-pay-card">
-            <h4><i class="ti ti-building-bank"></i> Direct Bank Transfer Details</h4>
+        <div id="manual-pay-card" class="manual-pay-card" role="region" aria-labelledby="manual-pay-heading">
+            <h4 id="manual-pay-heading"><i class="ti ti-building-bank" aria-hidden="true"></i> Direct Bank Transfer Details</h4>
             
             <div class="bank-info-grid">
                 <div><span>Bank:</span> Qatar National Bank (QNB)</div>
@@ -498,23 +501,29 @@
 
             <div class="form-group">
                 <label for="manual-ref-input" class="form-label">Transaction Reference / Receipt ID</label>
-                <input type="text" id="manual-ref-input" class="form-input" placeholder="e.g. QNB-TXN-984210" autocomplete="off">
+                <input type="text" id="manual-ref-input" class="form-input" placeholder="e.g. QNB-TXN-984210" autocomplete="off" aria-required="true">
             </div>
 
-            <button id="submit-manual-pay-btn" type="button" class="submit-manual-btn">
-                <i class="ti ti-send"></i> Submit Payment Reference
+            <button id="submit-manual-pay-btn" type="button" class="submit-manual-btn" aria-label="Submit bank transfer reference">
+                <i class="ti ti-send" aria-hidden="true"></i> Submit Payment Reference
             </button>
         </div>
 
-        <button id="inv-download-btn" onclick="window.print()" class="pay-btn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); margin-top: 0.75rem;">
-            <i class="ti ti-printer"></i> Print / Download PDF
+        <button id="inv-download-btn" onclick="window.print()" class="pay-btn" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); margin-top: 0.75rem;" aria-label="Print or download invoice as PDF">
+            <i class="ti ti-printer" aria-hidden="true"></i> Print / Download PDF
         </button>
 
         <div class="escrow-notice">
-            <i class="ti ti-shield-check"></i>
+            <i class="ti ti-shield-check" aria-hidden="true"></i>
             <span>Protected by Maynd Stomir Escrow. Technicians do not collect cash on site.</span>
         </div>
 
+    </main>
+
+    <!-- Offline Network Toast -->
+    <div id="network-toast" class="network-toast" role="status" aria-live="polite">
+        <i class="ti ti-wifi-off" id="network-toast-icon"></i>
+        <span id="network-toast-msg">You are currently offline. Changes will sync when reconnected.</span>
     </div>
 
     <!-- Dynamic Invoice Script -->

@@ -223,38 +223,44 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <div class="login-wrap">
+    <main class="login-wrap" id="main-content">
 
+        <!-- BRAND -->
         <div class="brand">
-            <div class="brand-logo">Maynd<span>Stomir</span></div>
+            <a href="/" style="text-decoration: none;" aria-label="Maynd Stomir Home">
+                <div class="brand-logo">Maynd<span>Stomir</span></div>
+            </a>
             <div class="brand-divider"></div>
-            <div class="brand-sub">Dispatch Command Centre</div>
+            <div class="brand-sub">Platform Administration</div>
         </div>
 
+        <!-- CARD -->
         <div class="login-card">
             <div class="card-header">
-                <h2>Admin Access</h2>
-                <p>Restricted to authorised personnel only</p>
+                <h2>Authorized Access Only</h2>
             </div>
             <div class="card-body">
-                <div class="field">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter username" autocomplete="username">
-                </div>
-                <div class="field">
-                    <label for="password">Password</label>
-                    <div class="password-wrap">
-                        <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
-                        <button type="button" id="toggle-password" class="toggle-pwd-btn">
-                            <i class="ti ti-eye" id="toggle-icon"></i>
-                        </button>
+                <form id="admin-login-form" onsubmit="event.preventDefault(); document.getElementById('login-btn').click();">
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Enter username" autocomplete="username" required aria-required="true">
                     </div>
-                </div>
-                <div class="error-msg" id="error-msg">
-                    Incorrect username or password. Please try again.
-                </div>
-                <button class="login-btn" id="login-btn">Access Dashboard →</button>
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <div class="password-wrap">
+                            <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required aria-required="true">
+                            <button type="button" id="toggle-password" class="toggle-pwd-btn" aria-label="Toggle password visibility">
+                                <i class="ti ti-eye" id="toggle-icon" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="error-msg" id="error-msg" role="alert" aria-live="assertive">
+                        Incorrect username or password. Please try again.
+                    </div>
+                    <button type="submit" class="login-btn" id="login-btn">Access Dashboard →</button>
+                </form>
             </div>
         </div>
 
@@ -262,7 +268,7 @@
             Maynd Stomir &copy; 2026 &nbsp;|&nbsp; Internal use only
         </div>
 
-    </div>
+    </main>
 
     <script>
         // ── CREDENTIALS (change these to whatever Yemi decides) ──

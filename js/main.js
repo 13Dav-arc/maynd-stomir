@@ -8,7 +8,7 @@ const BUCKET_NAME = "job-photos";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- DOM References ---
-const submitBtn = document.querySelector("button[type='submit']");
+const submitBtn = document.getElementById("request-submit-btn") || document.querySelector("button[type='submit']");
 const photoInput = document.getElementById("photo-upload");
 const uploadText = document.querySelector(".upload-text");
 const scheduledDate = document.getElementById("scheduled-date");
@@ -16,73 +16,64 @@ const scheduledTime = document.getElementById("scheduled-time");
 
 // Qatar Zone to Municipality / Neighborhood Name Registry
 const QATAR_ZONE_NAMES = {
-    "1": "Al Jasrah, Doha",
-    "2": "Al Bidda, Doha",
-    "3": "Mohamed Bin Jasim, Doha",
-    "4": "Mushayrib, Doha",
-    "5": "Al Najada, Doha",
-    "6": "Old Al Ghanim, Doha",
-    "7": "Al Souq, Doha",
-    "13": "Old Al Hitmi, Doha",
-    "14": "Fereej Abdel Aziz, Doha",
-    "15": "Al Doha Al Jadeeda, Doha",
-    "16": "Old Al Ghanim South, Doha",
-    "17": "Rawdat Al Khail, Doha",
-    "18": "Al Mansoura, Doha",
-    "19": "Najma, Doha",
-    "20": "Al Hilal, Doha",
-    "21": "Nuaija, Doha",
-    "22": "Fereej Al Asiri, Doha",
-    "23": "Fereej Al Murqqab, Doha",
-    "24": "Rawdat Al Khail, Doha",
-    "25": "Al Mansoura, Doha",
-    "26": "Najma, Doha",
-    "27": "Umm Ghuwailina, Doha",
-    "28": "Al Khulaifat, Doha",
-    "30": "Duhail South, Doha",
-    "31": "Umm Lekhba, Doha",
-    "32": "Madinat Khalifa North, Doha",
-    "33": "Al Messila, Doha",
-    "34": "Madinat Khalifa South, Doha",
-    "35": "Fereej Kulaib, Doha",
-    "36": "Al Messila South, Doha",
-    "37": "Fereej Bin Omran, Doha",
-    "38": "Al Sadd, Doha",
-    "39": "Al Nasr / Al Mirqab, Doha",
-    "40": "New Salata (Al Asiri), Doha",
-    "41": "Nuaija West, Doha",
-    "42": "Al Hilal West, Doha",
-    "43": "Al Mamoura, Doha",
-    "44": "Nuaija South, Doha",
-    "45": "Old Airport (Al Matar Al Qadeem), Doha",
-    "46": "Al Thumama, Doha",
-    "47": "Al Thumama South, Doha",
-    "48": "Doha International Airport, Doha",
-    "49": "Ras Abu Aboud, Doha",
-    "51": "Al Gharrafa, Al Rayyan",
-    "52": "Al Luqta, Al Rayyan",
-    "53": "Old Al Rayyan, Al Rayyan",
-    "54": "New Al Rayyan, Al Rayyan",
-    "55": "Aziziya / Al Waab, Al Rayyan",
-    "56": "Abu Hamour / Ain Khaled, Al Rayyan",
-    "57": "Industrial Area, Doha",
-    "60": "Al Dafna, Doha",
-    "61": "Al Dafna / Diplomatic Area, Doha",
-    "63": "Onaiza South, Doha",
-    "64": "Lejbailat, Doha",
-    "65": "Onaiza North, Doha",
-    "66": "West Bay / Legtaifiya / Pearl-Qatar",
-    "67": "Hazm Al Markhiya, Doha",
-    "68": "Al Jelaiah, Doha",
-    "69": "Lusail City / Jabal Thuaileb",
-    "70": "Lusail / Wadi Al Banat",
+    "1": "Al Jasrah, Doha", "2": "Al Bidda, Doha", "3": "Mohamed Bin Jasim, Doha",
+    "4": "Mushayrib, Doha", "5": "Al Najada, Doha", "6": "Old Al Ghanim, Doha",
+    "7": "Al Souq, Doha", "13": "Old Al Hitmi, Doha", "14": "Fereej Abdel Aziz, Doha",
+    "15": "Al Doha Al Jadeeda, Doha", "16": "Old Al Ghanim South, Doha", "17": "Rawdat Al Khail, Doha",
+    "18": "Al Mansoura, Doha", "19": "Najma, Doha", "20": "Al Hilal, Doha",
+    "21": "Nuaija, Doha", "22": "Fereej Al Asiri, Doha", "23": "Fereej Al Murqqab, Doha",
+    "24": "Rawdat Al Khail, Doha", "25": "Al Mansoura, Doha", "26": "Najma, Doha",
+    "27": "Umm Ghuwailina, Doha", "28": "Al Khulaifat, Doha", "30": "Duhail South, Doha",
+    "31": "Umm Lekhba, Doha", "32": "Madinat Khalifa North, Doha", "33": "Al Messila, Doha",
+    "34": "Madinat Khalifa South, Doha", "35": "Fereej Kulaib, Doha", "36": "Al Messila South, Doha",
+    "37": "Fereej Bin Omran, Doha", "38": "Al Sadd, Doha", "39": "Al Nasr / Al Mirqab, Doha",
+    "40": "New Salata (Al Asiri), Doha", "41": "Nuaija West, Doha", "42": "Al Hilal West, Doha",
+    "43": "Al Mamoura, Doha", "44": "Nuaija South, Doha", "45": "Old Airport (Al Matar Al Qadeem), Doha",
+    "46": "Al Thumama, Doha", "47": "Al Thumama South, Doha", "48": "Doha International Airport, Doha",
+    "49": "Ras Abu Aboud, Doha", "51": "Al Gharrafa, Al Rayyan", "52": "Al Luqta, Al Rayyan",
+    "53": "Old Al Rayyan, Al Rayyan", "54": "New Al Rayyan, Al Rayyan", "55": "Aziziya / Al Waab, Al Rayyan",
+    "56": "Abu Hamour / Ain Khaled, Al Rayyan", "57": "Industrial Area, Doha", "60": "Al Dafna, Doha",
+    "61": "Al Dafna / Diplomatic Area, Doha", "63": "Onaiza South, Doha", "64": "Lejbailat, Doha",
+    "65": "Onaiza North, Doha", "66": "West Bay / Legtaifiya / Pearl-Qatar", "67": "Hazm Al Markhiya, Doha",
+    "68": "Al Jelaiah, Doha", "69": "Lusail City / Jabal Thuaileb", "70": "Lusail / Wadi Al Banat",
     "71": "Al Kharaitiyat, Umm Salal"
 };
 
 function getZoneAreaName(zoneNum) {
-    const cleanZone = String(zoneNum).trim();
+    const cleanZone = String(zoneNum || "").trim();
     return QATAR_ZONE_NAMES[cleanZone] || "Doha, Qatar";
 }
+
+// Network Status Handling
+window.addEventListener("online", () => showNetworkToast("Back online.", true));
+window.addEventListener("offline", () => showNetworkToast("You are offline. Submission may fail.", false));
+
+function showNetworkToast(msg, isOnline) {
+    const toast = document.getElementById("network-toast");
+    const msgElem = document.getElementById("network-toast-msg");
+    const iconElem = document.getElementById("network-toast-icon");
+    if (!toast || !msgElem) return;
+
+    msgElem.textContent = msg;
+    toast.className = `network-toast show ${isOnline ? 'online' : ''}`;
+    if (iconElem) {
+        iconElem.className = isOnline ? "ti ti-wifi" : "ti ti-wifi-off";
+    }
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 4000);
+}
+
+// Global Keyboard Accessibility (Close Modals on ESC)
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+        closeProblemModal();
+        const successModal = document.getElementById("success-modal");
+        if (successModal && successModal.style.display !== "none") {
+            successModal.style.display = "none";
+        }
+    }
+});
 
 // Initialize scheduling controls & restrict past dates
 window.addEventListener("DOMContentLoaded", () => {
@@ -151,14 +142,14 @@ function showSuccessModal(message, jobId) {
     const modal = document.getElementById("success-modal");
     const textEl = document.getElementById("success-modal-text");
     if (textEl) textEl.textContent = message;
-    if (modal) modal.style.display = "flex";
-
-    if (jobId && modal) {
-        const trackBtn = modal.querySelector("button");
+    if (modal) {
+        modal.style.display = "flex";
+        const trackBtn = document.getElementById("track-job-btn");
         if (trackBtn) {
-            trackBtn.onclick = () => {
-                window.location.href = `/status?id=${jobId}`;
-            };
+            if (jobId) {
+                trackBtn.onclick = () => { window.location.href = `/status?id=${jobId}`; };
+            }
+            trackBtn.focus();
         }
     }
 }
@@ -282,16 +273,29 @@ function showAddressConfirmation(formattedAddress) {
 
 function openProblemModal() {
     const overlay = document.getElementById('problemModalOverlay');
+    const trigger = document.getElementById('selectTrigger');
     if (overlay) {
+        overlay.style.display = 'flex';
         overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
+        const firstOpt = overlay.querySelector('input[type="radio"]');
+        if (firstOpt) firstOpt.focus();
     }
 }
 
 function closeProblemModal() {
     const overlay = document.getElementById('problemModalOverlay');
+    const trigger = document.getElementById('selectTrigger');
     if (overlay) {
         overlay.classList.remove('active');
+        overlay.style.display = 'none';
+        overlay.setAttribute('aria-hidden', 'true');
+        if (trigger) {
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.focus();
+        }
         document.body.style.overflow = '';
     }
 }
@@ -323,27 +327,28 @@ function handleProblemSelect(radioElem) {
 if (submitBtn) {
     submitBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-
         hideFormError(); 
 
         const customerName = document.getElementById("customer-name")?.value.trim() || "";
         if (customerName.split(' ').filter(n => n).length < 2) {
-            showFormError("Please enter your full name.");
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Submit Maintenance Request";
+            showFormError("Please enter your full name (first and last name).");
             return;
         }
 
         const phoneNumber = document.getElementById("phone-number")?.value.trim() || "";
-        if (!/^\d{8}$/.test(phoneNumber)) {
-            showFormError("Phone number must be exactly 8 digits.");
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Submit Maintenance Request";
+        if (!/^\d{8,15}$/.test(phoneNumber.replace(/\D/g, ''))) {
+            showFormError("Please enter a valid Qatar phone number (at least 8 digits).");
+            return;
+        }
+
+        const categoryVal = document.getElementById("problem-category")?.value;
+        if (!categoryVal) {
+            showFormError("Please select a service category.");
+            openProblemModal();
             return;
         }
 
         const termsAgreed = document.getElementById("callout-agree")?.checked;
-
         if (!termsAgreed) {
             showFormError("Please confirm that you agree to the QAR 50 Call-Out Fee and Pricing Terms before submitting.");
             return;
@@ -360,8 +365,6 @@ if (submitBtn) {
 
             if (selectedDate < today) {
                 showFormError("Please select a valid future date for your maintenance request.");
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Submit Maintenance Request";
                 return;
             }
         }
@@ -375,8 +378,6 @@ if (submitBtn) {
 
             if (timeInMinutes < startWindow || timeInMinutes > endWindow) {
                 showFormError("Preferred service time must be scheduled between 8:00 AM and 5:00 PM.");
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Submit Maintenance Request";
                 return;
             }
         }
@@ -388,22 +389,19 @@ if (submitBtn) {
 
             if (scheduledDateTime < minAllowed) {
                 showFormError("Scheduled time must be at least 3 hours from now.");
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Submit Maintenance Request";
                 return;
             }
         }
 
         const photoFile = photoInput?.files?.[0];
-
         if (!photoFile) {
-            showFormError("Please upload a photo before submitting.");
+            showFormError("Please upload a photo of the maintenance issue.");
             return;
         }
 
         try {
             submitBtn.disabled = true;
-            submitBtn.textContent = "Resolving location...";
+            submitBtn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Resolving location...`;
 
             const zoneNumber = document.getElementById("zone-number")?.value.trim() || "";
             const streetNumber = document.getElementById("street-number")?.value.trim() || "";
@@ -416,27 +414,28 @@ if (submitBtn) {
 
             showAddressConfirmation(`Building ${buildingNumber}, Street ${streetNumber}, Zone ${zoneNumber} (${resolvedArea})`);
 
-            submitBtn.textContent = "Uploading photo...";
+            submitBtn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Uploading photo...`;
 
             // Step 1: Upload photo to Supabase
             const photo_url = await uploadPhoto(photoFile);
 
-            submitBtn.textContent = "Submitting...";
+            submitBtn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Submitting request...`;
 
+            const cleanPhone = phoneNumber.replace(/\D/g, '');
             const body = {
-                full_name:      customerName,
-                phone_number:   phoneNumber,
-                email:          document.getElementById("customer-email")?.value.trim() || "",
-                category:       document.getElementById("problem-category")?.value || "",
-                zone_number:    zoneNumber,
-                street_number:  streetNumber,
+                full_name:       customerName,
+                phone_number:    cleanPhone,
+                email:           document.getElementById("customer-email")?.value.trim() || "",
+                category:        categoryVal,
+                zone_number:     zoneNumber,
+                street_number:   streetNumber,
                 building_number: buildingNumber,
-                description:    `${descriptionText} | Location: Zone ${zoneNumber} (${resolvedArea}), Street ${streetNumber}, Building ${buildingNumber}`,
-                job_photo_url:  photo_url,
-                preferred_date: scheduledDateVal,
-                preferred_time: scheduledTimeVal,
-                client_lat:     coords.lat,  
-                client_lng:     coords.lng    
+                description:     `${descriptionText} | Location: Zone ${zoneNumber} (${resolvedArea}), Street ${streetNumber}, Building ${buildingNumber}`,
+                job_photo_url:   photo_url,
+                preferred_date:  scheduledDateVal,
+                preferred_time:  scheduledTimeVal,
+                client_lat:      coords.lat,  
+                client_lng:      coords.lng    
             };
 
             const response = await fetch(`${BASE_URL}/jobs`, {
@@ -457,7 +456,7 @@ if (submitBtn) {
                     window.location.href = "/status";
                 }
             } else {
-                console.error("422 detail:", JSON.stringify(result));
+                console.error("Submission response error:", JSON.stringify(result));
                 
                 let errorMsg = "Request validation failed. Please review your address and contact inputs.";
                 const rawString = JSON.stringify(result);
@@ -497,8 +496,10 @@ if (submitBtn) {
             console.error(error);
             showFormError("Something went wrong. Check your connection and try again.");
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Submit Maintenance Request";
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Maintenance Request";
+            }
         }
     });
 }

@@ -166,7 +166,7 @@ function renderTable(jobs) {
         }
 
         return `
-            <tr onclick="openJobPanelByIndex(${index})">
+            <tr onclick="openJobPanelByIndex(${index})" tabindex="0" role="button" aria-label="View details for Job #${String(job.id).padStart(4, "0")}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openJobPanelByIndex(${index});}">
                 <td>#${String(job.id).padStart(4, "0")}</td>
                 <td class="customer">
                     <span class="name">${job.customer_name || job.full_name || "—"}</span>
@@ -424,6 +424,8 @@ function applyFilters() {
             matchesStatus = rawStatus === "paid";
         } else if (filterVal === "completed") {
             matchesStatus = rawStatus === "completed";
+        } else if (filterVal === "disputed") {
+            matchesStatus = rawStatus === "disputed";
         }
 
         return matchesSearch && matchesStatus;
@@ -445,14 +447,46 @@ function applyFilters() {
     renderTable(filtered);
 }
 
-searchInput.addEventListener("input", applyFilters);
-filterSelect.addEventListener("change", applyFilters);
-sortSelect.addEventListener("change", applyFilters);
+if (searchInput) searchInput.addEventListener("input", applyFilters);
+if (filterSelect) filterSelect.addEventListener("change", applyFilters);
+if (sortSelect) sortSelect.addEventListener("change", applyFilters);
+
+// Network Status Handling
+window.addEventListener("online", () => showNetworkToast("Back online. Syncing dashboard...", true));
+window.addEventListener("offline", () => showNetworkToast("You are offline. Live changes paused.", false));
+
+function showNetworkToast(msg, isOnline) {
+    const toast = document.getElementById("network-toast");
+    const msgElem = document.getElementById("network-toast-msg");
+    const iconElem = document.getElementById("network-toast-icon");
+    if (!toast || !msgElem) return;
+
+    msgElem.textContent = msg;
+    toast.className = `network-toast show ${isOnline ? 'online' : ''}`;
+    if (iconElem) {
+        iconElem.className = isOnline ? "ti ti-wifi" : "ti ti-wifi-off";
+    }
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 4000);
+}
+
+// Global Keyboard Accessibility (Close Panel on ESC)
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+        closeJobPanel();
+    }
+});
 
 function showTableLoading() {
+    if (!tbody) return;
     tbody.innerHTML = `
-        <tr class="skeleton-row"><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td></tr>
-        <tr class="skeleton-row"><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td><td><div class="skeleton-line"></div></td></tr>`;
+        <tr class="skeleton-row"><td><div class="skeleton" style="width: 50px; height: 16px;"></div></td><td><div class="skeleton" style="width: 100px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 16px;"></div></td><td><div class="skeleton" style="width: 130px; height: 16px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td></tr>
+        <tr class="skeleton-row"><td><div class="skeleton" style="width: 50px; height: 16px;"></div></td><td><div class="skeleton" style="width: 100px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 16px;"></div></td><td><div class="skeleton" style="width: 130px; height: 16px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td></tr>
+        <tr class="skeleton-row"><td><div class="skeleton" style="width: 50px; height: 16px;"></div></td><td><div class="skeleton" style="width: 100px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 16px;"></div></td><td><div class="skeleton" style="width: 130px; height: 16px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td></tr>
+        <tr class="skeleton-row"><td><div class="skeleton" style="width: 50px; height: 16px;"></div></td><td><div class="skeleton" style="width: 100px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 16px;"></div></td><td><div class="skeleton" style="width: 130px; height: 16px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td></tr>
+        <tr class="skeleton-row"><td><div class="skeleton" style="width: 50px; height: 16px;"></div></td><td><div class="skeleton" style="width: 100px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 16px;"></div></td><td><div class="skeleton" style="width: 130px; height: 16px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td><td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td><td><div class="skeleton" style="width: 90px; height: 16px;"></div></td></tr>
+    `;
 }
 
 fetchJobs();

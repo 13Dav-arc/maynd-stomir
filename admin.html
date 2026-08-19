@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin page</title>
+    <title>Dispatch Overview — MAYND STOMIR Admin</title>
     <script>
         if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
             window.location.href = "/login";
@@ -14,52 +14,66 @@
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="icons/favicon.png">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#0F172A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Maynd">
-    
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <div class="admin-layout">
-        <div class=" header" id="header-layout">
-            <header>
-                <div class="logo">Maynd<span class="logo">Stomir</span></div>
-                <nav>
+        <div class="header" id="header-layout">
+            <header role="banner">
+                <a href="/admin" style="text-decoration: none; color: white;" aria-label="Maynd Stomir Admin Home">
+                    <div class="logo">Maynd<span class="logo">Stomir</span></div>
+                </a>
+                <nav aria-label="Admin desktop navigation">
                     <a href="/admin" class="active">All Jobs</a>
                     <a href="/technicians">Technicians</a>
                 </nav>
-                <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='/login'" class="primary">
+                <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='/login'" class="primary" aria-label="Log out of admin session">
                     Logout
                 </button>
-                <button class="hamburger" id="hamburger" aria-label="Open menu">
-                    <i class="ti ti-menu-2"></i>
+                <button class="hamburger" id="hamburger" aria-label="Open mobile admin menu" aria-expanded="false" aria-controls="drawer">
+                    <i class="ti ti-menu-2" aria-hidden="true"></i>
                 </button>
             </header>
+
             <!-- Drawer -->
-            <div class="drawer-overlay" id="drawer-overlay"></div>
-            <div class="drawer" id="drawer">
+            <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+            <div class="drawer" id="drawer" role="dialog" aria-label="Mobile admin menu" aria-modal="true" aria-hidden="true">
                 <div class="drawer-header">
-                    <button class="drawer-close" id="drawer-close" aria-label="Close menu">
-                        <i class="ti ti-x"></i>
+                    <span class="logo" style="color: var(--white); font-size: 1.1rem;">Maynd<span>Admin</span></span>
+                    <button class="drawer-close" id="drawer-close" aria-label="Close mobile admin menu">
+                        <i class="ti ti-x" aria-hidden="true"></i>
                     </button>
                 </div>
-                <nav class="drawer-nav">
-                    <a href="/admin"><i class="ti ti-plus"></i> All Jobs</a>
-                    <a href="/technicians"><i class="ti ti-tool"></i> Technicians</a>
+                <nav class="drawer-nav" aria-label="Admin drawer navigation">
+                    <a href="/admin" class="active"><i class="ti ti-list" aria-hidden="true"></i> All Jobs</a>
+                    <a href="/technicians"><i class="ti ti-users" aria-hidden="true"></i> Technicians</a>
                 </nav>
+                <div class="drawer-footer">
+                    <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='/login'" class="primary" style="width: 100%;">
+                        Logout
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="admin-content">
+
+        <main class="admin-content" id="main-content">
             <div class="admin-header">
                 <h2>Dispatch Overview</h2>
                 <div class="admin-left">
-                    <input type="search" placeholder="Search by name,category, zone e.t.c" name="search_field">
-                    <select name="filter" id="filter">
+                    <label for="search-field" class="sr-only">Search jobs</label>
+                    <input type="search" id="search-field" placeholder="Search by name, category, zone..." name="search_field" aria-label="Search jobs by name, category, zone">
+                    
+                    <label for="filter" class="sr-only">Filter jobs by status</label>
+                    <select name="filter" id="filter" aria-label="Filter jobs by status">
                         <option value="">All Jobs</option>
                         <option value="pending">Queued / Pending</option>
                         <option value="awaiting_verification">Awaiting Verification (Manual Pay)</option>
@@ -67,8 +81,11 @@
                         <option value="awaiting_payment">Awaiting Payment</option>
                         <option value="paid">Paid (In Repair)</option>
                         <option value="completed">Completed</option>
+                        <option value="disputed">Disputed / Under Review</option>
                     </select>
-                    <select id="sort" class="filter-select">
+
+                    <label for="sort" class="sr-only">Sort jobs</label>
+                    <select id="sort" class="filter-select" aria-label="Sort jobs">
                         <option value="">Sort By (Default)</option>
                         <option value="id-desc">Job ID: Highest First</option>
                         <option value="id-asc">Job ID: Lowest First</option>
@@ -79,78 +96,83 @@
                     </select>
                 </div>
             </div>
-            <div class="dispatch-cards">
-                <div class="dispatch-card pending">
-                    <div class="card-num"></div>
+
+            <div class="dispatch-cards" role="region" aria-label="Job Statistics Summary">
+                <div class="dispatch-card pending" role="status" aria-label="Pending Jobs count">
+                    <div class="card-num">0</div>
                     <div class="card-info">Pending Jobs</div>
                 </div>
-                <div class="dispatch-card assigned">
-                    <div class="card-num"></div>
+                <div class="dispatch-card assigned" role="status" aria-label="Assigned Jobs count">
+                    <div class="card-num">0</div>
                     <div class="card-info">Assigned</div>
                 </div>
-                <div class="dispatch-card completed">
-                    <div class="card-num"></div>
+                <div class="dispatch-card completed" role="status" aria-label="Completed Jobs count">
+                    <div class="card-num">0</div>
                     <div class="card-info">Completed</div>
                 </div>
             </div>
+
             <div class="dispatch-visual">
-                <div class="table-wrapper">
+                <div class="table-wrapper" role="region" aria-label="Jobs Table" tabindex="0">
                     <table class="dispatch-table">
                         <thead>
                             <tr>
-                                <th>job id</th>
-                                <th>customer</th>
-                                <th>category</th>
-                                <th>location</th>
-                                <th>scheduled</th>
-                                <th>status</th>
-                                <th>Assigned To</th>
+                                <th scope="col">Job ID</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Scheduled</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Assigned To</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody aria-live="polite">
                             <tr class="skeleton-row">
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
+                                <td><div class="skeleton" style="width: 60px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 110px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 90px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 140px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 100px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td>
+                                <td><div class="skeleton" style="width: 90px; height: 16px;"></div></td>
                             </tr>
                             <tr class="skeleton-row">
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
-                                <td><div class="skeleton-line"></div></td>
+                                <td><div class="skeleton" style="width: 60px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 110px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 90px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 140px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 100px; height: 16px;"></div></td>
+                                <td><div class="skeleton" style="width: 80px; height: 22px; border-radius: 12px;"></div></td>
+                                <td><div class="skeleton" style="width: 90px; height: 16px;"></div></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-         <nav class="bottom-nav">
+        </main>
+
+        <nav class="bottom-nav" aria-label="Mobile admin navigation">
             <a href="/admin" class="active">
-                <i class="ti ti-plus"></i>
+                <i class="ti ti-list nav-icon" aria-hidden="true"></i>
                 <span>All Jobs</span>
             </a>
-            <a href="#">
-                <i class="ti ti-search"></i>
-                <span>Track</span>
+            <a href="/technicians">
+                <i class="ti ti-users nav-icon" aria-hidden="true"></i>
+                <span>Technicians</span>
             </a>
         </nav>
     </div>
-    <div class="job-panel-backdrop" id="job-panel-backdrop" onclick="closeJobPanel()"></div>
-    <div class="job-detail-panel" id="job-detail-panel">
+
+    <!-- Job Detail Slide-over Panel -->
+    <div class="job-panel-backdrop" id="job-panel-backdrop" onclick="closeJobPanel()" aria-hidden="true"></div>
+    <div class="job-detail-panel" id="job-detail-panel" role="dialog" aria-modal="true" aria-labelledby="panel-job-id" aria-hidden="true">
         <div class="panel-header">
             <div>
-                <div class="panel-job-id" id="panel-job-id">#JOB-0000</div>
+                <h3 class="panel-job-id" id="panel-job-id" style="margin: 0;">#JOB-0000</h3>
                 <div class="panel-job-time" id="panel-job-time">Created: —</div>
             </div>
-            <button class="panel-close-btn" onclick="closeJobPanel()" aria-label="Close panel">
-                <i class="ti ti-x"></i>
+            <button class="panel-close-btn" onclick="closeJobPanel()" aria-label="Close job detail panel">
+                <i class="ti ti-x" aria-hidden="true"></i>
             </button>
         </div>
         <div class="panel-body" id="panel-body-content">
@@ -158,16 +180,20 @@
         </div>
     </div>
 
+    <!-- Offline Network Toast -->
+    <div id="network-toast" class="network-toast" role="status" aria-live="polite">
+        <i class="ti ti-wifi-off" id="network-toast-icon"></i>
+        <span id="network-toast-msg">You are currently offline. Changes will sync when reconnected.</span>
+    </div>
+
     <script>
         const currentPage = window.location.pathname.split("/").pop();
-
         document.querySelectorAll("nav a").forEach(link => {
             const linkPage = link.getAttribute("href").split("/").pop();
             if (linkPage === currentPage) {
                 link.classList.add("active");
             }
         });
-
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js')
