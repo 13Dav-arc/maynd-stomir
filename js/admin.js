@@ -335,7 +335,7 @@ function openJobPanelByIndex(index) {
             ` : '<p class="small" style="color:var(--text-muted)">No issue photo uploaded.</p>'}
         </div>
 
-        ${!["cancelled", "completed", "cancelled_by_client", "cancelled_by_technician", "expired"].includes(rawStatus) ? `
+        ${rawStatus !== "completed" && !rawStatus.startsWith("cancelled") ? `
             <div class="panel-section" style="border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 1rem;">
                 <button id="admin-cancel-btn" onclick="adminCancelJob('${job.tracking_token || job.id}')" style="width: 100%; background: #DC2626; color: white; border: none; padding: 0.75rem 1rem; border-radius: 4px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s ease;">
                     <i class="ti ti-ban" aria-hidden="true"></i> Cancel This Job (Admin Override)
