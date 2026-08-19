@@ -59,13 +59,10 @@ window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const jobId = params.get("id");
 
-    if (jobId) {
-        if (/^\d+$/.test(jobId)) {
-            showError("Invalid tracking reference. Please search using your phone number below.");
-            return;
-        }
-        activeTrackToken = jobId;
-        fetchJobById(jobId);
+    if (jobId && jobId.trim()) {
+        const cleanJobId = jobId.trim();
+        activeTrackToken = cleanJobId;
+        fetchJobById(cleanJobId);
         startPolling();
     }
 });
@@ -200,11 +197,18 @@ function buildJobCardHTML(job) {
     const rawStatus = (job.status || "").trim().toLowerCase();
     const tokenOrId = job.tracking_token || job.uuid || job.id;
 
-    // 1. Payment Verification Flags
-    const isCalloutPaid = Boolean(job.paid_at || job.callout_paid);
-    const hasSubmittedRef = Boolean(job.payment_reference);
-    const isCalloutUnpaid = !isCalloutPaid && !hasSubmittedRef && (rawStatus === "pending" || rawStatus === "pending_dispatch" || rawStatus === "draft" || rawStatus === "broadcasted" || rawStatus === "unassigned_queued");
+    // 1. Payment Verification Flags (Normalized type evaluation)
+    const isCalloutPaid = Boolean(job.paid_at) || 
+                          job.callout_paid === true || 
+                          job.callout_paid === 1 || 
+                          String(job.callout_paid).toLowerCase() === "true" ||
+                          String(job.callout_paid) === "1";
+    const hasSubmittedRef = Boolean(job.payment_reference && String(job.payment_reference).trim() !== "");
+    const isTerminalOrComplete = ["completed", "cancelled", "cancelled_by_client", "cancelled_by_technician", "expired"].includes(rawStatus);
     const isDiagnosticUnpaid = rawStatus === "awaiting_payment" || rawStatus === "awaiting_parts_or_approval";
+    
+    // Dynamic Callout Unpaid Evaluation: Unpaid whenever call-out is not verified, no reference submitted, not in diagnostic quote phase, and not terminal
+    const isCalloutUnpaid = !isCalloutPaid && !hasSubmittedRef && !isDiagnosticUnpaid && !isTerminalOrComplete;
     const needsPayment = isCalloutUnpaid || isDiagnosticUnpaid;
 
     // 2. Technician Acceptance Flag

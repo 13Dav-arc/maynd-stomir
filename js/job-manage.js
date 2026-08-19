@@ -292,9 +292,10 @@ document.getElementById("accept-job-btn")?.addEventListener("click", async () =>
     btn.disabled = true;
     btn.innerHTML = `<i class="ti ti-loader-2 ti-spin" aria-hidden="true"></i> Accepting...`;
 
-    const techId = activeJob?.assigned_technician_id 
+    const rawTechId = activeJob?.assigned_technician_id 
         || activeJob?.assigned_technician?.id 
         || new URLSearchParams(window.location.search).get("tech_id");
+    const techId = rawTechId !== null && rawTechId !== undefined ? String(rawTechId) : "";
 
     try {
         const res = await fetch(`${BASE_URL}/jobs/${activeJobIdOrToken}/accept`, {

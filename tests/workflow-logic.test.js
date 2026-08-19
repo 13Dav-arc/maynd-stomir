@@ -61,4 +61,16 @@ describe('Automated Workflow & Logic Test Suite', () => {
         assert.ok(invoiceJs.includes('50'), 'invoice.js must include 50 QAR baseline');
         assert.ok(mainJs.includes('50'), 'main.js must validate 50 QAR agreement');
     });
+
+    it('js/job-manage.js must explicitly cast technician_id to string', () => {
+        const jobManageJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'job-manage.js'), 'utf8');
+        assert.ok(jobManageJs.includes('String(rawTechId)'), 'job-manage.js must cast techId to string for FastAPI schema compatibility');
+    });
+
+    it('js/admin.js must implement admin job cancellation override', () => {
+        const adminJs = fs.readFileSync(path.join(ROOT_DIR, 'js', 'admin.js'), 'utf8');
+        assert.ok(adminJs.includes('adminCancelJob'), 'admin.js must define adminCancelJob');
+        assert.ok(adminJs.includes('/jobs/${jobId}/cancel') || adminJs.includes('/cancel'), 'admin.js must hit the cancel endpoint');
+        assert.ok(adminJs.includes('"role": "admin"') || adminJs.includes('role: "admin"'), 'admin.js must pass admin role payload');
+    });
 });

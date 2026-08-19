@@ -334,6 +334,14 @@ function openJobPanelByIndex(index) {
                 </a>
             ` : '<p class="small" style="color:var(--text-muted)">No issue photo uploaded.</p>'}
         </div>
+
+        ${!["cancelled", "completed", "cancelled_by_client", "cancelled_by_technician", "expired"].includes(rawStatus) ? `
+            <div class="panel-section" style="border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 1rem;">
+                <button id="admin-cancel-btn" onclick="adminCancelJob('${job.tracking_token || job.id}')" style="width: 100%; background: #DC2626; color: white; border: none; padding: 0.75rem 1rem; border-radius: 4px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s ease;">
+                    <i class="ti ti-ban" aria-hidden="true"></i> Cancel This Job (Admin Override)
+                </button>
+            </div>
+        ` : ""}
     `;
 
     backdrop.classList.add("active");
@@ -381,6 +389,45 @@ async function verifyManualPayment(jobId, currentCalloutPaid) {
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = `<i class="ti ti-circle-check"></i> Verify & Confirm Payment`;
+        }
+    }
+}
+
+// ACTION: ADMIN CANCEL JOB OVERRIDE
+async function adminCancelJob(jobId) {
+    const btn = document.getElementById("admin-cancel-btn");
+    if (!confirm("Are you sure you want to cancel this job? This will mark the job as CANCELLED.")) {
+        return;
+    }
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ti ti-loader-2 ti-spin"></i> Cancelling Job...`;
+        }
+
+        const response = await fetch(`${BASE_URL}/jobs/${jobId}/cancel`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-Key": API_KEY
+            },
+            body: JSON.stringify({
+                role: "admin",
+                reason: "Cancelled by Admin Console"
+            })
+        });
+
+        if (!response.ok) throw new Error("Failed to cancel job");
+
+        closeJobPanel();
+        await fetchJobs();
+    } catch (err) {
+        console.error(err);
+        alert("Unable to cancel job. Please check connection and try again.");
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="ti ti-ban"></i> Cancel This Job (Admin Override)`;
         }
     }
 }
