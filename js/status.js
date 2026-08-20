@@ -231,7 +231,7 @@ function buildJobCardHTML(job) {
         displayStatus = "Payment Verification";
         statusClass = "pending";
         statusDescription = "Your payment reference has been submitted and is undergoing verification.";
-    } else if ((rawStatus === "dispatched" || rawStatus === "pending_dispatch" || rawStatus === "broadcasted") && !isTechnicianAccepted) {
+    } else if ((rawStatus === "assigned" || rawStatus === "dispatched" || rawStatus === "pending_dispatch" || rawStatus === "broadcasted") && !isTechnicianAccepted) {
         displayStatus = "Finding Technician";
         statusClass = "pending";
         statusDescription = "Payment confirmed. Matching and dispatching your request to the nearest technician.";
