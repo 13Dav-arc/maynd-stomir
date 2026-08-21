@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Maintenance — MAYND STOMIR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="icons/favicon.png">
+    <meta name="theme-color" content="#1E293B">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Maynd">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="log-layout" id="log-layout">
+        <header role="banner">
+            <a href="/" style="text-decoration: none; color: white;" aria-label="Maynd Stomir Home">
+                <div class="logo">Maynd<span class="logo">Stomir</span></div>
+            </a>
+            <nav aria-label="Desktop navigation">
+                <a href="/request" class="active">Request Maintenance</a>
+                <a href="/partners">Join as Technician</a>
+            </nav>
+            <div class="emergency-contact">
+                <a href="tel:+97466904001" class="primary" aria-label="Emergency Call +974 6690 4001">Emergency Call</a>
+                <a href="https://wa.me/97466904001" target="_blank" rel="noopener noreferrer" class="primary" aria-label="Chat with us on WhatsApp">
+                    <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+                </a>
+                <button class="hamburger" id="hamburger" aria-label="Open mobile menu" aria-expanded="false" aria-controls="drawer">
+                    <i class="ti ti-menu-2" aria-hidden="true"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Drawer -->
+        <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+        <div class="drawer" id="drawer" role="dialog" aria-label="Mobile navigation drawer" aria-modal="true" aria-hidden="true">
+            <div class="drawer-header">
+                <span class="logo" style="color: var(--white); font-size: 1.1rem;">Maynd<span>Stomir</span></span>
+                <button class="drawer-close" id="drawer-close" aria-label="Close mobile menu">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                </button>
+            </div>
+            <nav class="drawer-nav" aria-label="Drawer navigation">
+                <a href="/request" class="active"><i class="ti ti-plus" aria-hidden="true"></i> Request Maintenance</a>
+                <a href="/status"><i class="ti ti-search" aria-hidden="true"></i> Track Jobs</a>
+                <a href="/partners"><i class="ti ti-tool" aria-hidden="true"></i> Join as Technician</a>
+            </nav>
+            <div class="drawer-footer">
+                <a href="tel:+97466904001" class="primary" aria-label="Emergency Phone Call">Emergency Call</a>
+                <a href="https://wa.me/97466904001" target="_blank" rel="noopener noreferrer" class="primary" aria-label="WhatsApp Us"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp Us</a>
+            </div>
+        </div>
+
+        <main class="page-layout" id="main-content">
+            <div class="info">
+                <div class="info-header">
+                    <div class="divider"></div>
+                    <h2>Fast. Reliable.<br>On-Demand<br>Maintenance</h2>
+                    <div class="small">We connect you to verified technicians across Qatar within hours. No phone tag. No waiting.</div>
+                </div>
+                <div class="info-main">
+                    <div class="small" style="text-transform: uppercase; margin-bottom: 1.5rem; font-weight: 700; letter-spacing: 0.05em;">How it works</div>
+                    <div class="info-list">
+                        <div class="info-field">
+                            <div class="info-num" aria-hidden="true">1</div>
+                            <div class="info-desc">Fill in your request details and submit the form below.</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-num" aria-hidden="true">2</div>
+                            <div class="info-desc">Our dispatcher reviews and matches an eligible technician.</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-num" aria-hidden="true">3</div>
+                            <div class="info-desc">Technician receives your exact location and ETA.</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-num" aria-hidden="true">4</div>
+                            <div class="info-desc">Track real-time progress on your tracking dashboard.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="main-header">
+                    <h1 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Log a Maintenance Request</h1>
+                    <div class="small">Fill in all fields below. We'll confirm your job within minutes.</div>
+                </div>
+                <div>
+                    <form class="form-grid" id="maintenance-request-form">
+                        <div class="form-upload">
+                            <label for="customer-name">Your Full Name</label>
+                            <input type="text" name="customer_name" id="customer-name" placeholder="e.g. Salem Al-Kuwari" autocomplete="name" required aria-required="true">
+                        </div>
+                        <div class="form-upload">
+                            <label for="phone-number">Phone Number</label>
+                            <input type="tel" name="phone_number" id="phone-number" placeholder="e.g. 55123456" autocomplete="tel" required aria-required="true">
+                        </div>
+                        <div class="form-upload">
+                            <label for="customer-email">Email Address</label>
+                            <input type="email" name="email" id="customer-email" placeholder="e.g. salem@example.com" autocomplete="email" required aria-required="true">
+                        </div>
+                        <div class="form-upload">
+                            <label id="blue-plate-heading">Qatar Blue Plate Location</label>
+                            <div class="small" style="color: var(--text-muted);">Enter your Blue Plate address numbers (Zone, Street, Building)</div>
+                        </div>
+                        <div class="address" role="group" aria-labelledby="blue-plate-heading">
+                            <div class="form-upload">
+                                <label for="zone-number">Zone Number</label>
+                                <input type="text" name="zone_number" id="zone-number" placeholder="Zone e.g. 40" required aria-required="true">
+                            </div>
+                            <div class="form-upload">
+                                <label for="street-number">Street Number</label>
+                                <input type="text" name="street_number" id="street-number" placeholder="Street e.g. 230" required aria-required="true">
+                            </div>
+                            <div class="form-upload">
+                                <label for="building-number">Building Number</label>
+                                <input type="text" name="building_number" id="building-number" placeholder="Bldg e.g. 20" required aria-required="true">
+                            </div>
+                        </div>
+
+                        <!-- SLEEK ADDRESS CONFIRMATION CARD -->
+                        <div id="address-confirm-card" class="address-confirm-card" style="display: none;" role="status">
+                            <div class="confirm-card-content">
+                                <i class="ti ti-map-pin" aria-hidden="true"></i>
+                                <div class="confirm-text">
+                                    <span class="confirm-label">Detected Location</span>
+                                    <span id="detected-address-text" class="confirm-address">Resolving address...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MAP PREVIEW BOX -->
+                        <div id="location-preview-container" style="display: none; margin-top: 1rem;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">
+                                <i class="ti ti-map-pin" style="color: var(--blue-accent);" aria-hidden="true"></i> Confirm Your Location:
+                            </label>
+                            <div id="map-preview" style="width: 100%; height: 220px; border-radius: 8px; border: 1px solid var(--border); margin-top: 0.5rem; overflow: hidden;"></div>
+                            <div id="location-match-text" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;"></div>
+                        </div>
+
+                        <!-- CUSTOM TRIGGER FIELD (ACCESSIBLE SELECT) -->
+                        <div class="form-upload">
+                            <label id="category-field-label">Service Category</label>
+                            <div class="custom-select-trigger" id="selectTrigger" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="category-field-label selectedCategoryText" onclick="openProblemModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProblemModal();}">
+                                <span id="selectedCategoryText">Select Problem Category</span>
+                                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+                            </div>
+                            <input type="hidden" name="category" id="problem-category" value="" required aria-required="true">
+                        </div>
+
+                        <!-- MOBILE BOTTOM-SHEET / MODAL -->
+                        <div class="select-modal-overlay" id="problemModalOverlay" onclick="closeProblemModalOnBackdrop(event)" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle" aria-hidden="true" style="display:none;">
+                            <div class="select-modal-card">
+                                <div class="select-modal-header">
+                                    <h3 id="categoryModalTitle">Select Service Category</h3>
+                                    <button type="button" class="close-modal-btn" onclick="closeProblemModal()" aria-label="Close category selection modal">&times;</button>
+                                </div>
+                                
+                                <div class="select-options-list" role="radiogroup" aria-labelledby="categoryModalTitle">
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">HVAC (AC Repair & Maintenance)</span>
+                                        <input type="radio" name="modal_problem_opt" value="hvac" data-label="HVAC" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Plumbing</span>
+                                        <input type="radio" name="modal_problem_opt" value="plumbing" data-label="Plumbing" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Electrical</span>
+                                        <input type="radio" name="modal_problem_opt" value="electrical" data-label="Electrical" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Painting</span>
+                                        <input type="radio" name="modal_problem_opt" value="painting" data-label="Painting" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Carpentry</span>
+                                        <input type="radio" name="modal_problem_opt" value="carpentry" data-label="Carpentry" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Flooring</span>
+                                        <input type="radio" name="modal_problem_opt" value="flooring" data-label="Flooring" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Appliance Repair</span>
+                                        <input type="radio" name="modal_problem_opt" value="appliance_repair" data-label="Appliance Repair" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Pest Control</span>
+                                        <input type="radio" name="modal_problem_opt" value="pest_control" data-label="Pest Control" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Deep Cleaning</span>
+                                        <input type="radio" name="modal_problem_opt" value="cleaning" data-label="Deep Cleaning" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Masonry / Tiling</span>
+                                        <input type="radio" name="modal_problem_opt" value="masonry" data-label="Masonry / Tiling" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Glass & Windows</span>
+                                        <input type="radio" name="modal_problem_opt" value="glass_windows" data-label="Glass & Windows" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Locks & Security</span>
+                                        <input type="radio" name="modal_problem_opt" value="locks_security" data-label="Locks & Security" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+
+                                    <label class="custom-radio-row">
+                                        <span class="option-title">Other Maintenance</span>
+                                        <input type="radio" name="modal_problem_opt" value="other" data-label="Other" onchange="handleProblemSelect(this)">
+                                        <span class="radio-indicator"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-upload">
+                            <label for="description-note">Description of Issue</label>
+                            <textarea id="description-note" name="description" rows="4" cols="10" placeholder="Please describe the maintenance issue with as much detail as possible."></textarea>
+                        </div>
+
+                        <div class="form-upload">
+                            <label for="photo-upload">Upload Photo of Issue</label>
+                            <div class="upload-photo">
+                                <i class="ti ti-camera" aria-hidden="true"></i>
+                                <span class="upload-text">Click to upload from device (PNG, JPG, JPEG - Max 5MB)</span>
+                                <input type="file" accept="image/*" capture="environment" id="photo-upload" name="photo" aria-label="Upload photo of issue">
+                            </div>
+                        </div>
+
+                        <div class="preferred-date">
+                            <div class="form-upload">
+                                <label for="scheduled-date">Preferred Date</label>
+                                <input type="date" name="scheduled_date" id="scheduled-date" required aria-required="true">
+                            </div>
+                            <div class="form-upload">
+                                <label for="scheduled-time">Preferred Time</label>
+                                <input type="time" name="scheduled_time" id="scheduled-time" min="08:00" max="17:00" required aria-required="true">
+                            </div>
+                        </div>
+
+                        <div class="callout-notice">
+                            <div class="callout-notice-header">
+                                <i class="ti ti-receipt" aria-hidden="true"></i>
+                                <span>Transparent Pricing — Call-Out & Diagnostic Fee</span>
+                            </div>
+                            <div class="callout-notice-body">
+                                <p>Every dispatch includes a mandatory <strong>QAR 50 non-refundable call-out fee</strong>. This covers the technician's travel and up to 60 minutes of on-site inspection or minor repairs.</p>
+                                <ul class="callout-list">
+                                    <li><i class="ti ti-check" aria-hidden="true"></i> If additional parts or labor are required, you will receive a transparent quote before any work proceeds.</li>
+                                    <li><i class="ti ti-check" aria-hidden="true"></i> You pay Maynd Stomir directly — technicians never collect cash on site.</li>
+                                    <li><i class="ti ti-check" aria-hidden="true"></i> No hidden fees. No surprises.</li>
+                                </ul>
+                            </div>
+                            <label class="callout-agree" for="callout-agree">
+                                <input type="checkbox" id="callout-agree" required aria-required="true">
+                                <span>I understand and agree to the QAR 50 call-out fee and our <a href="/pricing-terms.html" target="_blank" rel="noopener noreferrer" class="terms-link">Pricing & Service Terms</a>.</span>
+                            </label>
+                        </div>
+
+                        <div class="form-error" id="form-error" style="display:none;" role="alert" aria-live="assertive">
+                            <i class="ti ti-alert-circle" aria-hidden="true"></i>
+                            <span id="form-error-text"></span>
+                        </div>
+
+                        <button type="submit" class="primary" id="request-submit-btn" style="min-height: 48px; font-size: 0.95rem;">
+                            Submit Maintenance Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav" aria-label="Mobile navigation">
+            <a href="/request" class="active">
+                <i class="ti ti-plus nav-icon" aria-hidden="true"></i>
+                <span>Request</span>
+            </a>
+            <a href="/status">
+                <i class="ti ti-search nav-icon" aria-hidden="true"></i>
+                <span>Track</span>
+            </a>
+            <a href="/partners">
+                <i class="ti ti-tool nav-icon" aria-hidden="true"></i>
+                <span>Technician</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="success-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="success-modal-text">
+        <div class="success-modal-card">
+            <i class="ti ti-circle-check" aria-hidden="true" style="font-size: 2.5rem; color: var(--assigned);"></i>
+            <h3 id="success-modal-text">Request Logged Successfully!</h3>
+            <button class="primary" id="track-job-btn" onclick="window.location.href='/status'">
+                Track My Job →
+            </button>
+        </div>
+    </div>
+
+    <!-- PWA Installation Banner -->
+    <div id="pwa-install-banner" class="pwa-banner" style="display: none;" role="region" aria-label="App installation">
+        <div class="pwa-content">
+            <i class="ti ti-download" aria-hidden="true"></i>
+            <div class="pwa-text">
+                <strong>Install Maynd Stomir</strong>
+                <p>Receive job updates & track statuses instantly</p>
+            </div>
+        </div>
+        <div class="pwa-actions">
+            <button id="pwa-btn-install" class="pwa-btn-primary">Install</button>
+            <button id="pwa-btn-close" class="pwa-btn-close" aria-label="Dismiss app installation banner">×</button>
+        </div>
+    </div>
+
+    <!-- Offline Network Toast -->
+    <div id="network-toast" class="network-toast" role="status" aria-live="polite">
+        <i class="ti ti-wifi-off" id="network-toast-icon"></i>
+        <span id="network-toast-msg">You are currently offline. Changes will sync when reconnected.</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const currentPage = window.location.pathname.split("/").pop();
+        document.querySelectorAll("nav a").forEach(link => {
+            const linkPage = link.getAttribute("href").split("/").pop();
+            if (linkPage === currentPage) {
+                link.classList.add("active");
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch((err) => console.error('Service Worker failed:', err));
+        }
+    </script>
+    <script src="js/nav.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

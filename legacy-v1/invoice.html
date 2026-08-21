@@ -51,20 +51,10 @@
             max-width: 650px;
             margin: 0 auto;
             background: var(--white);
-            border: 1px solid rgba(226, 232, 240, 0.85);
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
             padding: 2.5rem;
-            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .invoice-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--blue-accent) 0%, var(--gold) 100%);
+            box-shadow: 0 4px 12px var(--shadow);
         }
 
         .invoice-header {
@@ -72,7 +62,7 @@
             justify-content: space-between;
             align-items: flex-start;
             padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 2px solid var(--border);
         }
 
         .logo {
@@ -80,7 +70,6 @@
             font-size: clamp(1.2rem, 3.5vw, 1.5rem);
             font-weight: 800;
             color: var(--blue-dark);
-            letter-spacing: -0.02em;
         }
 
         .logo span {
@@ -88,12 +77,11 @@
         }
 
         .brand-subtitle {
-            font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+            font-size: clamp(0.7rem, 1.8vw, 0.78rem);
             color: var(--text-muted);
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-top: 0.2rem;
+            letter-spacing: 0.05em;
         }
 
         .invoice-meta {
@@ -101,57 +89,51 @@
         }
 
         .invoice-number {
-            font-size: clamp(1.05rem, 3vw, 1.25rem);
+            font-size: clamp(1rem, 3vw, 1.2rem);
             font-weight: 800;
             color: var(--blue-accent);
-            letter-spacing: -0.02em;
         }
 
         .invoice-date {
             font-size: 0.8rem;
             color: var(--text-muted);
-            margin-top: 0.2rem;
         }
 
         .details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
+            gap: 1.5rem;
             margin: 1.5rem 0;
-            padding: 1.25rem;
-            background: #F8FAFC;
+            padding: 1.2rem;
+            background: var(--off-white);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 4px;
         }
 
         .meta-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             color: var(--text-muted);
             font-weight: 700;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         .meta-value {
             font-size: 0.9rem;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-primary);
-            line-height: 1.35;
         }
 
         .status-badge {
             display: inline-block;
             font-family: 'Syne', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 800;
+            font-size: 0.7rem;
+            font-weight: 700;
             color: var(--pending);
-            background: rgba(180, 83, 9, 0.08);
-            border: 1px solid rgba(180, 83, 9, 0.25);
-            padding: 0.25rem 0.6rem;
-            border-radius: 9999px;
+            background: rgba(180, 83, 9, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
         }
 
         .invoice-table {
@@ -162,10 +144,8 @@
 
         .invoice-table th {
             text-align: left;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            font-family: 'Syne', sans-serif;
-            letter-spacing: 0.06em;
             color: var(--text-muted);
             padding: 0.75rem 0;
             border-bottom: 1px solid var(--border);
@@ -173,8 +153,8 @@
 
         .invoice-table td {
             padding: 1rem 0;
-            font-size: 0.88rem;
-            border-bottom: 1px solid #F1F5F9;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
         }
 
         .invoice-table td.amount {
@@ -194,7 +174,6 @@
         .total-label {
             font-size: 1.1rem;
             font-weight: 800;
-            color: var(--text-primary);
         }
 
         .total-amount {
@@ -202,7 +181,6 @@
             font-size: 1.5rem;
             font-weight: 800;
             color: var(--blue-accent);
-            letter-spacing: -0.02em;
         }
 
         .pay-btn {
@@ -215,25 +193,18 @@
             color: var(--text-inverse);
             text-decoration: none;
             padding: 1rem;
-            border-radius: 6px;
+            border-radius: 4px;
             font-family: 'Syne', sans-serif;
             font-weight: 700;
-            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
             margin-top: 1.5rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 2px 4px rgba(92, 15, 26, 0.15);
+            transition: background 0.2s ease;
         }
 
         .pay-btn:hover {
             background: var(--blue-light);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(92, 15, 26, 0.25);
-        }
-
-        .pay-btn:active {
-            transform: scale(0.98);
         }
 
         /* MANUAL PAYMENT & NOTIFICATION STYLES */
