@@ -1,25 +1,36 @@
-    // const currentPage = window.location.pathname.split("/").pop();
     const hamburger = document.getElementById("hamburger");
     const drawer = document.getElementById("drawer");
     const overlay = document.getElementById("drawer-overlay");
     const drawerClose = document.getElementById("drawer-close");
 
-    
-    hamburger.addEventListener("click", () => {
-        drawer.classList.add("open");
-        overlay.classList.add("open");
-        document.body.style.overflow = "hidden"; // prevent background scroll
+    if (hamburger && drawer) {
+        hamburger.addEventListener("click", () => {
+            drawer.classList.add("open");
+            if (overlay) overlay.classList.add("open");
+            hamburger.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden"; // prevent background scroll
+        });
+    }
+
+    if (drawerClose) {
+        drawerClose.addEventListener("click", closeDrawer);
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", closeDrawer);
+    }
+
+    // Keyboard support: Escape closes mobile drawer
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && drawer && drawer.classList.contains("open")) {
+            closeDrawer();
+        }
     });
 
-    
-    drawerClose.addEventListener("click", closeDrawer);
-
-    
-    overlay.addEventListener("click", closeDrawer);
-
     function closeDrawer() {
-        drawer.classList.remove("open");
-        overlay.classList.remove("open");
+        if (drawer) drawer.classList.remove("open");
+        if (overlay) overlay.classList.remove("open");
+        if (hamburger) hamburger.setAttribute("aria-expanded", "false");
         document.body.style.overflow = "";
     }
 

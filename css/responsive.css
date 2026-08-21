@@ -1,22 +1,33 @@
 
-/* ── BOTTOM NAV (hidden on desktop) ── */
-.bottom-nav {
-    display: none;
+/* ── 1. BOTTOM NAVIGATION (Hidden by default on standard browsers) ── */
+.bottom-nav,
+.mobile-bottom-bar {
+    display: none !important;
 }
 
-/* HAMBURGER — hidden on desktop */
+/* ── 2. HAMBURGER (Hidden on desktop by default) ── */
 .hamburger {
     display: none;
-    background: none;
+    background: transparent;
     border: none;
     color: var(--text-inverse);
     font-size: 1.5rem;
     cursor: pointer;
-    padding: 0.3rem;
-    transition: color 0.3s ease;
+    padding: 0;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.15s ease;
+    border-radius: 4px;
 }
-.hamburger:hover{
-    color: var(--blue-light);
+
+.hamburger:hover {
+    color: var(--gold);
+}
+
+.hamburger:active {
+    transform: scale(0.95);
 }
 
 /* DRAWER OVERLAY */
@@ -136,12 +147,16 @@
         height: 70px;
         padding: 0 1.2rem;
     }
-    .hamburger { display: block; }
-    header nav {
-        display: none;
+    .hamburger { 
+        display: inline-flex !important; 
     }
-    header > div > .primary {
-        display: none;
+    header nav,
+    .desktop-nav {
+        display: none !important;
+    }
+    header > div > .primary,
+    header > .primary {
+        display: none !important;
     }
 
     /* PAGE LAYOUT — stack sidebar above form */
@@ -172,7 +187,7 @@
         min-height: 100vh;
         overflow-y: visible;
         padding: 1.2rem;
-        padding-bottom: 90px;
+        padding-bottom: 2.5rem;
     }
     .form-search input {
         width: 100%;
@@ -189,49 +204,10 @@
     .track-results-main {
         padding: 1rem;
     }
-     .track-fields {
+    .track-fields {
         flex-direction: column;
         gap: 0.2rem;
         margin-bottom: 0.8rem;
-    }
-
-    /* BOTTOM NAV — show on mobile */
-    .bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 200;
-        background: var(--blue-dark);
-        border-top: 1px solid var(--blue-mid);
-    }
-    .bottom-nav a {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 0.6rem 0.4rem 0.8rem;
-        gap: 0.2rem;
-        text-decoration: none;
-        color: var(--text-muted);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        transition: color 0.2s ease;
-        border-top: 2px solid transparent;
-    }
-    .bottom-nav a .nav-icon {
-        font-size: 1.3rem;
-    }
-    .bottom-nav a.active {
-        color: var(--blue-light);
-        border-top: 2px solid var(--blue-accent);
-    }
-    .bottom-nav a:hover {
-        color: var(--blue-light);
     }
 }
 
@@ -420,23 +396,62 @@
     }
 }
 
-/* Safe Area Inset adjustments for modern notch/pill devices */
-@media (max-width: 768px) {
-    .bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 200;
-        background: var(--blue-dark);
-        border-top: 1px solid var(--blue-mid);
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
+/* ── 3. PWA STANDALONE & FULLSCREEN DISPLAY MODES ONLY ── */
+@media all and (display-mode: standalone), (display-mode: fullscreen) {
+    @media (max-width: 768px) {
+        .bottom-nav,
+        .mobile-bottom-bar {
+            display: flex !important;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 200;
+            background: var(--blue-dark);
+            border-top: 1px solid var(--blue-mid);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
 
-    .main-content,
-    .admin-content,
-    .page-layout {
-        padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+        .bottom-nav a,
+        .mobile-bottom-bar a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem 0.4rem 0.8rem;
+            gap: 0.2rem;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+            border-top: 2px solid transparent;
+        }
+
+        .bottom-nav a .nav-icon,
+        .mobile-bottom-bar a .nav-icon {
+            font-size: 1.3rem;
+        }
+
+        .bottom-nav a.active,
+        .mobile-bottom-bar a.active {
+            color: var(--blue-light);
+            border-top: 2px solid var(--blue-accent);
+        }
+
+        .bottom-nav a:hover,
+        .mobile-bottom-bar a:hover {
+            color: var(--blue-light);
+        }
+
+        .main-content,
+        .admin-content,
+        .result-content,
+        .page-layout {
+            padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
+        }
     }
 }
