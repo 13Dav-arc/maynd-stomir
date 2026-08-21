@@ -1,3 +1,4 @@
+
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
@@ -21,21 +22,25 @@ const HTML_FILES = [
     'technicians.html'
 ].filter(f => fs.existsSync(path.join(ROOT_DIR, f)));
 
-function createCleanDOM(html) {
-    // Strip external scripts and stylesheets to ensure instantaneous, deterministic test execution
-    const sanitizedHtml = html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/<link\b[^>]*>/gi, '');
-    return new JSDOM(sanitizedHtml, { pretendToBeVisual: false });
+const domCache = new Map();
+function getParsedDoc(file) {
+    if (!domCache.has(file)) {
+        const html = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
+        const sanitizedHtml = html
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/<link\b[^>]*>/gi, '');
+        const dom = new JSDOM(sanitizedHtml, { pretendToBeVisual: false });
+        domCache.set(file, { html, dom });
+    }
+    return domCache.get(file);
 }
 
 describe('Automated UI & Accessibility Test Suite', () => {
 
     it('All HTML pages must have a valid HTML5 doctype and lang attribute', () => {
         for (const file of HTML_FILES) {
-            const html = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
+            const { html, dom } = getParsedDoc(file);
             assert.match(html, /<!DOCTYPE html>/i, `${file} missing <!DOCTYPE html>`);
-            const dom = createCleanDOM(html);
             const htmlElem = dom.window.document.documentElement;
             assert.strictEqual(htmlElem.getAttribute('lang'), 'en', `${file} must have lang="en"`);
         }
@@ -43,8 +48,7 @@ describe('Automated UI & Accessibility Test Suite', () => {
 
     it('All HTML pages must contain a mobile-responsive viewport meta tag', () => {
         for (const file of HTML_FILES) {
-            const html = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
-            const dom = createCleanDOM(html);
+            const { dom } = getParsedDoc(file);
             const viewportMeta = dom.window.document.querySelector('meta[name="viewport"]');
             assert.ok(viewportMeta, `${file} missing viewport meta tag`);
             const content = viewportMeta.getAttribute('content');
@@ -69,8 +73,7 @@ describe('Automated UI & Accessibility Test Suite', () => {
         ].filter(f => fs.existsSync(path.join(ROOT_DIR, f)));
 
         for (const file of pagesRequiringSkipLink) {
-            const html = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
-            const dom = createCleanDOM(html);
+            const { dom } = getParsedDoc(file);
             const skipLink = dom.window.document.querySelector('a.skip-link');
             assert.ok(skipLink, `${file} missing <a class="skip-link">`);
             assert.strictEqual(skipLink.getAttribute('href'), '#main-content', `${file} skip-link must point to #main-content`);
@@ -82,8 +85,7 @@ describe('Automated UI & Accessibility Test Suite', () => {
 
     it('No HTML page should contain duplicate element IDs', () => {
         for (const file of HTML_FILES) {
-            const html = fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
-            const dom = createCleanDOM(html);
+            const { dom } = getParsedDoc(file);
             const allElements = dom.window.document.querySelectorAll('[id]');
             const idMap = new Map();
 
@@ -113,8 +115,7 @@ describe('Automated UI & Accessibility Test Suite', () => {
             const filePath = path.join(ROOT_DIR, file);
             if (!fs.existsSync(filePath)) continue;
 
-            const html = fs.readFileSync(filePath, 'utf8');
-            const dom = createCleanDOM(html);
+            const { dom } = getParsedDoc(file);
             const modals = dom.window.document.querySelectorAll('[role="dialog"]');
 
             modals.forEach(modal => {
@@ -130,8 +131,7 @@ describe('Automated UI & Accessibility Test Suite', () => {
             const filePath = path.join(ROOT_DIR, file);
             if (!fs.existsSync(filePath)) continue;
 
-            const html = fs.readFileSync(filePath, 'utf8');
-            const dom = createCleanDOM(html);
+            const { dom } = getParsedDoc(file);
             const toast = dom.window.document.getElementById('network-toast');
             assert.ok(toast, `${file} must include #network-toast container for offline notification`);
             assert.strictEqual(toast.getAttribute('role'), 'status', `${file} #network-toast must have role="status"`);
