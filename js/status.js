@@ -306,7 +306,7 @@ function buildJobCardHTML(job) {
                 <p style="font-size: 0.85rem; color: var(--text-primary); margin: 0; line-height: 1.4;">
                     To dispatch a technician to your location, please pay the <strong>50 QAR Call-Out & Diagnostic Fee</strong>.
                 </p>
-                <a href="/invoice.html?id=${tokenOrId}" style="background: #2563EB; color: white; text-align: center; text-decoration: none; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.2rem;" aria-label="Pay Call-Out Fee of 50 QAR">
+                <a href="/invoice?id=${tokenOrId}" style="background: #2563EB; color: white; text-align: center; text-decoration: none; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.2rem;" aria-label="Pay Call-Out Fee of 50 QAR">
                     <i class="ti ti-credit-card" aria-hidden="true"></i> Pay Call-Out Fee (50 QAR) →
                 </a>
             </div>`;
@@ -319,14 +319,14 @@ function buildJobCardHTML(job) {
                 <p style="font-size: 0.85rem; color: var(--text-primary); margin: 0; line-height: 1.4;">
                     The technician has submitted the inspection quote. Please review and pay the remaining balance to authorize physical repairs.
                 </p>
-                <a href="/invoice.html?id=${tokenOrId}" style="background: #B45309; color: white; text-align: center; text-decoration: none; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.2rem;" aria-label="View and Settle Diagnostic Invoice">
+                <a href="/invoice?id=${tokenOrId}" style="background: #B45309; color: white; text-align: center; text-decoration: none; padding: 0.75rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.2rem;" aria-label="View and Settle Diagnostic Invoice">
                     <i class="ti ti-file-text" aria-hidden="true"></i> View & Settle Invoice →
                 </a>
             </div>`;
     }
 
     const payInvoiceBtn = needsPayment
-        ? `<a href="/invoice.html?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF; display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700;" aria-label="Pay invoice for ${jobIdFormatted}">
+        ? `<a href="/invoice?id=${tokenOrId}" class="complete-btn" style="background: var(--blue-accent); text-decoration:none; color:#FFF; display:inline-flex; align-items:center; gap:0.4rem; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700;" aria-label="Pay invoice for ${jobIdFormatted}">
             <i class="ti ti-receipt" aria-hidden="true"></i> Pay Invoice
            </a>`
         : "";

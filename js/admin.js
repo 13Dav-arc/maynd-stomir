@@ -1,6 +1,6 @@
 // AUTH CHECK — redirect to login if not authenticated
 if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
-    window.location.href = "login.html";
+    window.location.href = "/login";
 }
 
 // MAYND STOMIR — Admin Dashboard Logic

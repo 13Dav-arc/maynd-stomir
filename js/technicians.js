@@ -2,7 +2,7 @@
 
 // AUTH CHECK
 if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
-    window.location.href = "login.html";
+    window.location.href = "/login";
 }
 
 // --- CONFIG ---

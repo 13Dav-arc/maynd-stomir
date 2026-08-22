@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maynd Stomir — Technicians</title>
+    <script>
+        if (sessionStorage.getItem("maynd_admin_auth") !== "true") {
+            window.location.href = "/login";
+        }
+    </script>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="css/responsive.css">
@@ -22,7 +27,7 @@
                     <a href="/admin">All Jobs</a>
                     <a href="/technicians" class="active">Technicians</a>
                 </nav>
-                <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='login.html'" class="primary">
+                <button onclick="sessionStorage.removeItem('maynd_admin_auth'); window.location.href='/login'" class="primary">
                     Logout
                 </button>
                 <button class="hamburger" id="hamburger" aria-label="Open menu">

@@ -1,6 +1,6 @@
 {
   "name": "maynd-stomir",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "",
   "main": "service-worker.js",
   "scripts": {
